@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<ivy-module version="1.0">
+    <info organisation="example" module="teamcity-jmx-plugin" />
+    <configurations>
+        <conf name="master"/>
+        <conf name="compile"/>
+        <conf name="runtime" extends="compile"/>
+        <conf name="test" extends="runtime" visibility="private"/>
+        <conf name="default" extends="master,runtime"/>
+    </configurations>
+    <dependencies>
+        <dependency org="com.jetbrains.teamcity" name="common-api" rev="${teamcity.version}" conf="compile->default"/>
+        <dependency org="com.jetbrains.teamcity" name="server-api" rev="${teamcity.version}" conf="compile->default"/>
+        <dependency org="com.jetbrains.teamcity" name="util" rev="${teamcity.version}" conf="compile->default"/>
+
+        <dependency org="junit" name="junit" rev="${junit.version}" conf="test->default"/>
+    </dependencies>
+</ivy-module>

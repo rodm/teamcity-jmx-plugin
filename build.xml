@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<project name="jmx-plugin" default="default"
+         xmlns:ivy="antlib:org.apache.ivy.ant">
+
+    <target name="init">
+        <property file="build.properties"/>
+
+        <property name="plugin.name" value="jmx-plugin"/>
+
+        <property name="junit.version" value="4.8.2"/>
+        <property name="ivy.version" value="2.2.0"/>
+
+        <property name="src.dir" location="src"/>
+        <property name="java.src.dir" location="${src.dir}/main/java"/>
+        <property name="resources.dir" location="${src.dir}/main/resources"/>
+        <property name="test.src.dir" location="${src.dir}/test/java"/>
+
+        <property name="build.dir" location="build"/>
+        <property name="classes.dir" location="${build.dir}/classes"/>
+        <property name="test.classes.dir" location="${build.dir}/test/classes"/>
+        <property name="test.report.dir" location="${build.dir}/test/report"/>
+
+        <property name="dist.dir" location="dist"/>
+
+        <!-- Compiler options -->
+        <property name="compiler.debug" value="on"/>
+        <property name="compiler.nowarn" value="off"/>
+        <property name="compiler.args" value=""/>
+        <property name="compiler.max.memory" value="128m"/>
+
+        <property name="ivy.filename" value="ivy-${ivy.version}.jar"/>
+        <property name="ivy.settings.filename" value="ivysettings.xml"/>
+        <property name="ivy.resolve.log" value="quiet"/>
+        <property name="ivy.default.resolver" value="chained"/>
+
+        <property name="lib.dir" location="lib"/>
+        <available property="download.ivy" file="${lib.dir}/${ivy.filename}"/>
+
+        <fail unless="teamcity.home" message="teamcity.home property must be set"/>
+    </target>
+
+    <target name="download-ivy" depends="init" unless="download.ivy">
+        <mkdir dir="${lib.dir}"/>
+
+        <echo message="downloading ivy..."/>
+        <get src="http://repo1.maven.org/maven2/org/apache/ivy/ivy/${ivy.version}/${ivy.filename}"
+             dest="${lib.dir}/${ivy.filename}" usetimestamp="true"/>
+    </target>
+
+    <target name="init-ivy" depends="download-ivy">
+        <path id="lib.classpath">
+            <fileset dir="${lib.dir}" includes="*.jar"/>
+        </path>
+        <taskdef resource="org/apache/ivy/ant/antlib.xml"
+                 uri="antlib:org.apache.ivy.ant"
+                 classpathref="lib.classpath"/>
+
+        <ivy:settings file="${ivy.settings.filename}" />
+    </target>
+
+    <target name="resolve-dependencies" depends="init-ivy">
+        <ivy:resolve log="${ivy.resolve.log}"/>
+        <ivy:cachepath pathid="compile.classpath" conf="compile"/>
+        <ivy:cachepath pathid="test.classpath" conf="test"/>
+    </target>
+
+    <target name="compile" depends="resolve-dependencies">
+        <mkdir dir="${build.dir}"/>
+        <mkdir dir="${classes.dir}"/>
+
+        <javac destdir="${classes.dir}"
+               debug="${compiler.debug}"
+               nowarn="${compiler.nowarn}"
+               memorymaximumsize="${compiler.max.memory}"
+               fork="true"
+               target="1.5">
+            <classpath refid="compile.classpath"/>
+            <src location="${java.src.dir}"/>
+        </javac>
+
+        <copy todir="${classes.dir}">
+            <fileset dir="${resources.dir}">
+                <type type="file"/>
+            </fileset>
+        </copy>
+    </target>
+
+    <target name="compile-tests" depends="compile">
+        <mkdir dir="${test.classes.dir}"/>
+
+        <javac destdir="${test.classes.dir}"
+               debug="${compiler.debug}"
+               nowarn="${compiler.nowarn}"
+               memorymaximumsize="${compiler.max.memory}"
+               fork="true"
+               target="1.5">
+            <classpath refid="compile.classpath"/>
+            <classpath refid="test.classpath"/>
+            <classpath location="${classes.dir}"/>
+            <src location="${test.src.dir}"/>
+        </javac>
+    </target>
+
+    <target name="run-tests" depends="compile-tests">
+        <mkdir dir="${test.report.dir}"/>
+
+        <junit fork="yes"
+               forkmode="once"
+               printsummary="withOutAndErr"
+               errorproperty="tests.failed"
+               failureproperty="tests.failed"
+               showoutput="true">
+            <!--<sysproperty key="java.awt.headless" value="${java.awt.headless}"/>-->
+            <classpath refid="compile.classpath"/>
+            <classpath refid="test.classpath"/>
+            <classpath location="${classes.dir}"/>
+            <classpath location="${test.classes.dir}"/>
+
+            <formatter type="brief" usefile="false"/>
+
+            <batchtest fork="yes" todir="${test.report.dir}">
+                <formatter type="xml"/>
+                <fileset dir="${test.src.dir}">
+                    <include name="**/*Test.java"/>
+                </fileset>
+            </batchtest>
+        </junit>
+
+        <junitreport todir="${test.report.dir}">
+            <fileset dir="${test.report.dir}">
+                <include name="TEST-*.xml" />
+            </fileset>
+            <report format="noframes" todir="${test.report.dir}" />
+        </junitreport>
+
+        <fail if="tests.failed">Unit tests failed.</fail>
+    </target>
+
+    <target name="package-plugin" depends="run-tests">
+        <delete dir="${dist.dir}"/>
+
+        <mkdir dir="${dist.dir}/server"/>
+
+        <jar destfile="${dist.dir}/server/${plugin.name}.jar"
+             basedir="${classes.dir}">
+            <exclude name="teamcity-plugin.xml"/>
+        </jar>
+
+        <zip destfile="${dist.dir}/${plugin.name}.zip">
+            <zipfileset dir="${dist.dir}/server" prefix="server">
+                <include name="*.jar"/>
+            </zipfileset>
+            <zipfileset dir="${classes.dir}" includes="*.xml"/>
+        </zip>
+    </target>
+
+    <target name="default" depends="package-plugin"/>
+
+    <target name="clean" depends="init">
+        <delete dir="${build.dir}"/>
+        <delete dir="${dist.dir}"/>
+    </target>
+
+    <target name="init-teamcity" depends="init">
+        <property name="teamcity.host" value="localhost"/>
+        <property name="teamcity.port" value="8111"/>
+        <property name="teamcity.data.path" location="${basedir}/data"/>
+        <property name="teamcity.plugin.dir" location="${teamcity.data.path}/plugins"/>
+        <property name="teamcity.server.mem.opts" value=""/>
+        <property name="teamcity.server.opts" value=""/>
+
+        <available property="teamcity.exists" file="${teamcity.home}/bin/teamcity-server.sh" type="file"/>
+        <fail unless="teamcity.exists">${teamcity.home} is not a valid TeamCity installation</fail>
+
+        <property name="teamcity.java.home" location="${java.home}"/>
+        <echo>teamcity.java.home: ${teamcity.java.home}</echo>
+    </target>
+
+    <target name="deploy-plugin" depends="package-plugin,init-teamcity">
+        <copy todir="${teamcity.plugin.dir}"
+              file="${dist.dir}/${plugin.name}.zip"/>
+    </target>
+
+    <target name="undeploy-plugin" depends="init-teamcity">
+        <delete file="${teamcity.plugin.dir}/${plugin.name}.zip"/>
+    </target>
+
+    <target name="start-teamcity-server" depends="init-teamcity" description="Start TeamCity server">
+        <echo message="Starting TeamCity Server"/>
+        <exec executable="${teamcity.home}/bin/teamcity-server.sh" spawn="true">
+            <env key="JAVA_HOME" path="${teamcity.java.home}"/>
+            <env key="TEAMCITY_DATA_PATH" path="${teamcity.data.path}"/>
+            <env key="TEAMCITY_SERVER_MEM_OPTS" value="${teamcity.server.mem.opts}"/>
+            <env key="TEAMCITY_SERVER_OPTS" value="${teamcity.server.opts}"/>
+            <arg value="start"/>
+        </exec>
+
+        <echo message="Waiting for TeamCity Server to startup"/>
+        <waitfor maxwait="90"
+                 maxwaitunit="second"
+                 timeoutproperty="teamcity.timeout">
+            <socket server="${teamcity.host}" port="${teamcity.port}"/>
+        </waitfor>
+        <fail message="TeamCity Server failed to start" if="teamcity.timeout"/>
+        <echo message="TeamCity Server ready"/>
+    </target>
+
+    <target name="stop-teamcity-server" depends="init-teamcity" description="Stop TeamCity server">
+        <echo message="Stopping TeamCity Server"/>
+        <exec executable="${teamcity.home}/bin/teamcity-server.sh" spawn="true">
+            <env key="JAVA_HOME" path="${teamcity.java.home}"/>
+            <env key="TEAMCITY_DATA_PATH" path="${teamcity.data.path}"/>
+            <arg value="stop"/>
+        </exec>
+
+        <echo message="Waiting for TeamCity Server to shutdown"/>
+        <waitfor maxwait="90"
+                 maxwaitunit="second"
+                 timeoutproperty="teamcity.timeout">
+            <not><socket server="${teamcity.host}" port="${teamcity.port}"/></not>
+        </waitfor>
+        <fail message="TeamCity Server failed to stop" if="teamcity.timeout"/>
+        <echo message="TeamCity Server stopped"/>
+    </target>
+
+    <target name="start-teamcity-agent" depends="init-teamcity" description="Start TeamCity Build Agent">
+        <echo message="Starting TeamCity Build Agent"/>
+        <exec executable="${teamcity.home}/buildAgent/bin/agent.sh" spawn="true">
+            <env key="JAVA_HOME" path="${teamcity.java.home}"/>
+            <arg value="start"/>
+        </exec>
+        <echo message="TeamCity Build Agent started"/>
+    </target>
+
+    <target name="stop-teamcity-agent" depends="init-teamcity" description="Stop TeamCity Build Agent">
+        <echo message="Stopping TeamCity Build Agent"/>
+        <exec executable="${teamcity.home}/buildAgent/bin/agent.sh" spawn="true">
+            <env key="JAVA_HOME" path="${teamcity.java.home}"/>
+            <arg value="stop"/>
+        </exec>
+        <echo message="TeamCity Build Agent stopped"/>
+    </target>
+</project>
