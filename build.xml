@@ -35,8 +35,6 @@
 
         <property name="lib.dir" location="lib"/>
         <available property="download.ivy" file="${lib.dir}/${ivy.filename}"/>
-
-        <fail unless="teamcity.home" message="teamcity.home property must be set"/>
     </target>
 
     <target name="download-ivy" depends="init" unless="download.ivy">
@@ -168,6 +166,8 @@
         <property name="teamcity.plugin.dir" location="${teamcity.data.path}/plugins"/>
         <property name="teamcity.server.mem.opts" value=""/>
         <property name="teamcity.server.opts" value=""/>
+
+        <fail unless="teamcity.home" message="teamcity.home property must be set"/>
 
         <available property="teamcity.exists" file="${teamcity.home}/bin/teamcity-server.sh" type="file"/>
         <fail unless="teamcity.exists">${teamcity.home} is not a valid TeamCity installation</fail>
