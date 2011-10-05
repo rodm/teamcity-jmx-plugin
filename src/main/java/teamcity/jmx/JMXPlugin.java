@@ -3,6 +3,7 @@ package teamcity.jmx;
 
 import jetbrains.buildServer.log.Loggers;
 import jetbrains.buildServer.serverSide.BuildServerAdapter;
+import jetbrains.buildServer.serverSide.SBuildAgent;
 import jetbrains.buildServer.serverSide.SBuildServer;
 
 import javax.management.MBeanServer;
@@ -36,6 +37,22 @@ public class JMXPlugin extends BuildServerAdapter {
         Loggers.SERVER.info(name + " stopped");
     }
 
+    @Override
+    public void agentRegistered(SBuildAgent agent, long currentlyRunningBuildId) {
+        AgentMBean agentMBean = new Agent(agent);
+        registerMBean(JMX_DOMAIN, "type=Agent,name=" + agent.getName(), agentMBean);
+    }
+
+    @Override
+    public void agentUnregistered(SBuildAgent agent) {
+        unregisterMBean(JMX_DOMAIN, "type=Agent,name=" + agent.getName());
+    }
+
+    @Override
+    public void agentRemoved(SBuildAgent agent) {
+        unregisterMBean(JMX_DOMAIN, "type=Agent,name=" + agent.getName());
+    }
+
     private static void registerMBean(String domain, String name, Object mbean) {
         MBeanServer server = ManagementFactory.getPlatformMBeanServer();
 
@@ -49,6 +66,22 @@ public class JMXPlugin extends BuildServerAdapter {
             }
         } catch (Throwable t) {
             Loggers.SERVER.error("Failed to register MBean: " + jmxName, t);
+        }
+    }
+
+    private static void unregisterMBean(String domain, String name) {
+        MBeanServer server = ManagementFactory.getPlatformMBeanServer();
+
+        String jmxName = domain + ":" + name;
+        try {
+            ObjectName objectName = new ObjectName(jmxName);
+            if (server.isRegistered(objectName)) {
+                server.unregisterMBean(objectName);
+            } else {
+                Loggers.SERVER.warn("MBean not registered: " + jmxName);
+            }
+        } catch (Throwable t) {
+            Loggers.SERVER.error("Failed to unregister MBean: " + jmxName, t);
         }
     }
 }
