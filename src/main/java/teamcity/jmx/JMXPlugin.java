@@ -39,7 +39,7 @@ public class JMXPlugin extends BuildServerAdapter {
 
     @Override
     public void agentRegistered(SBuildAgent agent, long currentlyRunningBuildId) {
-        AgentMBean agentMBean = new Agent(agent);
+        AgentMBean agentMBean = new Agent(agent, server.getBuildAgentManager());
         registerMBean(JMX_DOMAIN, "type=Agent,name=" + agent.getName(), agentMBean);
     }
 

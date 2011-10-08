@@ -1,9 +1,21 @@
 package teamcity.jmx;
 
 public interface BuildServerMBean {
-    int getNumberOfAgents();
+    int getRegisteredAgents();
 
-    int getAgentsRunning();
+    int getUnregisteredAgents();
+
+    int getUnauthorizedAgents();
+
+    int getNumberOfRunningBuilds();
 
     int getBuildQueueSize();
+
+    String getFullServerVersion();
+
+    int getNumberOfRegisteredUsers();
+
+    int getNumberOfProjects();
+
+    int getNumberOfBuildTypes();
 }
