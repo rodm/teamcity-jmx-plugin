@@ -5,5 +5,11 @@
         <name>jmxPlugin</name>
         <display-name>JMX Plugin</display-name>
         <version>0.1</version>
+        <description>Registers the BuildServer and Agents with JMX</description>
+        <vendor>
+            <name>rodm</name>
+            <url>http://bitbucket.org/rodm/teamcity-jmx-plugin</url>
+        </vendor>
     </info>
+    <deployment use-separate-classloader="false"/>
 </teamcity-plugin>
