@@ -18,4 +18,6 @@ public interface BuildServerMBean {
     int getNumberOfProjects();
 
     int getNumberOfBuildTypes();
+
+    long getCleanupDuration();
 }
