@@ -187,6 +187,7 @@
     </target>
 
     <target name="init-teamcity" depends="init">
+        <property name="teamcity.java.home" location="${java.home}"/>
         <property name="teamcity.host" value="localhost"/>
         <property name="teamcity.port" value="8111"/>
         <property name="teamcity.data.path" location="${basedir}/data"/>
@@ -201,9 +202,6 @@
 
         <available property="teamcity.exists" file="${teamcity.home}/bin/teamcity-server.sh" type="file"/>
         <fail unless="teamcity.exists">${teamcity.home} is not a valid TeamCity installation</fail>
-
-        <property name="teamcity.java.home" location="${java.home}"/>
-        <echo>teamcity.java.home: ${teamcity.java.home}</echo>
     </target>
 
     <target name="deploy-plugin" depends="package-plugin,init-teamcity">
