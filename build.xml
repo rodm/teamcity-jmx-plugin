@@ -194,6 +194,9 @@
         <property name="teamcity.server.mem.opts" value=""/>
         <property name="teamcity.server.opts" value=""/>
 
+        <condition property="ext" value="bat" else="sh">
+            <os family="windows"/>
+        </condition>
         <fail unless="teamcity.home" message="teamcity.home property must be set"/>
 
         <available property="teamcity.exists" file="${teamcity.home}/bin/teamcity-server.sh" type="file"/>
@@ -214,7 +217,7 @@
 
     <target name="start-teamcity-server" depends="init-teamcity" description="Start TeamCity server">
         <echo message="Starting TeamCity Server"/>
-        <exec executable="${teamcity.home}/bin/teamcity-server.sh" spawn="true">
+        <exec executable="${teamcity.home}/bin/teamcity-server.${ext}" spawn="true">
             <env key="JAVA_HOME" path="${teamcity.java.home}"/>
             <env key="TEAMCITY_DATA_PATH" path="${teamcity.data.path}"/>
             <env key="TEAMCITY_SERVER_MEM_OPTS" value="${teamcity.server.mem.opts}"/>
@@ -234,7 +237,7 @@
 
     <target name="stop-teamcity-server" depends="init-teamcity" description="Stop TeamCity server">
         <echo message="Stopping TeamCity Server"/>
-        <exec executable="${teamcity.home}/bin/teamcity-server.sh" spawn="true">
+        <exec executable="${teamcity.home}/bin/teamcity-server.${ext}" spawn="true">
             <env key="JAVA_HOME" path="${teamcity.java.home}"/>
             <env key="TEAMCITY_DATA_PATH" path="${teamcity.data.path}"/>
             <arg value="stop"/>
@@ -252,7 +255,7 @@
 
     <target name="start-teamcity-agent" depends="init-teamcity" description="Start TeamCity Build Agent">
         <echo message="Starting TeamCity Build Agent"/>
-        <exec executable="${teamcity.home}/buildAgent/bin/agent.sh" spawn="true">
+        <exec executable="${teamcity.home}/buildAgent/bin/agent.${ext}" spawn="true">
             <env key="JAVA_HOME" path="${teamcity.java.home}"/>
             <arg value="start"/>
         </exec>
@@ -261,7 +264,7 @@
 
     <target name="stop-teamcity-agent" depends="init-teamcity" description="Stop TeamCity Build Agent">
         <echo message="Stopping TeamCity Build Agent"/>
-        <exec executable="${teamcity.home}/buildAgent/bin/agent.sh" spawn="true">
+        <exec executable="${teamcity.home}/buildAgent/bin/agent.${ext}" spawn="true">
             <env key="JAVA_HOME" path="${teamcity.java.home}"/>
             <arg value="stop"/>
         </exec>
