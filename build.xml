@@ -37,7 +37,34 @@
         <available property="download.ivy" file="${lib.dir}/${ivy.filename}"/>
     </target>
 
-    <target name="download-ivy" depends="init" unless="download.ivy">
+    <target name="dev-package-install" depends="init">
+        <fail unless="teamcity.version" message="teamcity.version property must be set"/>
+
+        <!-- TeamCity 6 and later have a runtime directory for runtime-util.jar -->
+        <condition property="teamcity.runtime.available">
+            <available file="${teamcity.home}/devPackage/runtime" type="dir"/>
+        </condition>
+
+        <property name="repo.dir" location="${user.home}/.ivy2/local/com.jetbrains.teamcity"/>
+        <property name="common-api.dir" location="${repo.dir}/common-api/${teamcity.version}/jars"/>
+        <property name="server-api.dir" location="${repo.dir}/server-api/${teamcity.version}/jars"/>
+        <property name="annotations.dir" location="${repo.dir}/annotations/${teamcity.version}/jars"/>
+        <property name="util.dir" location="${repo.dir}/util/${teamcity.version}/jars"/>
+        <property name="runtime-util.dir" location="${repo.dir}/runtime-util/${teamcity.version}/jars"/>
+
+        <copy todir="${common-api.dir}" file="${teamcity.home}/devPackage/common-api.jar"/>
+        <copy todir="${server-api.dir}" file="${teamcity.home}/devPackage/server-api.jar"/>
+        <copy todir="${runtime-util.dir}" flatten="true">
+            <fileset dir="${teamcity.home}/devPackage">
+                <include name="runtime-util.jar" unless="teamcity.runtime.available"/>
+                <include name="runtime/runtime-util.jar" if="teamcity.runtime.available"/>
+            </fileset>
+        </copy>
+        <copy todir="${annotations.dir}" file="${teamcity.home}/webapps/ROOT/WEB-INF/lib/annotations.jar"/>
+        <copy todir="${util.dir}" file="${teamcity.home}/webapps/ROOT/WEB-INF/lib/util.jar"/>
+    </target>
+
+    <target name="download-ivy" depends="dev-package-install" unless="download.ivy">
         <mkdir dir="${lib.dir}"/>
 
         <echo message="downloading ivy..."/>
