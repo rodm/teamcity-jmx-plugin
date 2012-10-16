@@ -111,54 +111,9 @@
     </target>
 
     <target name="compile-tests" depends="compile">
-        <mkdir dir="${test.classes.dir}"/>
-
-        <javac destdir="${test.classes.dir}"
-               debug="${compiler.debug}"
-               nowarn="${compiler.nowarn}"
-               memorymaximumsize="${compiler.max.memory}"
-               fork="true"
-               target="1.5">
-            <classpath refid="compile.classpath"/>
-            <classpath refid="test.classpath"/>
-            <classpath location="${classes.dir}"/>
-            <src location="${test.src.dir}"/>
-        </javac>
     </target>
 
     <target name="run-tests" depends="compile-tests">
-        <mkdir dir="${test.report.dir}"/>
-
-        <junit fork="yes"
-               forkmode="once"
-               printsummary="withOutAndErr"
-               errorproperty="tests.failed"
-               failureproperty="tests.failed"
-               showoutput="true">
-            <!--<sysproperty key="java.awt.headless" value="${java.awt.headless}"/>-->
-            <classpath refid="compile.classpath"/>
-            <classpath refid="test.classpath"/>
-            <classpath location="${classes.dir}"/>
-            <classpath location="${test.classes.dir}"/>
-
-            <formatter type="brief" usefile="false"/>
-
-            <batchtest fork="yes" todir="${test.report.dir}">
-                <formatter type="xml"/>
-                <fileset dir="${test.src.dir}">
-                    <include name="**/*Test.java"/>
-                </fileset>
-            </batchtest>
-        </junit>
-
-        <junitreport todir="${test.report.dir}">
-            <fileset dir="${test.report.dir}">
-                <include name="TEST-*.xml" />
-            </fileset>
-            <report format="noframes" todir="${test.report.dir}" />
-        </junitreport>
-
-        <fail if="tests.failed">Unit tests failed.</fail>
     </target>
 
     <target name="package-plugin" depends="run-tests">
