@@ -4,8 +4,9 @@
     <info>
         <name>jmxPlugin</name>
         <display-name>JMX Plugin</display-name>
-        <version>0.1</version>
+        <version>@VERSION@</version>
         <description>Registers the BuildServer and Agents with JMX</description>
+        <email>rod.n.mackenzie@gmail.com</email>
         <vendor>
             <name>rodm</name>
             <url>http://bitbucket.org/rodm/teamcity-jmx-plugin</url>

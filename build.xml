@@ -35,6 +35,12 @@
 
         <property name="lib.dir" location="lib"/>
         <available property="download.ivy" file="${lib.dir}/${ivy.filename}"/>
+
+        <tstamp/>
+        <property name="build.date" value="${TODAY}"/>
+        <property name="build.number" value="dev"/>
+        <property name="build.vcs.number" value="${DSTAMP}${TSTAMP}"/>
+        <property name="version" value="1.0"/>
     </target>
 
     <target name="dev-package-install" depends="init">
@@ -102,15 +108,20 @@
             <classpath refid="compile.classpath"/>
             <src location="${java.src.dir}"/>
         </javac>
+    </target>
 
+    <target name="copy-resources" depends="compile">
         <copy todir="${classes.dir}">
             <fileset dir="${resources.dir}">
                 <type type="file"/>
             </fileset>
+            <filterset>
+                <filter token="VERSION" value="${version}"/>
+            </filterset>
         </copy>
     </target>
 
-    <target name="compile-tests" depends="compile">
+    <target name="compile-tests" depends="copy-resources">
     </target>
 
     <target name="run-tests" depends="compile-tests">
@@ -121,12 +132,19 @@
 
         <mkdir dir="${dist.dir}/server"/>
 
+        <manifest file="${build.dir}/MANIFEST.MF">
+            <attribute name="Build-Date" value="${build.date}"/>
+            <attribute name="Build-Number" value="${build.number}"/>
+            <attribute name="Build-VCS-Number" value="${build.vcs.number}"/>
+        </manifest>
+
         <jar destfile="${dist.dir}/server/${plugin.name}.jar"
+             manifest="${build.dir}/MANIFEST.MF"
              basedir="${classes.dir}">
             <exclude name="teamcity-plugin.xml"/>
         </jar>
 
-        <zip destfile="${dist.dir}/${plugin.name}.zip">
+        <zip destfile="${dist.dir}/${plugin.name}-${version}.zip">
             <zipfileset dir="${dist.dir}/server" prefix="server">
                 <include name="*.jar"/>
             </zipfileset>
