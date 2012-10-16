@@ -2,4 +2,4 @@
 ^data/
 ^dist/
 ^lib/
-build.properties$
+^build.properties$
