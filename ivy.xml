@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<ivy-module version="1.0">
-    <info organisation="example" module="teamcity-jmx-plugin" />
+<ivy-module version="2.0"
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xsi:noNamespaceSchemaLocation="http://ant.apache.org/ivy/schemas/ivy.xsd">
+    <info organisation="org.bitbucket.rodm" module="teamcity-jmx-plugin" />
     <configurations>
         <conf name="master"/>
         <conf name="compile"/>
