@@ -5,8 +5,15 @@
     <target name="init">
         <property file="build.properties"/>
 
-        <property name="plugin.name" value="jmx-plugin"/>
+        <tstamp/>
+        <property name="build.date" value="${TODAY}"/>
+        <property name="build.number" value="dev"/>
+        <property name="build.vcs.number" value="${DSTAMP}${TSTAMP}"/>
+        <property name="version" value="1.0"/>
 
+        <property name="plugin.name" value="jmx-plugin"/>
+        <property name="plugin.filename" value="${plugin.name}-${version}.zip"/>
+        
         <property name="junit.version" value="4.8.2"/>
         <property name="ivy.version" value="2.2.0"/>
 
@@ -35,12 +42,6 @@
 
         <property name="lib.dir" location="lib"/>
         <available property="download.ivy" file="${lib.dir}/${ivy.filename}"/>
-
-        <tstamp/>
-        <property name="build.date" value="${TODAY}"/>
-        <property name="build.number" value="dev"/>
-        <property name="build.vcs.number" value="${DSTAMP}${TSTAMP}"/>
-        <property name="version" value="1.0"/>
     </target>
 
     <target name="dev-package-install" depends="init">
@@ -144,7 +145,7 @@
             <exclude name="teamcity-plugin.xml"/>
         </jar>
 
-        <zip destfile="${dist.dir}/${plugin.name}-${version}.zip">
+        <zip destfile="${dist.dir}/${plugin.filename}">
             <zipfileset dir="${dist.dir}/server" prefix="server">
                 <include name="*.jar"/>
             </zipfileset>
@@ -179,11 +180,11 @@
 
     <target name="deploy-plugin" depends="package-plugin,init-teamcity">
         <copy todir="${teamcity.plugin.dir}"
-              file="${dist.dir}/${plugin.name}.zip"/>
+              file="${dist.dir}/${plugin.filename}"/>
     </target>
 
     <target name="undeploy-plugin" depends="init-teamcity">
-        <delete file="${teamcity.plugin.dir}/${plugin.name}.zip"/>
+        <delete file="${teamcity.plugin.dir}/${plugin.filename}"/>
     </target>
 
     <target name="start-teamcity-server" depends="init-teamcity" description="Start TeamCity server">
