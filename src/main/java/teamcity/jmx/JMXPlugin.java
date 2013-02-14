@@ -1,14 +1,13 @@
-
 package teamcity.jmx;
 
 import jetbrains.buildServer.log.Loggers;
-import jetbrains.buildServer.serverSide.BuildServerAdapter;
-import jetbrains.buildServer.serverSide.SBuildAgent;
-import jetbrains.buildServer.serverSide.SBuildServer;
+import jetbrains.buildServer.serverSide.*;
 
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 import java.lang.management.ManagementFactory;
+import java.util.HashMap;
+import java.util.Map;
 
 public class JMXPlugin extends BuildServerAdapter {
 
@@ -17,6 +16,8 @@ public class JMXPlugin extends BuildServerAdapter {
     private SBuildServer server;
 
     private String name;
+
+    private Map<String, Project> projectMBeans = new HashMap<String, Project>();
 
     public JMXPlugin(/* @NotNull */ SBuildServer server) {
         this.server = server;
@@ -30,6 +31,10 @@ public class JMXPlugin extends BuildServerAdapter {
 
         BuildServerMBean buildServer = new BuildServer(server);
         registerMBean(JMX_DOMAIN, "type=BuildServer", buildServer);
+
+        for (SProject project : server.getProjectManager().getProjects()) {
+            projectCreated(project.getProjectId());
+        }
     }
 
     @Override
@@ -51,6 +56,38 @@ public class JMXPlugin extends BuildServerAdapter {
     @Override
     public void agentRemoved(SBuildAgent agent) {
         unregisterMBean(JMX_DOMAIN, "type=Agent,name=" + agent.getName());
+    }
+
+    @Override
+    public void projectCreated(String projectId) {
+        ProjectManager projectManager = server.getProjectManager();
+        SProject project = projectManager.findProjectById(projectId);
+        if (project != null) {
+            Project projectMBean = new Project(project);
+            projectMBeans.put(projectId, projectMBean);
+            registerMBean(JMX_DOMAIN, "type=Project,name=" + project.getName(), projectMBean);
+        }
+    }
+
+    @Override
+    public void projectRemoved(String projectId) {
+        Project projectMBean = projectMBeans.get(projectId);
+        if (projectMBean != null) {
+            unregisterMBean(JMX_DOMAIN, "type=Project,name=" + projectMBean.getName());
+            projectMBeans.remove(projectId);
+        }
+    }
+
+    @Override
+    public void buildFinished(SRunningBuild build) {
+        Project project = projectMBeans.get(build.getProjectId());
+        project.update();
+    }
+
+    @Override
+    public void buildTypeActiveStatusChanged(SBuildType buildType) {
+        Project project = projectMBeans.get(buildType.getProjectId());
+        project.update();
     }
 
     private static void registerMBean(String domain, String name, Object mbean) {

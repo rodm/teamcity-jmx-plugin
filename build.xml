@@ -9,7 +9,7 @@
         <property name="build.date" value="${TODAY}"/>
         <property name="build.number" value="dev"/>
         <property name="build.vcs.number" value="${DSTAMP}${TSTAMP}"/>
-        <property name="version" value="1.0"/>
+        <property name="version" value="1.1dev"/>
 
         <property name="plugin.name" value="jmx-plugin"/>
         <property name="plugin.filename" value="${plugin.name}-${version}.zip"/>
