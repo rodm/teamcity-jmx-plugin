@@ -2,6 +2,7 @@ package teamcity.jmx;
 
 import jetbrains.buildServer.log.Loggers;
 import jetbrains.buildServer.serverSide.*;
+import jetbrains.buildServer.users.SUser;
 
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
@@ -58,7 +59,10 @@ public class JMXPlugin extends BuildServerAdapter {
         unregisterMBean(JMX_DOMAIN, "type=Agent,name=" + agent.getName());
     }
 
-    @Override
+    public void projectCreated(String projectId, SUser user) {
+        projectCreated(projectId);
+    }
+
     public void projectCreated(String projectId) {
         ProjectManager projectManager = server.getProjectManager();
         SProject project = projectManager.findProjectById(projectId);
