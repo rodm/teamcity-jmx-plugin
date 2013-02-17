@@ -9,6 +9,8 @@ public class Project implements ProjectMBean {
 
     private SProject project;
 
+    private String name;
+
     private int successfulBuildTypes = 0;
 
     private int failedBuildTypes = 0;
@@ -17,11 +19,16 @@ public class Project implements ProjectMBean {
 
     public Project(final SProject project) {
         this.project = project;
+        this.name = project.getName();
         update();
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public String getName() {
-        return project.getName();
+        return this.name;
     }
 
     public int getNumberOfBuildTypes() {

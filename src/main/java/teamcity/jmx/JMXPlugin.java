@@ -83,6 +83,19 @@ public class JMXPlugin extends BuildServerAdapter {
     }
 
     @Override
+    public void projectPersisted(String projectId) {
+        SProject project = server.getProjectManager().findProjectById(projectId);
+        Project projectMBean = projectMBeans.get(projectId);
+        if (project != null && projectMBean != null) {
+            if (!project.getName().equals(projectMBean.getName())) {
+                registerMBean(JMX_DOMAIN, "type=Project,name=" + project.getName(), projectMBean);
+                unregisterMBean(JMX_DOMAIN, "type=Project,name=" + projectMBean.getName());
+                projectMBean.setName(project.getName());
+            }
+        }
+    }
+
+    @Override
     public void buildTypeRegistered(SBuildType buildType) {
         updateProject(buildType.getProjectId());
     }
