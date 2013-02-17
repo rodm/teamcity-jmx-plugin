@@ -83,14 +83,27 @@ public class JMXPlugin extends BuildServerAdapter {
     }
 
     @Override
+    public void buildTypeRegistered(SBuildType buildType) {
+        updateProject(buildType.getProjectId());
+    }
+
+    @Override
+    public void buildTypeUnregistered(SBuildType buildType) {
+        updateProject(buildType.getProjectId());
+    }
+
+    @Override
     public void buildFinished(SRunningBuild build) {
-        Project project = projectMBeans.get(build.getProjectId());
-        project.update();
+        updateProject(build.getProjectId());
     }
 
     @Override
     public void buildTypeActiveStatusChanged(SBuildType buildType) {
-        Project project = projectMBeans.get(buildType.getProjectId());
+        updateProject(buildType.getProjectId());
+    }
+
+    private void updateProject(String projectId) {
+        Project project = projectMBeans.get(projectId);
         project.update();
     }
 
