@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <project name="jmx-plugin" default="default"
-         xmlns:ivy="antlib:org.apache.ivy.ant">
+         xmlns:ivy="antlib:org.apache.ivy.ant"
+         xmlns:artifact="antlib:org.apache.maven.artifact.ant">
 
     <target name="init">
         <property file="build.properties"/>
@@ -9,10 +10,10 @@
         <property name="build.date" value="${TODAY}"/>
         <property name="build.number" value="dev"/>
         <property name="build.vcs.number" value="${DSTAMP}${TSTAMP}"/>
-        <property name="version" value="1.1dev"/>
+        <property name="version" value="1.1-SNAPSHOT"/>
 
         <property name="plugin.name" value="jmx-plugin"/>
-        <property name="plugin.filename" value="${plugin.name}-${version}.zip"/>
+        <property name="plugin.filename" value="${plugin.name}.zip"/>
         
         <property name="junit.version" value="4.8.2"/>
         <property name="ivy.version" value="2.2.0"/>
@@ -154,6 +155,28 @@
     </target>
 
     <target name="default" depends="package-plugin"/>
+
+    <target name="publish" depends="init-ivy">
+        <property name="repo.id" value="snapshots"/>
+        <property name="repo.url" value="http://localhost:8080/nexus"/>
+
+        <property name="ivy.pom.version" value="${version}"/>
+        <ivy:makepom ivyfile="ivy.xml" pomfile="${dist.dir}/pom.xml" artifactpackaging="zip" conf="master"/>
+
+        <ivy:cachepath pathid="maven.classpath" conf="maven"/>
+
+        <typedef resource="org/apache/maven/artifact/ant/antlib.xml"
+                 uri="antlib:org.apache.maven.artifact.ant"
+                 classpathref="maven.classpath" />
+
+        <artifact:install-provider artifactId="wagon-http" version="2.5"/>
+        <artifact:deploy file="${dist.dir}/${plugin.filename}">
+            <remoteRepository id="${repo.id}" url="${repo.url}">
+                <authentication username="${repo.user}" password="${repo.pass}"/>
+            </remoteRepository>
+            <pom file="${dist.dir}/pom.xml"/>
+        </artifact:deploy>
+    </target>
 
     <target name="clean" depends="init">
         <delete dir="${build.dir}"/>
