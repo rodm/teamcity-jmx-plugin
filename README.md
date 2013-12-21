@@ -4,7 +4,7 @@ The JMX Plugin makes attributes of the BuildServer and BuildAgents available usi
 
 ## How to install
 
-Copy the `jmx-plugin.zip` file to the `.BuildServer/plugins` directory and restart the TeamCity server.
+Download the plugin archive from [Bintray](https://bintray.com/rodm/teamcity-plugins/teamcity-jmx-plugin) and copy the `teamcity-jmx-plugin.zip` file to the `.BuildServer/plugins` directory and restart the TeamCity server.
 
 ## How to use the plugin
 
