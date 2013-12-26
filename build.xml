@@ -119,6 +119,8 @@
             </fileset>
             <filterset>
                 <filter token="VERSION" value="${version}"/>
+                <filter token="VCS_REVISION" value="${build.vcs.number}"/>
+                <filter token="BUILD_NUMBER" value="${build.number}"/>
             </filterset>
         </copy>
     </target>

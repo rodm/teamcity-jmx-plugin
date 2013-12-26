@@ -5,7 +5,10 @@
         <name>jmxPlugin</name>
         <display-name>JMX Plugin</display-name>
         <version>@VERSION@</version>
-        <description>Registers the BuildServer and Agents with JMX</description>
+        <description>
+            Makes BuildServer and Agent attributes available via JMX.
+            VCS Revision: @VCS_REVISION@, Build Number: @BUILD_NUMBER@
+        </description>
         <email>rod.n.mackenzie@gmail.com</email>
         <vendor>
             <name>rodm</name>
