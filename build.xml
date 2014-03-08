@@ -5,6 +5,7 @@
 
     <target name="init">
         <property file="build.properties"/>
+        <property file="default.properties"/>
 
         <tstamp/>
         <property name="build.date" value="${TODAY}"/>
@@ -14,9 +15,6 @@
 
         <property name="plugin.name" value="jmx-plugin"/>
         <property name="plugin.filename" value="${plugin.name}.zip"/>
-        
-        <property name="junit.version" value="4.8.2"/>
-        <property name="ivy.version" value="2.2.0"/>
 
         <property name="src.dir" location="src"/>
         <property name="java.src.dir" location="${src.dir}/main/java"/>
@@ -33,6 +31,7 @@
         <!-- Compiler options -->
         <property name="compiler.debug" value="on"/>
         <property name="compiler.nowarn" value="off"/>
+        <property name="compiler.target" value="1.5"/>
         <property name="compiler.args" value=""/>
         <property name="compiler.max.memory" value="128m"/>
 
@@ -126,9 +125,54 @@
     </target>
 
     <target name="compile-tests" depends="copy-resources">
+        <mkdir dir="${test.classes.dir}"/>
+
+        <javac destdir="${test.classes.dir}"
+               debug="${compiler.debug}"
+               nowarn="${compiler.nowarn}"
+               memorymaximumsize="${compiler.max.memory}"
+               fork="true"
+               target="${compiler.target}">
+            <classpath refid="compile.classpath"/>
+            <classpath refid="test.classpath"/>
+            <classpath location="${classes.dir}"/>
+            <src location="${test.src.dir}"/>
+        </javac>
     </target>
 
     <target name="run-tests" depends="compile-tests">
+        <property name="test.vmparam" value="-Ddefault"/>
+
+        <mkdir dir="${test.report.dir}"/>
+
+        <junit fork="yes"
+               forkmode="once"
+               printsummary="withOutAndErr"
+               errorproperty="tests.failed"
+               failureproperty="tests.failed"
+               showoutput="true">
+            <jvmarg value="${test.vmparam}"/>
+            <classpath refid="compile.classpath"/>
+            <classpath refid="test.classpath"/>
+            <classpath location="${classes.dir}"/>
+            <classpath location="${test.classes.dir}"/>
+
+            <batchtest fork="yes" todir="${test.report.dir}">
+                <formatter type="xml"/>
+                <fileset dir="${test.src.dir}">
+                    <include name="**/*Test.java"/>
+                </fileset>
+            </batchtest>
+        </junit>
+
+        <junitreport todir="${test.report.dir}">
+            <fileset dir="${test.report.dir}">
+                <include name="TEST-*.xml" />
+            </fileset>
+            <report format="noframes" todir="${test.report.dir}" />
+        </junitreport>
+
+        <fail if="tests.failed">Unit tests failed.</fail>
     </target>
 
     <target name="package-plugin" depends="run-tests">
