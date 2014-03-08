@@ -32,6 +32,8 @@ public class JMXPlugin extends BuildServerAdapter {
 
         BuildServerMBean buildServer = new BuildServer(server);
         registerMBean(JMX_DOMAIN, "type=BuildServer", buildServer);
+        BuildStatistics serverBuildStatistics = new BuildStatistics(server);
+        registerMBean(JMX_DOMAIN, "type=BuildServer,stats=BuildStatistics", serverBuildStatistics);
 
         for (SProject project : server.getProjectManager().getProjects()) {
             projectCreated(project.getProjectId());
@@ -120,8 +122,8 @@ public class JMXPlugin extends BuildServerAdapter {
         project.update();
     }
 
-    private static void registerMBean(String domain, String name, Object mbean) {
-        MBeanServer server = ManagementFactory.getPlatformMBeanServer();
+    private void registerMBean(String domain, String name, Object mbean) {
+        MBeanServer server = getMBeanServer();
 
         String jmxName = domain + ":" + name;
         try {
@@ -136,8 +138,8 @@ public class JMXPlugin extends BuildServerAdapter {
         }
     }
 
-    private static void unregisterMBean(String domain, String name) {
-        MBeanServer server = ManagementFactory.getPlatformMBeanServer();
+    private void unregisterMBean(String domain, String name) {
+        MBeanServer server = getMBeanServer();
 
         String jmxName = domain + ":" + name;
         try {
@@ -150,5 +152,9 @@ public class JMXPlugin extends BuildServerAdapter {
         } catch (Throwable t) {
             Loggers.SERVER.error("Failed to unregister MBean: " + jmxName, t);
         }
+    }
+
+    MBeanServer getMBeanServer() {
+        return ManagementFactory.getPlatformMBeanServer();
     }
 }
