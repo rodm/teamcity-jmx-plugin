@@ -7,6 +7,8 @@ import jetbrains.buildServer.serverSide.SRunningBuild;
 
 public class BuildStatistics extends BuildServerAdapter implements BuildStatisticsMBean {
 
+    private BuildFilter filter;
+
     private long buildsStarted = 0;
     private long buildsFinished = 0;
     private long buildsInterrupted = 0;
@@ -15,7 +17,12 @@ public class BuildStatistics extends BuildServerAdapter implements BuildStatisti
     private long ignoredBuilds = 0;
 
     public BuildStatistics(SBuildServer server) {
+        this(server, new AcceptAllBuildFilter());
+    }
+
+    public BuildStatistics(SBuildServer server, BuildFilter filter) {
         server.addListener(this);
+        this.filter = filter;
     }
 
     @Override
@@ -50,26 +57,32 @@ public class BuildStatistics extends BuildServerAdapter implements BuildStatisti
 
     @Override
     public void buildStarted(SRunningBuild build) {
-        buildsStarted++;
+        if (filter.accept(build)) {
+            buildsStarted++;
+        }
     }
 
     @Override
     public void buildFinished(SRunningBuild build) {
-        buildsFinished++;
-        Status status = build.getBuildStatus();
-        if (status.isSuccessful()) {
-            successfulBuilds++;
-        }
-        if (status.isFailed()) {
-            failedBuilds++;
-        }
-        if (status.isIgnored()) {
-            ignoredBuilds++;
+        if (filter.accept(build)) {
+            buildsFinished++;
+            Status status = build.getBuildStatus();
+            if (status.isSuccessful()) {
+                successfulBuilds++;
+            }
+            if (status.isFailed()) {
+                failedBuilds++;
+            }
+            if (status.isIgnored()) {
+                ignoredBuilds++;
+            }
         }
     }
 
     @Override
     public void buildInterrupted(SRunningBuild build) {
-        buildsInterrupted++;
+        if (filter.accept(build)) {
+            buildsInterrupted++;
+        }
     }
 }

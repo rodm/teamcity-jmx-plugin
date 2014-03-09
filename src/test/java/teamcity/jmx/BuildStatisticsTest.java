@@ -1,12 +1,15 @@
 package teamcity.jmx;
 
 import jetbrains.buildServer.messages.Status;
+import jetbrains.buildServer.serverSide.SBuild;
 import jetbrains.buildServer.serverSide.SBuildServer;
 import jetbrains.buildServer.serverSide.SRunningBuild;
 import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -106,5 +109,69 @@ public class BuildStatisticsTest {
         stats.buildFinished(FAILED_BUILD);
 
         assertEquals(0, stats.getIgnoredBuilds());
+    }
+
+    @Test
+    public void shouldDelegateRecordingBuildStartedToFilter() {
+        BuildFilter filter = mock(BuildFilter.class);
+        stats = new BuildStatistics(server, filter);
+
+        stats.buildStarted(SUCCESSFUL_BUILD);
+
+        verify(filter).accept(eq(SUCCESSFUL_BUILD));
+    }
+
+    @Test
+    public void shouldNotRecordBuildStartedWhenRejectedByFilter() {
+        BuildFilter filter = mock(BuildFilter.class);
+        when(filter.accept(any(SBuild.class))).thenReturn(false);
+        stats = new BuildStatistics(server, filter);
+
+        stats.buildStarted(DUMMY_BUILD);
+
+        assertEquals(0, stats.getBuildsStarted());
+    }
+
+    @Test
+    public void shouldDelegateRecordingBuildFinishedToFilter() {
+        BuildFilter filter = mock(BuildFilter.class);
+        stats = new BuildStatistics(server, filter);
+
+        stats.buildFinished(SUCCESSFUL_BUILD);
+
+        verify(filter).accept(eq(SUCCESSFUL_BUILD));
+    }
+
+
+    @Test
+    public void shouldNotRecordBuildFinishedWhenRejectedByFilter() {
+        BuildFilter filter = mock(BuildFilter.class);
+        when(filter.accept(any(SBuild.class))).thenReturn(false);
+        stats = new BuildStatistics(server, filter);
+
+        stats.buildFinished(SUCCESSFUL_BUILD);
+
+        assertEquals(0, stats.getBuildsFinished());
+    }
+
+    @Test
+    public void shouldDelegateRecordingBuildInterruptedToFilter() {
+        BuildFilter filter = mock(BuildFilter.class);
+        stats = new BuildStatistics(server, filter);
+
+        stats.buildInterrupted(SUCCESSFUL_BUILD);
+
+        verify(filter).accept(eq(SUCCESSFUL_BUILD));
+    }
+
+    @Test
+    public void shouldNotRecordBuildInterruptedWhenRejectedByFilter() {
+        BuildFilter filter = mock(BuildFilter.class);
+        when(filter.accept(any(SBuild.class))).thenReturn(false);
+        stats = new BuildStatistics(server, filter);
+
+        stats.buildInterrupted(SUCCESSFUL_BUILD);
+
+        assertEquals(0, stats.getBuildsInterrupted());
     }
 }
