@@ -1,0 +1,31 @@
+
+apply plugin: 'java'
+
+teamCityVersion = '7.1.5'
+
+repositories {
+  mavenCentral()
+  ivy {
+    url "${System.properties['user.home']}/.ivy2/local"
+    layout 'pattern', {
+      artifact "[organisation]/[module]/[revision]/[type]s/[artifact].[ext]"
+      ivy "[organisation]/[module]/[revision]/[type]s/[artifact].[ext]"
+    }
+  }
+}
+
+dependencies {
+    compile group: 'com.jetbrains.teamcity', name: 'common-api', version: teamCityVersion
+    compile group: 'com.jetbrains.teamcity', name: 'server-api', version: teamCityVersion
+    compile group: 'com.jetbrains.teamcity', name: 'util', version: teamCityVersion
+    compile group: 'com.jetbrains.teamcity', name: 'runtime-util', version: teamCityVersion
+    compile group: 'com.jetbrains.teamcity', name: 'annotations', version: teamCityVersion
+
+    testCompile group: 'junit', name: 'junit', version: '4.11'
+    testCompile group: 'org.mockito', name: 'mockito-core', version: '1.9.5'
+    testCompile group: 'log4j', name: 'log4j', version: '1.2.16'
+}
+
+ant.importBuild 'build.xml'
+
+compileJava.dependsOn 'dev-package-install'

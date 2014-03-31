@@ -224,7 +224,7 @@
         </artifact:deploy>
     </target>
 
-    <target name="clean" depends="init">
+    <target name="clean-all" depends="init">
         <delete dir="${build.dir}"/>
         <delete dir="${dist.dir}"/>
     </target>
