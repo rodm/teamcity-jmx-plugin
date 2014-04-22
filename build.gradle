@@ -1,7 +1,8 @@
 
 apply plugin: 'java'
 
-teamCityVersion = '7.1.5'
+teamCityHome = System.properties['teamcity.home']
+teamCityVersion = System.properties['teamcity.version']
 
 repositories {
   mavenCentral()
@@ -27,5 +28,7 @@ dependencies {
 }
 
 ant.importBuild 'build.xml'
+ant.properties['teamcity.home'] = teamCityHome
+ant.properties['teamcity.version'] = teamCityVersion
 
 compileJava.dependsOn 'dev-package-install'
