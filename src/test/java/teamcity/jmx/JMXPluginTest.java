@@ -68,7 +68,7 @@ public class JMXPluginTest {
         final ObjectName name = new ObjectName(JMX_DOMAIN + ":type=Agent,name=" + AGENT_NAME + ",stats=BuildStatistics");
         SBuildAgent agent = mock(SBuildAgent.class);
         when(agent.getName()).thenReturn(AGENT_NAME);
-        when(mbeanServer.isRegistered(name)).thenReturn(true);
+        when(mbeanServer.isRegistered(any(ObjectName.class))).thenReturn(true);
 
         plugin.agentUnregistered(agent);
 

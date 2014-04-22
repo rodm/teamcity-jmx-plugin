@@ -28,7 +28,7 @@ public class JMXPlugin extends BuildServerAdapter {
 
     @Override
     public void serverStartup() {
-        Loggers.SERVER.info(name + " started");
+//        Loggers.SERVER.info(name + " started");
 
         BuildServerMBean buildServer = new BuildServer(server);
         registerMBean(JMX_DOMAIN, "type=BuildServer", buildServer);
