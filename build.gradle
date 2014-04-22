@@ -31,4 +31,24 @@ ant.importBuild 'build.xml'
 ant.properties['teamcity.home'] = teamCityHome
 ant.properties['teamcity.version'] = teamCityVersion
 
+jar {
+    archiveName = 'jmx-plugin.jar'
+    exclude('**/teamcity-plugin.xml')
+}
+
+task packagePlugin(type: Zip) {
+    archiveName = 'jmx-plugin.zip'
+    destinationDir = file('dist')
+    from(jar.outputs.files) {
+        into 'server'
+    }
+    from("$buildDir/resources/main") {
+        include 'teamcity-plugin.xml'
+    }
+}
+
 compileJava.dependsOn 'dev-package-install'
+
+build.dependsOn packagePlugin
+
+clean.dependsOn 'clean-all'
