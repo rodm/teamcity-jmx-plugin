@@ -22,3 +22,7 @@ Download the plugin archive from [Bintray](https://bintray.com/rodm/teamcity-plu
 The Ant build script provides a target to deploy the plugin to a local configuration directory, deploy-plugin. The
 TeamCity server can be started using the start-teamcity-server target. The TEAMCITY_DATA_PATH is set by default to use
 a local directory and not the `~/.BuildServer` directory.
+
+## How to configure Munin to monitor TeamCity
+
+See the README in the config/munin directory.
