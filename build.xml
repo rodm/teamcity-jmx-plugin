@@ -58,6 +58,7 @@
         <property name="annotations.dir" location="${repo.dir}/annotations/${teamcity.version}/jars"/>
         <property name="util.dir" location="${repo.dir}/util/${teamcity.version}/jars"/>
         <property name="runtime-util.dir" location="${repo.dir}/runtime-util/${teamcity.version}/jars"/>
+        <property name="openapi.dir" location="${repo.dir}/openapi/${teamcity.version}/jars"/>
 
         <copy todir="${common-api.dir}" file="${teamcity.home}/devPackage/common-api.jar"/>
         <copy todir="${server-api.dir}" file="${teamcity.home}/devPackage/server-api.jar"/>
@@ -68,6 +69,7 @@
             </fileset>
         </copy>
         <copy todir="${annotations.dir}" file="${teamcity.home}/webapps/ROOT/WEB-INF/lib/annotations.jar"/>
+        <copy todir="${openapi.dir}" file="${teamcity.home}/webapps/ROOT/WEB-INF/lib/openapi.jar"/>
         <copy todir="${util.dir}" file="${teamcity.home}/webapps/ROOT/WEB-INF/lib/util.jar"/>
     </target>
 

@@ -15,6 +15,7 @@
         <dependency org="com.jetbrains.teamcity" name="common-api" rev="${teamcity.version}" conf="compile->default"/>
         <dependency org="com.jetbrains.teamcity" name="server-api" rev="${teamcity.version}" conf="compile->default"/>
         <dependency org="com.jetbrains.teamcity" name="util" rev="${teamcity.version}" conf="compile->default"/>
+        <dependency org="com.jetbrains.teamcity" name="openapi" rev="${teamcity.version}" conf="compile->default"/>
         <dependency org="com.jetbrains.teamcity" name="runtime-util" rev="${teamcity.version}" conf="compile->default"/>
 
         <dependency org="junit" name="junit" rev="${junit.version}" conf="test->default"/>
