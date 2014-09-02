@@ -1,8 +1,8 @@
 package teamcity.jmx;
 
-import jetbrains.buildServer.log.Loggers;
 import jetbrains.buildServer.serverSide.*;
 import jetbrains.buildServer.users.SUser;
+import org.apache.log4j.Logger;
 
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
@@ -11,6 +11,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class JMXPlugin extends BuildServerAdapter {
+
+    private static Logger log = Logger.getLogger("jetbrains.buildServer.SERVER");
 
     private static String JMX_DOMAIN = "com.jetbrains.teamcity";
 
@@ -28,7 +30,7 @@ public class JMXPlugin extends BuildServerAdapter {
 
     @Override
     public void serverStartup() {
-//        Loggers.SERVER.info(name + " started");
+        log.info(name + " started");
 
         BuildServerMBean buildServer = new BuildServer(server);
         registerMBean(JMX_DOMAIN, "type=BuildServer", buildServer);
@@ -42,7 +44,7 @@ public class JMXPlugin extends BuildServerAdapter {
 
     @Override
     public void serverShutdown() {
-        Loggers.SERVER.info(name + " stopped");
+        log.info(name + " stopped");
     }
 
     @Override
@@ -134,10 +136,10 @@ public class JMXPlugin extends BuildServerAdapter {
             if (!server.isRegistered(objectName)) {
                 server.registerMBean(mbean, objectName);
             } else {
-                Loggers.SERVER.warn("MBean already registered: " + jmxName);
+                log.warn("MBean already registered: " + jmxName);
             }
         } catch (Throwable t) {
-            Loggers.SERVER.error("Failed to register MBean: " + jmxName, t);
+            log.error("Failed to register MBean: " + jmxName, t);
         }
     }
 
@@ -150,10 +152,10 @@ public class JMXPlugin extends BuildServerAdapter {
             if (server.isRegistered(objectName)) {
                 server.unregisterMBean(objectName);
             } else {
-                Loggers.SERVER.warn("MBean not registered: " + jmxName);
+                log.warn("MBean not registered: " + jmxName);
             }
         } catch (Throwable t) {
-            Loggers.SERVER.error("Failed to unregister MBean: " + jmxName, t);
+            log.error("Failed to unregister MBean: " + jmxName, t);
         }
     }
 

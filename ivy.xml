@@ -14,13 +14,10 @@
     <dependencies>
         <dependency org="com.jetbrains.teamcity" name="common-api" rev="${teamcity.version}" conf="compile->default"/>
         <dependency org="com.jetbrains.teamcity" name="server-api" rev="${teamcity.version}" conf="compile->default"/>
-        <dependency org="com.jetbrains.teamcity" name="util" rev="${teamcity.version}" conf="compile->default"/>
-        <dependency org="com.jetbrains.teamcity" name="openapi" rev="${teamcity.version}" conf="compile->default"/>
-        <dependency org="com.jetbrains.teamcity" name="runtime-util" rev="${teamcity.version}" conf="compile->default"/>
+        <dependency org="log4j" name="log4j" rev="${log4j.version}" conf="compile->default"/>
 
         <dependency org="junit" name="junit" rev="${junit.version}" conf="test->default"/>
         <dependency org="org.mockito" name="mockito-core" rev="${mockito.version}" conf="test->default"/>
-        <dependency org="log4j" name="log4j" rev="${log4j.version}" conf="test->default"/>
 
         <dependency org="org.apache.maven" name="maven-ant-tasks" rev="2.1.3" conf="maven->default"/>
     </dependencies>
