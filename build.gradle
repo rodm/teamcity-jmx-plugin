@@ -1,39 +1,28 @@
 
 apply plugin: 'java'
 
-teamCityHome = System.properties['teamcity.home']
-teamCityVersion = System.properties['teamcity.version']
+project.ext.teamCityVersion = '8.1.4'
 
 repositories {
-  mavenCentral()
-  ivy {
-    url "${System.properties['user.home']}/.ivy2/local"
-    layout 'pattern', {
-      artifact "[organisation]/[module]/[revision]/[type]s/[artifact].[ext]"
-      ivy "[organisation]/[module]/[revision]/[type]s/[artifact].[ext]"
+    mavenCentral()
+    maven {
+        url "http://repository.jetbrains.com/all"
     }
-  }
 }
 
 dependencies {
-    compile group: 'com.jetbrains.teamcity', name: 'common-api', version: teamCityVersion
-    compile group: 'com.jetbrains.teamcity', name: 'server-api', version: teamCityVersion
-    compile group: 'log4j', name: 'log4j', version: '1.2.16'
+    compile "org.jetbrains.teamcity:server-api:${teamCityVersion}"
 
     testCompile group: 'junit', name: 'junit', version: '4.11'
     testCompile group: 'org.mockito', name: 'mockito-core', version: '1.9.5'
 }
 
-ant.importBuild 'build.xml'
-ant.properties['teamcity.home'] = teamCityHome
-ant.properties['teamcity.version'] = teamCityVersion
-
 jar {
-    archiveName = 'jmx-plugin.jar'
-    exclude('**/teamcity-plugin.xml')
+    archiveName "jmx-plugin.jar"
+    exclude "**/teamcity-plugin.xml"
 }
 
-task packagePlugin(type: Zip) {
+task packagePlugin(type: Zip, dependsOn: jar) {
     archiveName = 'jmx-plugin.zip'
     destinationDir = file('dist')
     from(jar.outputs.files) {
@@ -44,8 +33,4 @@ task packagePlugin(type: Zip) {
     }
 }
 
-compileJava.dependsOn 'dev-package-install'
-
-build.dependsOn packagePlugin
-
-clean.dependsOn 'clean-all'
+assemble.dependsOn packagePlugin
