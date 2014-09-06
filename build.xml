@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <project name="jmx-plugin" default="default"
          xmlns:ivy="antlib:org.apache.ivy.ant"
          xmlns:artifact="antlib:org.apache.maven.artifact.ant">
@@ -42,9 +42,26 @@
 
         <property name="lib.dir" location="lib"/>
         <available property="download.ivy" file="${lib.dir}/${ivy.filename}"/>
+
+        <property name="teamcity.version" value="7.1.5"/>
+        <property name="teamcity.dir" location="${basedir}/servers"/>
+        <property name="teamcity.home" location="${teamcity.dir}/TeamCity-${teamcity.version}"/>
+        <available property="download.teamcity" file="${teamcity.home}" type="dir"/>
     </target>
 
-    <target name="dev-package-install" depends="init">
+    <target name="download-teamcity" depends="init" unless="download.teamcity">
+        <property name="teamcity.file" value="TeamCity-${teamcity.version}.tar.gz"/>
+        <property name="teamcity.base.url" value="http://download.jetbrains.com/teamcity"/>
+        <property name="teamcity.url" value="${teamcity.base.url}/${teamcity.file}"/>
+
+        <echo message="downloading TeamCity installer..."/>
+        <get src="${teamcity.url}" dest="${teamcity.dir}" usetimestamp="true"/>
+        <untar dest="${teamcity.dir}" src="${teamcity.dir}/${teamcity.file}" compression="gzip"/>
+        <move tofile="${teamcity.home}" file="${teamcity.dir}/TeamCity"/>
+        <delete file="${teamcity.dir}/${teamcity.file}"/>
+    </target>
+
+    <target name="dev-package-install" depends="download-teamcity">
         <fail unless="teamcity.version" message="teamcity.version property must be set"/>
 
         <!-- TeamCity 6 and later have a runtime directory for runtime-util.jar -->
