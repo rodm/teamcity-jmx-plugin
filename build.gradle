@@ -1,7 +1,7 @@
 
 apply plugin: 'java'
 
-project.ext.teamCityVersion = System.properties['version'] ?: '8.1.5'
+project.ext.teamCityVersion = System.properties['teamcity.version'] ?: '8.1.5'
 
 repositories {
     mavenCentral()
