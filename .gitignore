@@ -1,0 +1,11 @@
+
+.DS_Store
+
+.idea/
+dist/
+data/
+lib/
+target/
+
+.gradle/
+build/
