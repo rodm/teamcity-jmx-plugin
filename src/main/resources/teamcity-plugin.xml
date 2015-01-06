@@ -12,7 +12,7 @@
         <email>rod.n.mackenzie@gmail.com</email>
         <vendor>
             <name>rodm</name>
-            <url>http://bitbucket.org/rodm/teamcity-jmx-plugin</url>
+            <url>https://github.com/rodm/teamcity-jmx-plugin</url>
         </vendor>
     </info>
     <deployment use-separate-classloader="false"/>

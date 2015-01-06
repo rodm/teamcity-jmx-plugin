@@ -41,8 +41,8 @@ Restart the munin-node service
 
 ## Examples
 
-![TeamCity load for a day](https://bitbucket.org/rodm/teamcity-jmx-plugin/raw/default/config/munin/teamcity-queue-day.png "TeamCity load")
+![TeamCity load for a day](https://raw.githubusercontent.com/rodm/teamcity-jmx-plugin/master/config/munin/teamcity-queue-day.png "TeamCity load")
 
-![TeamCity load for a week](https://bitbucket.org/rodm/teamcity-jmx-plugin/raw/default/config/munin/teamcity-queue-week.png "TeamCity load")
+![TeamCity load for a week](https://raw.githubusercontent.com/rodm/teamcity-jmx-plugin/master/config/munin/teamcity-queue-week.png "TeamCity load")
 
-![TeamCity cleanup times for a month](https://bitbucket.org/rodm/teamcity-jmx-plugin/raw/default/config/munin/teamcity-cleanup-month.png "TeamCity cleanup")
+![TeamCity cleanup times for a month](https://raw.githubusercontent.com/rodm/teamcity-jmx-plugin/master/config/munin/teamcity-cleanup-month.png "TeamCity cleanup")
