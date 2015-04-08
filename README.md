@@ -2,9 +2,12 @@
 
 The JMX Plugin makes attributes of the BuildServer and BuildAgents available using JMX.
 
+[![Build Status](https://travis-ci.org/rodm/teamcity-jmx-plugin.svg)](https://travis-ci.org/rodm/teamcity-jmx-plugin)
+[![Download](https://api.bintray.com/packages/rodm/teamcity-plugins/teamcity-jmx-plugin/images/download.svg)](https://bintray.com/rodm/teamcity-plugins/teamcity-jmx-plugin/_latestVersion)
+
 ## How to install
 
-Download the plugin archive from [Bintray](https://bintray.com/rodm/teamcity-plugins/teamcity-jmx-plugin) and copy the `teamcity-jmx-plugin.zip` file to the `.BuildServer/plugins` directory and restart the TeamCity server.
+Download the plugin using the link above and follow the instructions from the TeamCity documentation, [Installing Additional Plugins](https://confluence.jetbrains.com/display/TCD9/Installing+Additional+Plugins)
 
 ## How to use the plugin
 
