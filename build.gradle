@@ -3,6 +3,11 @@ apply plugin: 'java'
 
 project.ext.teamCityVersion = System.properties['teamcity.version'] ?: '8.1.5'
 
+sourceCompatibility = 1.7
+targetCompatibility = 1.7
+
+archivesBaseName = "jmx-plugin"
+
 repositories {
     mavenCentral()
     maven {
@@ -18,12 +23,10 @@ dependencies {
 }
 
 jar {
-    archiveName "jmx-plugin.jar"
     exclude "**/teamcity-plugin.xml"
 }
 
 task packagePlugin(type: Zip, dependsOn: jar) {
-    archiveName = 'jmx-plugin.zip'
     destinationDir = file('dist')
     from(jar.outputs.files) {
         into 'server'
