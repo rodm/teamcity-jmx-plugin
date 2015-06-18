@@ -1,6 +1,10 @@
 
 apply plugin: 'java'
+apply plugin: 'maven-publish'
 apply plugin: 'sonar-runner'
+
+group = 'com.github.rodm'
+version = '1.1-SNAPSHOT'
 
 project.ext.teamCityVersion = System.properties['teamcity.version'] ?: '8.1.5'
 
@@ -38,3 +42,24 @@ task packagePlugin(type: Zip, dependsOn: jar) {
 }
 
 assemble.dependsOn packagePlugin
+
+artifacts {
+    archives packagePlugin
+}
+
+publishing {
+    publications {
+        plugin(MavenPublication) {
+            artifact packagePlugin
+        }
+    }
+    repositories {
+        maven {
+            url repositoryUrl
+            credentials {
+                username repositoryUsername
+                password repositoryPassword
+            }
+        }
+    }
+}
