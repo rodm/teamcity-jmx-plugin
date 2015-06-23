@@ -25,8 +25,9 @@
         <property name="classes.dir" location="${build.dir}/classes"/>
         <property name="test.classes.dir" location="${build.dir}/test/classes"/>
         <property name="test.report.dir" location="${build.dir}/test/report"/>
+        <property name="build.lib.dir" location="${build.dir}/lib"/>
 
-        <property name="dist.dir" location="dist"/>
+        <property name="dist.dir" location="${build.dir}/distributions"/>
 
         <!-- Compiler options -->
         <property name="compiler.debug" value="on"/>
@@ -197,7 +198,7 @@
     <target name="package-plugin" depends="run-tests">
         <delete dir="${dist.dir}"/>
 
-        <mkdir dir="${dist.dir}/server"/>
+        <mkdir dir="${build.lib.dir}"/>
 
         <manifest file="${build.dir}/MANIFEST.MF">
             <attribute name="Build-Date" value="${build.date}"/>
@@ -205,13 +206,13 @@
             <attribute name="Build-VCS-Number" value="${build.vcs.number}"/>
         </manifest>
 
-        <jar destfile="${dist.dir}/server/${plugin.name}.jar"
+        <jar destfile="${build.lib.dir}/${plugin.name}.jar"
              manifest="${build.dir}/MANIFEST.MF"
              basedir="${classes.dir}">
         </jar>
 
         <zip destfile="${dist.dir}/${plugin.filename}">
-            <zipfileset dir="${dist.dir}/server" prefix="server">
+            <zipfileset dir="${build.lib.dir}" prefix="server">
                 <include name="*.jar"/>
             </zipfileset>
             <zipfileset dir="${classes.dir}" includes="*.xml"/>

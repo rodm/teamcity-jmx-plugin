@@ -20,7 +20,7 @@ Download the plugin using the link above and follow the instructions from the Te
 1. [Download](http://www.jetbrains.com/teamcity/download/index.html) and install TeamCity version 4.5 or later.
 2. Copy the `example.build.properties` file to `build.properties`
 3. Edit the `build.properties` file to set the properties teamcity.home, teamcity.version and teamcity.java.home
-4. Run the Ant build, the default is to build and package the plugin, the plugin is output to `dist/jmx-plugin.zip`
+4. Run the Ant build, the default is to build and package the plugin, the plugin is output to `build/distributions/jmx-plugin.zip`
 
 The Ant build script provides a target to deploy the plugin to a local configuration directory, deploy-plugin. The
 TeamCity server can be started using the start-teamcity-server target. The TEAMCITY_DATA_PATH is set by default to use
