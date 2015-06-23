@@ -19,6 +19,7 @@
         <property name="src.dir" location="src"/>
         <property name="java.src.dir" location="${src.dir}/main/java"/>
         <property name="resources.dir" location="${src.dir}/main/resources"/>
+        <property name="descriptor.dir" location="${src.dir}/main/descriptor"/>
         <property name="test.src.dir" location="${src.dir}/test/java"/>
 
         <property name="build.dir" location="build"/>
@@ -26,6 +27,7 @@
         <property name="test.classes.dir" location="${build.dir}/test/classes"/>
         <property name="test.report.dir" location="${build.dir}/test/report"/>
         <property name="build.lib.dir" location="${build.dir}/lib"/>
+        <property name="build.descriptor.dir" location="${build.dir}/descriptor"/>
 
         <property name="dist.dir" location="${build.dir}/distributions"/>
 
@@ -206,9 +208,21 @@
             <attribute name="Build-VCS-Number" value="${build.vcs.number}"/>
         </manifest>
 
+        <copy todir="${build.descriptor.dir}">
+            <fileset dir="${descriptor.dir}">
+                <type type="file"/>
+            </fileset>
+            <filterset>
+                <filter token="VERSION" value="${version}"/>
+                <filter token="VCS_REVISION" value="${build.vcs.number}"/>
+                <filter token="BUILD_NUMBER" value="${build.number}"/>
+            </filterset>
+        </copy>
+
         <jar destfile="${build.lib.dir}/${plugin.name}.jar"
              manifest="${build.dir}/MANIFEST.MF"
              basedir="${classes.dir}">
+            <fileset dir="${build.descriptor.dir}" includes="*.xml"/>
         </jar>
 
         <zip destfile="${dist.dir}/${plugin.filename}">
@@ -216,7 +230,7 @@
                 <include name="*.jar"/>
             </zipfileset>
             <zipfileset dir="${classes.dir}" includes="*.xml"/>
-            <zipfileset dir="${src.dir}/main/descriptor" includes="teamcity-plugin.xml"/>
+            <zipfileset dir="${build.descriptor.dir}" includes="teamcity-plugin.xml"/>
         </zip>
     </target>
 
