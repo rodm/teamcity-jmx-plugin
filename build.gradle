@@ -8,6 +8,10 @@ version = '1.1-SNAPSHOT'
 
 project.ext.teamCityVersion = System.properties['teamcity.version'] ?: '8.1.5'
 
+ext.repositoryUrl = hasProperty('repositoryUrl') ? property('repositoryUrl') : 'http://localhost:8080'
+ext.repositoryUsername = hasProperty('repositoryUsername') ? property('repositoryUsername') : ''
+ext.repositoryPassword = hasProperty('repositoryPassword') ? property('repositoryPassword') : ''
+
 sourceCompatibility = 1.7
 targetCompatibility = 1.7
 
