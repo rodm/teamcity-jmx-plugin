@@ -1,12 +1,26 @@
 
-apply plugin: 'java'
+buildscript {
+    repositories {
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+    }
+    dependencies {
+        classpath group: 'com.github.rodm', name: 'gradle-teamcity-plugin', version: '0.4'
+    }
+}
+
+apply plugin: "com.github.rodm.teamcity"
 apply plugin: 'maven-publish'
 apply plugin: 'sonar-runner'
 
 group = 'com.github.rodm'
 version = '1.1-SNAPSHOT'
 
-project.ext.teamCityVersion = System.properties['teamcity.version'] ?: '8.1.5'
+ext.teamcityVersion = System.properties['teamcity.version'] ?: '8.1.5'
+ext.teamcityDir = hasProperty('teamcity.home') ? property('teamcity.home') : "$rootDir/servers/TeamCity-${teamcityVersion}"
+ext.teamcityDataDir = "$rootDir/data/" + (teamcityVersion =~ /(\d+\.\d+).*/)[0][1]
+ext.teamcityJavaHome = System.properties['java.home']
 
 ext.repositoryUrl = hasProperty('repositoryUrl') ? property('repositoryUrl') : 'http://localhost:8080'
 ext.repositoryUsername = hasProperty('repositoryUsername') ? property('repositoryUsername') : ''
@@ -19,33 +33,22 @@ archivesBaseName = "jmx-plugin"
 
 repositories {
     mavenCentral()
-    maven {
-        url "http://repository.jetbrains.com/all"
-    }
 }
 
 dependencies {
-    compile group: 'org.jetbrains.teamcity', name: 'server-api', version: "${teamCityVersion}"
-
     testCompile group: 'junit', name: 'junit', version: '4.11'
     testCompile group: 'org.mockito', name: 'mockito-core', version: '1.9.5'
 }
 
-jar {
-    exclude "**/teamcity-plugin.xml"
-}
+teamcity {
+    version = "${teamcityVersion}"
+    descriptor = file("$rootDir/src/main/resources/teamcity-plugin.xml")
 
-task packagePlugin(type: Zip, dependsOn: jar) {
-    destinationDir = file('dist')
-    from(jar.outputs.files) {
-        into 'server'
-    }
-    from("$buildDir/resources/main") {
-        include 'teamcity-plugin.xml'
-    }
-}
 
-assemble.dependsOn packagePlugin
+    homeDir = file(teamcityDir)
+    dataDir = file(teamcityDataDir)
+    javaHome = file(teamcityJavaHome)
+}
 
 artifacts {
     archives packagePlugin
