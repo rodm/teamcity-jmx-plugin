@@ -42,7 +42,7 @@ dependencies {
 
 teamcity {
     version = "${teamcityVersion}"
-    descriptor = file("$rootDir/src/main/resources/teamcity-plugin.xml")
+    descriptor = file("$rootDir/src/main/descriptor/teamcity-plugin.xml")
 
 
     homeDir = file(teamcityDir)

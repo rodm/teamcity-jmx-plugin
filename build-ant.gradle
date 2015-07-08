@@ -30,7 +30,6 @@ ant.properties['teamcity.version'] = teamCityVersion
 
 jar {
     archiveName = 'jmx-plugin.jar'
-    exclude('**/teamcity-plugin.xml')
 }
 
 task packagePlugin(type: Zip) {
@@ -39,7 +38,7 @@ task packagePlugin(type: Zip) {
     from(jar.outputs.files) {
         into 'server'
     }
-    from("$buildDir/resources/main") {
+    from("$rootDir/src/main/descriptor") {
         include 'teamcity-plugin.xml'
     }
 }

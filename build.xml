@@ -208,7 +208,6 @@
         <jar destfile="${dist.dir}/server/${plugin.name}.jar"
              manifest="${build.dir}/MANIFEST.MF"
              basedir="${classes.dir}">
-            <exclude name="teamcity-plugin.xml"/>
         </jar>
 
         <zip destfile="${dist.dir}/${plugin.filename}">
@@ -216,6 +215,7 @@
                 <include name="*.jar"/>
             </zipfileset>
             <zipfileset dir="${classes.dir}" includes="*.xml"/>
+            <zipfileset dir="${src.dir}/main/descriptor" includes="teamcity-plugin.xml"/>
         </zip>
     </target>
 
