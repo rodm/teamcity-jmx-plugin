@@ -12,9 +12,9 @@ import java.util.Map;
 
 public class JMXPlugin extends BuildServerAdapter {
 
-    private static Logger log = Logger.getLogger("jetbrains.buildServer.SERVER");
+    private static final Logger LOGGER = Logger.getLogger("jetbrains.buildServer.SERVER");
 
-    private static String JMX_DOMAIN = "com.jetbrains.teamcity";
+    private static final String JMX_DOMAIN = "com.jetbrains.teamcity";
 
     private SBuildServer server;
 
@@ -30,7 +30,7 @@ public class JMXPlugin extends BuildServerAdapter {
 
     @Override
     public void serverStartup() {
-        log.info(name + " started");
+        LOGGER.info(name + " started");
 
         BuildServerMBean buildServer = new BuildServer(server);
         registerMBean(JMX_DOMAIN, "type=BuildServer", buildServer);
@@ -44,7 +44,7 @@ public class JMXPlugin extends BuildServerAdapter {
 
     @Override
     public void serverShutdown() {
-        log.info(name + " stopped");
+        LOGGER.info(name + " stopped");
     }
 
     @Override
@@ -136,10 +136,10 @@ public class JMXPlugin extends BuildServerAdapter {
             if (!server.isRegistered(objectName)) {
                 server.registerMBean(mbean, objectName);
             } else {
-                log.warn("MBean already registered: " + jmxName);
+                LOGGER.warn("MBean already registered: " + jmxName);
             }
         } catch (Exception e) {
-            log.error("Failed to register MBean: " + jmxName, e);
+            LOGGER.error("Failed to register MBean: " + jmxName, e);
         }
     }
 
@@ -152,10 +152,10 @@ public class JMXPlugin extends BuildServerAdapter {
             if (server.isRegistered(objectName)) {
                 server.unregisterMBean(objectName);
             } else {
-                log.warn("MBean not registered: " + jmxName);
+                LOGGER.warn("MBean not registered: " + jmxName);
             }
         } catch (Exception e) {
-            log.error("Failed to unregister MBean: " + jmxName, e);
+            LOGGER.error("Failed to unregister MBean: " + jmxName, e);
         }
     }
 
