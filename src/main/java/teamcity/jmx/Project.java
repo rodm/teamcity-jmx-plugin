@@ -31,22 +31,27 @@ public class Project implements ProjectMBean {
         return this.name;
     }
 
+    @Override
     public int getNumberOfBuildTypes() {
         return project.getBuildTypes().size();
     }
 
+    @Override
     public int getNumberOfSuccessfulBuildTypes() {
         return successfulBuildTypes;
     }
 
+    @Override
     public int getNumberOfFailedBuildTypes() {
         return failedBuildTypes;
     }
 
+    @Override
     public int getNumberOfPausedBuildTypes() {
         return pausedBuildTypes;
     }
 
+    @Override
     public int getSuccessPercentage() {
         if (getNumberOfBuildTypes() > 0) {
             return (successfulBuildTypes / getNumberOfBuildTypes()) * 100;

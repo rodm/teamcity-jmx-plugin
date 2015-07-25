@@ -4,6 +4,7 @@ import jetbrains.buildServer.messages.Status;
 import jetbrains.buildServer.serverSide.BuildServerAdapter;
 import jetbrains.buildServer.serverSide.SBuildServer;
 import jetbrains.buildServer.serverSide.SRunningBuild;
+import org.jetbrains.annotations.NotNull;
 
 public class BuildStatistics extends BuildServerAdapter implements BuildStatisticsMBean {
 
@@ -56,14 +57,14 @@ public class BuildStatistics extends BuildServerAdapter implements BuildStatisti
     }
 
     @Override
-    public void buildStarted(SRunningBuild build) {
+    public void buildStarted(@NotNull SRunningBuild build) {
         if (filter.accept(build)) {
             buildsStarted++;
         }
     }
 
     @Override
-    public void buildFinished(SRunningBuild build) {
+    public void buildFinished(@NotNull SRunningBuild build) {
         if (filter.accept(build)) {
             buildsFinished++;
             Status status = build.getBuildStatus();
@@ -80,7 +81,7 @@ public class BuildStatistics extends BuildServerAdapter implements BuildStatisti
     }
 
     @Override
-    public void buildInterrupted(SRunningBuild build) {
+    public void buildInterrupted(@NotNull SRunningBuild build) {
         if (filter.accept(build)) {
             buildsInterrupted++;
         }

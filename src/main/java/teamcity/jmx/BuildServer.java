@@ -16,43 +16,53 @@ public class BuildServer extends BuildServerAdapter implements BuildServerMBean 
         this.server.addListener(this);
     }
 
+    @Override
     public int getRegisteredAgents() {
         return server.getBuildAgentManager().getRegisteredAgents().size();
     }
 
+    @Override
     public int getUnregisteredAgents() {
         return server.getBuildAgentManager().getUnregisteredAgents().size();
     }
 
+    @Override
     public int getUnauthorizedAgents() {
         int allAgents = server.getBuildAgentManager().getRegisteredAgents(true).size();
         return allAgents - getRegisteredAgents();
     }
 
+    @Override
     public int getNumberOfRunningBuilds() {
         return server.getNumberOfRunningBuilds();
     }
 
+    @Override
     public int getBuildQueueSize() {
         return server.getQueue().getNumberOfItems();
     }
 
+    @Override
     public String getFullServerVersion() {
         return server.getFullServerVersion();
     }
 
+    @Override
     public int getNumberOfRegisteredUsers() {
         return server.getUserModel().getNumberOfRegisteredUsers();
     }
 
+    @Override
     public int getNumberOfProjects() {
         return server.getProjectManager().getNumberOfProjects();
     }
 
+    @Override
     public int getNumberOfBuildTypes() {
         return server.getProjectManager().getNumberOfBuildTypes();
     }
 
+    @Override
     public long getCleanupDuration() {
         return cleanupDuration;
     }

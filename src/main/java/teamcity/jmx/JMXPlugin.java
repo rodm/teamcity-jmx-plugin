@@ -3,6 +3,7 @@ package teamcity.jmx;
 import jetbrains.buildServer.serverSide.*;
 import jetbrains.buildServer.users.SUser;
 import org.apache.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
 
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
@@ -22,7 +23,7 @@ public class JMXPlugin extends BuildServerAdapter {
 
     private Map<String, Project> projectMBeans = new HashMap<String, Project>();
 
-    public JMXPlugin(/* @NotNull */ SBuildServer server) {
+    public JMXPlugin(@NotNull SBuildServer server) {
         this.server = server;
         this.name = this.getClass().getSimpleName();
         server.addListener(this);
@@ -48,7 +49,7 @@ public class JMXPlugin extends BuildServerAdapter {
     }
 
     @Override
-    public void agentRegistered(SBuildAgent agent, long currentlyRunningBuildId) {
+    public void agentRegistered(@NotNull SBuildAgent agent, long currentlyRunningBuildId) {
         AgentMBean agentMBean = new Agent(agent, server.getBuildAgentManager());
         registerMBean(JMX_DOMAIN, "type=Agent,name=" + agent.getName(), agentMBean);
         BuildStatisticsMBean agentBuildStatistics = new BuildStatistics(server, new AgentBuildFilter(agent));
@@ -56,17 +57,18 @@ public class JMXPlugin extends BuildServerAdapter {
     }
 
     @Override
-    public void agentUnregistered(SBuildAgent agent) {
+    public void agentUnregistered(@NotNull SBuildAgent agent) {
         unregisterMBean(JMX_DOMAIN, "type=Agent,name=" + agent.getName() + ",stats=BuildStatistics");
         unregisterMBean(JMX_DOMAIN, "type=Agent,name=" + agent.getName());
     }
 
     @Override
-    public void agentRemoved(SBuildAgent agent) {
+    public void agentRemoved(@NotNull SBuildAgent agent) {
         unregisterMBean(JMX_DOMAIN, "type=Agent,name=" + agent.getName());
     }
 
-    public void projectCreated(String projectId, SUser user) {
+    @Override
+    public void projectCreated(@NotNull String projectId, SUser user) {
         projectCreated(projectId);
     }
 
@@ -81,7 +83,7 @@ public class JMXPlugin extends BuildServerAdapter {
     }
 
     @Override
-    public void projectRemoved(String projectId) {
+    public void projectRemoved(@NotNull String projectId) {
         Project projectMBean = projectMBeans.get(projectId);
         if (projectMBean != null) {
             unregisterMBean(JMX_DOMAIN, "type=Project,name=" + projectMBean.getName());
@@ -90,7 +92,7 @@ public class JMXPlugin extends BuildServerAdapter {
     }
 
     @Override
-    public void projectPersisted(String projectId) {
+    public void projectPersisted(@NotNull String projectId) {
         SProject project = server.getProjectManager().findProjectById(projectId);
         Project projectMBean = projectMBeans.get(projectId);
         if (project != null && projectMBean != null) {
@@ -103,22 +105,22 @@ public class JMXPlugin extends BuildServerAdapter {
     }
 
     @Override
-    public void buildTypeRegistered(SBuildType buildType) {
+    public void buildTypeRegistered(@NotNull SBuildType buildType) {
         updateProject(buildType.getProjectId());
     }
 
     @Override
-    public void buildTypeUnregistered(SBuildType buildType) {
+    public void buildTypeUnregistered(@NotNull SBuildType buildType) {
         updateProject(buildType.getProjectId());
     }
 
     @Override
-    public void buildFinished(SRunningBuild build) {
+    public void buildFinished(@NotNull SRunningBuild build) {
         updateProject(build.getProjectId());
     }
 
     @Override
-    public void buildTypeActiveStatusChanged(SBuildType buildType) {
+    public void buildTypeActiveStatusChanged(@NotNull SBuildType buildType) {
         updateProject(buildType.getProjectId());
     }
 
