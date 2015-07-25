@@ -130,13 +130,13 @@ public class JMXPlugin extends BuildServerAdapter {
     }
 
     private void registerMBean(String domain, String name, Object mbean) {
-        MBeanServer server = getMBeanServer();
+        MBeanServer mBeanServer = getMBeanServer();
 
         String jmxName = domain + ":" + name;
         try {
             ObjectName objectName = new ObjectName(jmxName);
-            if (!server.isRegistered(objectName)) {
-                server.registerMBean(mbean, objectName);
+            if (!mBeanServer.isRegistered(objectName)) {
+                mBeanServer.registerMBean(mbean, objectName);
             } else {
                 LOGGER.warn("MBean already registered: " + jmxName);
             }
@@ -146,13 +146,13 @@ public class JMXPlugin extends BuildServerAdapter {
     }
 
     private void unregisterMBean(String domain, String name) {
-        MBeanServer server = getMBeanServer();
+        MBeanServer mBeanServer = getMBeanServer();
 
         String jmxName = domain + ":" + name;
         try {
             ObjectName objectName = new ObjectName(jmxName);
-            if (server.isRegistered(objectName)) {
-                server.unregisterMBean(objectName);
+            if (mBeanServer.isRegistered(objectName)) {
+                mBeanServer.unregisterMBean(objectName);
             } else {
                 LOGGER.warn("MBean not registered: " + jmxName);
             }
