@@ -138,8 +138,8 @@ public class JMXPlugin extends BuildServerAdapter {
             } else {
                 log.warn("MBean already registered: " + jmxName);
             }
-        } catch (Throwable t) {
-            log.error("Failed to register MBean: " + jmxName, t);
+        } catch (Exception e) {
+            log.error("Failed to register MBean: " + jmxName, e);
         }
     }
 
@@ -154,8 +154,8 @@ public class JMXPlugin extends BuildServerAdapter {
             } else {
                 log.warn("MBean not registered: " + jmxName);
             }
-        } catch (Throwable t) {
-            log.error("Failed to unregister MBean: " + jmxName, t);
+        } catch (Exception e) {
+            log.error("Failed to unregister MBean: " + jmxName, e);
         }
     }
 
