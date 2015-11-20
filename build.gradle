@@ -6,16 +6,20 @@ buildscript {
         }
     }
     dependencies {
-        classpath group: 'com.github.rodm', name: 'gradle-teamcity-plugin', version: '0.5'
+        classpath group: 'com.github.rodm', name: 'gradle-teamcity-plugin', version: '0.8'
     }
 }
 
-apply plugin: "com.github.rodm.teamcity"
+apply plugin: 'java'
+apply plugin: 'com.github.rodm.teamcity-server'
 apply plugin: 'maven-publish'
 apply plugin: 'sonar-runner'
 
 group = 'com.github.rodm'
 version = '1.1-SNAPSHOT'
+
+ext.buildVcsNumber = System.properties['build.vcs.number'] ?: new Date().format('yyyyMMddHHmmss')
+ext.buildNumber = System.properties['build.number'] ?: 'dev'
 
 ext.teamcityVersion = System.properties['teamcity.version'] ?: '8.1.5'
 ext.teamcityDir = hasProperty('teamcity.home') ? property('teamcity.home') : "$rootDir/servers/TeamCity-${teamcityVersion}"
@@ -36,9 +40,14 @@ dependencies {
     testCompile group: 'org.mockito', name: 'mockito-core', version: '1.9.5'
 }
 
+serverPlugin {
+    baseName = project.archivesBaseName
+}
+
 teamcity {
     version = "${teamcityVersion}"
     descriptor = file("$rootDir/src/main/descriptor/teamcity-plugin.xml")
+    tokens = [VERSION: project.version, VCS_REVISION: buildVcsNumber, BUILD_NUMBER: buildNumber]
 
     homeDir = file(teamcityDir)
     dataDir = file(teamcityDataDir)
@@ -46,13 +55,13 @@ teamcity {
 }
 
 artifacts {
-    archives packagePlugin
+    archives serverPlugin
 }
 
 publishing {
     publications {
         plugin(MavenPublication) {
-            artifact packagePlugin
+            artifact serverPlugin
         }
     }
     repositories {
