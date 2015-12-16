@@ -18,6 +18,8 @@ apply plugin: 'sonar-runner'
 group = 'com.github.rodm'
 version = '1.1-SNAPSHOT'
 
+ext.publicationVersion = System.properties['version'] ?: version
+
 ext.buildVcsNumber = System.properties['build.vcs.number'] ?: new Date().format('yyyyMMddHHmmss')
 ext.buildNumber = System.properties['build.number'] ?: 'dev'
 
@@ -61,6 +63,8 @@ artifacts {
 publishing {
     publications {
         plugin(MavenPublication) {
+            version publicationVersion
+
             artifact serverPlugin
         }
     }
