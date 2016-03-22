@@ -2,8 +2,12 @@
 .DS_Store
 
 .idea/
+*.iml
+
 data/
 target/
 
 .gradle/
 build/
+build.properties
+gradle.properties
