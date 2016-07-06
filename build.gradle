@@ -16,11 +16,11 @@ ext {
     buildNumber = System.properties['build.number'] ?: 'dev'
 
     teamcityVersion = System.properties['teamcity.version'] ?: '8.1.5'
-    teamcityDir = project.hasProperty('teamcity.dir') ? property('teamcity.dir') : "$rootDir/servers"
+    teamcityDir = findProperty('teamcity.dir') ?: "$rootDir/servers"
 
-    repositoryUrl = project.hasProperty('repositoryUrl') ? property('repositoryUrl') : 'http://localhost:8080'
-    repositoryUsername = project.hasProperty('repositoryUsername') ? property('repositoryUsername') : ''
-    repositoryPassword = project.hasProperty('repositoryPassword') ? property('repositoryPassword') : ''
+    repositoryUrl = findProperty('repositoryUrl') ?: 'http://localhost:8080'
+    repositoryUsername = findProperty('repositoryUsername') ?: ''
+    repositoryPassword = findProperty('repositoryPassword') ?: ''
 }
 
 sourceCompatibility = 1.7
