@@ -1,19 +1,10 @@
 
-buildscript {
-    repositories {
-        maven {
-            url "https://plugins.gradle.org/m2/"
-        }
-    }
-    dependencies {
-        classpath group: 'com.github.rodm', name: 'gradle-teamcity-plugin', version: '0.8.4'
-    }
+plugins {
+    id 'org.gradle.java'
+    id 'org.gradle.maven-publish'
+    id 'org.gradle.sonar-runner'
+    id 'com.github.rodm.teamcity-server' version '0.8.4'
 }
-
-apply plugin: 'java'
-apply plugin: 'com.github.rodm.teamcity-server'
-apply plugin: 'maven-publish'
-apply plugin: 'sonar-runner'
 
 group = 'com.github.rodm'
 version = '1.1-SNAPSHOT'
