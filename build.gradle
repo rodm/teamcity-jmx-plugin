@@ -50,12 +50,10 @@ teamcity {
         environments {
             teamcity81 {
                 version = '8.1.5'
-                homeDir = file("${baseHomeDir}/TeamCity-${version}")
             }
 
             teamcity91 {
                 version = '9.1.7'
-                homeDir = file("${baseHomeDir}/TeamCity-${version}")
             }
 
             teamcity10 {
