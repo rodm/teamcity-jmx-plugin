@@ -19,7 +19,7 @@ ext {
 
     downloadsDir = findProperty('downloads.dir') ?: "$rootDir/downloads"
     serversDir = findProperty('servers.dir') ?: "$rootDir/servers"
-    java8Home = project.hasProperty('java8.home') ? property('java8.home') : '/opt/jdk1.8.0_92'
+    java8Home = findProperty('java8.home') ?: '/opt/jdk1.8.0_92'
 
     repositoryUrl = findProperty('repositoryUrl') ?: 'http://localhost:8080'
     repositoryUsername = findProperty('repositoryUsername') ?: ''
