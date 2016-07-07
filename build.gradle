@@ -16,6 +16,8 @@ ext {
     buildNumber = System.properties['build.number'] ?: 'dev'
 
     teamcityVersion = System.properties['teamcity.version'] ?: '8.1.5'
+
+    downloadsDir = findProperty('downloads.dir') ?: "$rootDir/downloads"
     teamcityDir = findProperty('teamcity.dir') ?: "$rootDir/servers"
     java8Home = project.hasProperty('java8.home') ? property('java8.home') : '/opt/jdk1.8.0_92'
 
@@ -45,6 +47,7 @@ teamcity {
         descriptor = file("$rootDir/src/main/descriptor/teamcity-plugin.xml")
         tokens VERSION: project.version, VCS_REVISION: buildVcsNumber, BUILD_NUMBER: buildNumber
 
+        downloadsDir = project.downloadsDir
         baseHomeDir = teamcityDir
 
         environments {
