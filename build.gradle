@@ -18,7 +18,7 @@ ext {
     teamcityVersion = System.properties['teamcity.version'] ?: '8.1.5'
 
     downloadsDir = findProperty('downloads.dir') ?: "$rootDir/downloads"
-    teamcityDir = findProperty('teamcity.dir') ?: "$rootDir/servers"
+    serversDir = findProperty('servers.dir') ?: "$rootDir/servers"
     java8Home = project.hasProperty('java8.home') ? property('java8.home') : '/opt/jdk1.8.0_92'
 
     repositoryUrl = findProperty('repositoryUrl') ?: 'http://localhost:8080'
@@ -48,7 +48,7 @@ teamcity {
         tokens VERSION: project.version, VCS_REVISION: buildVcsNumber, BUILD_NUMBER: buildNumber
 
         downloadsDir = project.downloadsDir
-        baseHomeDir = teamcityDir
+        baseHomeDir = project.serversDir
 
         environments {
             teamcity81 {
