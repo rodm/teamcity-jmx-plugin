@@ -4,10 +4,14 @@
 .idea/
 *.iml
 
-data/
 target/
 
 .gradle/
 build/
 build.properties
 gradle.properties
+
+# gradle-teamcity-plugin
+data/
+downloads/
+servers/
