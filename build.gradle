@@ -60,8 +60,8 @@ teamcity {
             }
 
             teamcity10 {
-                version = '10-EAP2'
-                downloadUrl = "https://download.jetbrains.com/teamcity/eap/TeamCity-41463.tar.gz"
+                version = '10-EAP3'
+                downloadUrl = 'https://download.jetbrains.com/teamcity/eap/TeamCity-41843.tar.gz'
                 homeDir = file("${baseHomeDir}/TeamCity-${version}")
                 dataDir = file("${baseDataDir}/10.0")
                 javaHome = file(java8Home)
