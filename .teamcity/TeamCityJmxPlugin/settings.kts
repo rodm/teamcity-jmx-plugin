@@ -95,67 +95,43 @@ project {
     })
     template(buildTemplate)
 
-    val build80 = BuildType({
+    val build1 = BuildType({
         template(buildTemplate)
         uuid = "7b13548f-b973-4b45-80c0-91b76d44dc98"
         id = "TeamCityJmxPlugin_BuildTeamCity80"
-        name = "Build - TeamCity 8.0"
+        name = "Build - TeamCity 10.0"
 
         artifactRules = "build/distributions/*.zip"
 
         params {
-            param("version", "7.1.5")
+            param("version", "10.0")
         }
     })
-    buildType(build80)
+    buildType(build1)
 
-    val build81 = BuildType({
+    val build2 = BuildType({
         template(buildTemplate)
         uuid = "57c8decb-afc5-40a6-890b-e938b93606a7"
         id = "TeamCityJmxPlugin_BuildTeamCity81"
-        name = "Build - TeamCity 8.1"
+        name = "Build - TeamCity 2017.1"
 
         params {
-            param("version", "%teamcity81.version%")
+            param("version", "2017.1")
         }
     })
-    buildType(build81)
+    buildType(build2)
 
-    val build90 =  BuildType({
+    val build3 =  BuildType({
         template(buildTemplate)
         uuid = "162abe89-c678-4a4d-a29b-719e1f165564"
         id = "TeamCityJmxPlugin_BuildTeamCity90"
-        name = "Build - TeamCity 9.0"
+        name = "Build - TeamCity 2017.2"
 
         params {
-            param("version", "%teamcity90.version%")
+            param("version", "2017.2")
         }
     })
-    buildType(build90)
-
-    val build91 = BuildType({
-        template(buildTemplate)
-        uuid = "f241df8c-3530-4d6a-aa64-595643d08f62"
-        id = "TeamCityJmxPlugin_BuildTeamCity91"
-        name = "Build - TeamCity 9.1"
-
-        params {
-            param("version", "%teamcity91.version%")
-        }
-    })
-    buildType(build91)
-
-    val build100 = BuildType({
-        template(buildTemplate)
-        uuid = "e41a12c8-b4d7-476b-bb5f-edaeaba23bcb"
-        id = "TeamCityJmxPlugin_BuildTeamCity100"
-        name = "Build - TeamCity 10.0"
-
-        params {
-            param("version", "%teamcity100.version%")
-        }
-    })
-    buildType(build100)
+    buildType(build3)
 
     val reportCodeQuality = BuildType({
         template(buildTemplate)
@@ -166,7 +142,7 @@ project {
         params {
             param("gradle.opts", "%sonar.opts% -Dteamcity.version=%version%")
             param("gradle.tasks", "clean build sonarqube")
-            param("version", "%teamcity81.version%")
+            param("version", "10.0")
         }
 
         triggers {
@@ -186,5 +162,5 @@ project {
     })
     buildType(reportCodeQuality)
 
-    buildTypesOrder = arrayListOf(build80, build81, build90, build91, build100, reportCodeQuality)
+    buildTypesOrder = arrayListOf(build1, build2, build3, reportCodeQuality)
 }
