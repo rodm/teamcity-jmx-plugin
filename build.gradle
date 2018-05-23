@@ -13,9 +13,6 @@ version = '1.1-SNAPSHOT'
 ext {
     publicationVersion = System.properties['version'] ?: version
 
-    buildVcsNumber = System.properties['build.vcs.number'] ?: new Date().format('yyyyMMddHHmmss')
-    buildNumber = System.properties['build.number'] ?: 'dev'
-
     teamcityVersion = System.properties['teamcity.version'] ?: '8.1.5'
 
     downloadsDir = findProperty('downloads.dir') ?: "$rootDir/downloads"
@@ -43,8 +40,16 @@ teamcity {
     server {
         archiveName = "${archivesBaseName}-${project.version}.zip"
 
-        descriptor = file("$rootDir/src/main/descriptor/teamcity-plugin.xml")
-        tokens VERSION: project.version, VCS_REVISION: buildVcsNumber, BUILD_NUMBER: buildNumber
+        descriptor {
+            name = 'jmxPlugin'
+            displayName = 'JMX Plugin'
+            version = project.version
+            description = 'Makes BuildServer and Agent attributes available via JMX.'
+            vendorName = 'Rod MacKenzie'
+            vendorUrl = 'https://github.com/rodm'
+            email = 'rod.n.mackenzie@gmail.com'
+            useSeparateClassloader = false
+        }
     }
 
     environments {
