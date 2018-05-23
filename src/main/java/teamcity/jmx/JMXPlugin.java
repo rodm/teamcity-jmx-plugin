@@ -51,20 +51,20 @@ public class JMXPlugin extends BuildServerAdapter {
     @Override
     public void agentRegistered(@NotNull SBuildAgent agent, long currentlyRunningBuildId) {
         AgentMBean agentMBean = new Agent(agent, server.getBuildAgentManager());
-        registerMBean(JMX_DOMAIN, "type=Agent,name=" + agent.getName(), agentMBean);
+        registerMBean(JMX_DOMAIN, createAgentTypeName(agent.getName()), agentMBean);
         BuildStatisticsMBean agentBuildStatistics = new BuildStatistics(server, new AgentBuildFilter(agent));
-        registerMBean(JMX_DOMAIN, "type=Agent,name=" + agent.getName() + ",stats=BuildStatistics", agentBuildStatistics);
+        registerMBean(JMX_DOMAIN, createAgentTypeName(agent.getName()) + ",stats=BuildStatistics", agentBuildStatistics);
     }
 
     @Override
     public void agentUnregistered(@NotNull SBuildAgent agent) {
-        unregisterMBean(JMX_DOMAIN, "type=Agent,name=" + agent.getName() + ",stats=BuildStatistics");
-        unregisterMBean(JMX_DOMAIN, "type=Agent,name=" + agent.getName());
+        unregisterMBean(JMX_DOMAIN, createAgentTypeName(agent.getName()) + ",stats=BuildStatistics");
+        unregisterMBean(JMX_DOMAIN, createAgentTypeName(agent.getName()));
     }
 
     @Override
     public void agentRemoved(@NotNull SBuildAgent agent) {
-        unregisterMBean(JMX_DOMAIN, "type=Agent,name=" + agent.getName());
+        unregisterMBean(JMX_DOMAIN, createAgentTypeName(agent.getName()));
     }
 
     @Override
@@ -78,7 +78,7 @@ public class JMXPlugin extends BuildServerAdapter {
         if (project != null) {
             Project projectMBean = new Project(project);
             projectMBeans.put(projectId, projectMBean);
-            registerMBean(JMX_DOMAIN, "type=Project,name=" + project.getName(), projectMBean);
+            registerMBean(JMX_DOMAIN, createProjectTypeName(project.getName()), projectMBean);
         }
     }
 
@@ -86,7 +86,7 @@ public class JMXPlugin extends BuildServerAdapter {
     public void projectRemoved(@NotNull String projectId) {
         Project projectMBean = projectMBeans.get(projectId);
         if (projectMBean != null) {
-            unregisterMBean(JMX_DOMAIN, "type=Project,name=" + projectMBean.getName());
+            unregisterMBean(JMX_DOMAIN, createProjectTypeName(projectMBean.getName()));
             projectMBeans.remove(projectId);
         }
     }
@@ -97,8 +97,8 @@ public class JMXPlugin extends BuildServerAdapter {
         Project projectMBean = projectMBeans.get(projectId);
         if (project != null && projectMBean != null) {
             if (!project.getName().equals(projectMBean.getName())) {
-                registerMBean(JMX_DOMAIN, "type=Project,name=" + project.getName(), projectMBean);
-                unregisterMBean(JMX_DOMAIN, "type=Project,name=" + projectMBean.getName());
+                registerMBean(JMX_DOMAIN, createProjectTypeName(project.getName()), projectMBean);
+                unregisterMBean(JMX_DOMAIN, createProjectTypeName(projectMBean.getName()));
                 projectMBean.setName(project.getName());
             }
         }
@@ -127,6 +127,14 @@ public class JMXPlugin extends BuildServerAdapter {
     private void updateProject(String projectId) {
         Project project = projectMBeans.get(projectId);
         project.update();
+    }
+
+    private String createAgentTypeName(String agentName) {
+        return "type=Agent,name=" + agentName;
+    }
+
+    private String createProjectTypeName(String projectName) {
+        return "type=Project,name=" + projectName;
     }
 
     private void registerMBean(String domain, String name, Object mbean) {
