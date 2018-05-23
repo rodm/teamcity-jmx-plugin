@@ -35,7 +35,7 @@ teamcity {
 
         descriptor {
             name = 'jmxPlugin'
-            displayName = 'JMX Plugin'
+            displayName = 'JMX support'
             version = project.version
             description = 'Makes BuildServer and Agent attributes available via JMX.'
             vendorName = 'Rod MacKenzie'
