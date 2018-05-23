@@ -47,13 +47,6 @@ project {
         id = "btTemplate3"
         name = "build plugin"
 
-        params {
-            param("gradle.opts", "")
-            param("gradle.tasks", "clean build")
-            param("java.home", "%java8.home%")
-            param("version", "%teamcity80.version%")
-        }
-
         vcs {
             root(vcsRoot)
             checkoutMode = CheckoutMode.ON_SERVER
@@ -92,6 +85,13 @@ project {
                 enabled = false
             }
         }
+
+        params {
+            param("gradle.opts", "-Dteamcity.version=%version%")
+            param("gradle.tasks", "clean build")
+            param("java.home", "%java8.home%")
+            param("version", "%teamcity80.version%")
+        }
     })
     template(buildTemplate)
 
@@ -116,7 +116,6 @@ project {
         name = "Build - TeamCity 8.1"
 
         params {
-            param("gradle.opts", "-Dteamcity.version=%version%")
             param("version", "%teamcity81.version%")
         }
     })
@@ -129,7 +128,6 @@ project {
         name = "Build - TeamCity 9.0"
 
         params {
-            param("gradle.opts", "-Dteamcity.version=%version%")
             param("version", "%teamcity90.version%")
         }
     })
@@ -142,7 +140,6 @@ project {
         name = "Build - TeamCity 9.1"
 
         params {
-            param("gradle.opts", "-Dteamcity.version=%version%")
             param("version", "%teamcity91.version%")
         }
     })
@@ -155,7 +152,6 @@ project {
         name = "Build - TeamCity 10.0"
 
         params {
-            param("gradle.opts", "-Dteamcity.version=%version%")
             param("version", "%teamcity100.version%")
         }
     })
