@@ -21,8 +21,9 @@ public class JMXPlugin extends BuildServerAdapter {
 
     private String name;
 
-    private Map<String, Project> projectMBeans = new HashMap<String, Project>();
+    private Map<String, Project> projectMBeans = new HashMap<>();
 
+    @SuppressWarnings("WeakerAccess")
     public JMXPlugin(@NotNull SBuildServer server) {
         this.server = server;
         this.name = this.getClass().getSimpleName();
@@ -95,12 +96,10 @@ public class JMXPlugin extends BuildServerAdapter {
     public void projectPersisted(@NotNull String projectId) {
         SProject project = server.getProjectManager().findProjectById(projectId);
         Project projectMBean = projectMBeans.get(projectId);
-        if (project != null && projectMBean != null) {
-            if (!project.getName().equals(projectMBean.getName())) {
-                registerMBean(JMX_DOMAIN, createProjectTypeName(project.getName()), projectMBean);
-                unregisterMBean(JMX_DOMAIN, createProjectTypeName(projectMBean.getName()));
-                projectMBean.setName(project.getName());
-            }
+        if (project != null && projectMBean != null && !project.getName().equals(projectMBean.getName())) {
+            registerMBean(JMX_DOMAIN, createProjectTypeName(project.getName()), projectMBean);
+            unregisterMBean(JMX_DOMAIN, createProjectTypeName(projectMBean.getName()));
+            projectMBean.setName(project.getName());
         }
     }
 
