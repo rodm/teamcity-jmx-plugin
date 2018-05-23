@@ -2,7 +2,6 @@ package TeamCityJmxPlugin
 
 import jetbrains.buildServer.configs.kotlin.v2017_2.BuildType
 import jetbrains.buildServer.configs.kotlin.v2017_2.CheckoutMode
-import jetbrains.buildServer.configs.kotlin.v2017_2.FailureAction
 import jetbrains.buildServer.configs.kotlin.v2017_2.Template
 import jetbrains.buildServer.configs.kotlin.v2017_2.buildSteps.gradle
 import jetbrains.buildServer.configs.kotlin.v2017_2.project
@@ -174,98 +173,6 @@ project {
         disableSettings("RUNNER_5")
     })
     buildType(build100)
-
-    val publishTemplate = Template({
-        uuid = "4158df22-d9b9-432a-89a5-40623805b716"
-        id = "TeamCityJmxPlugin_PublishPlugin"
-        name = "publish plugin"
-
-        params {
-            param("gradle.opts", "-x build -x jar -x serverPlugin -PrepositoryUrl=%repository.url% -PrepositoryUsername=%repository.user% -PrepositoryPassword=%repository.password%")
-            param("java.home", "%java8.home%")
-            param("repository.password", "")
-            param("repository.url", "")
-            param("repository.user", "")
-            param("system.teamcity.home", "%teamcity.agent.jvm.user.home%/servers/TeamCity-%version%")
-            param("version", "%teamcity80.version%")
-        }
-
-        vcs {
-            root(vcsRoot)
-            checkoutMode = CheckoutMode.ON_SERVER
-        }
-
-        steps {
-            gradle {
-                id = "RUNNER_20"
-                tasks = "publish"
-                gradleParams = "%gradle.opts%"
-                useGradleWrapper = true
-                enableStacktrace = true
-                jdkHome = "%java.home%"
-            }
-        }
-
-        failureConditions {
-            executionTimeoutMin = 5
-        }
-
-        features {
-            feature {
-                id = "perfmon"
-                type = "perfmon"
-            }
-        }
-
-        dependencies {
-            dependency(build80) {
-                snapshot {
-                    onDependencyFailure = FailureAction.FAIL_TO_START
-                }
-
-                artifacts {
-                    id = "ARTIFACT_DEPENDENCY_1"
-                    cleanDestination = true
-                    artifactRules = "jmx-plugin-1.1-SNAPSHOT.zip => build/distributions"
-                }
-            }
-        }
-    })
-    template(publishTemplate)
-
-    val publishToBintray = BuildType({
-        template(publishTemplate)
-        uuid = "c06de9c8-5763-4f3f-ac85-923edf152e47"
-        id = "TeamCityJmxPlugin_PublishToBintray"
-        name = "Publish to Bintray"
-
-        params {
-            param("gradle.opts", """
-            -x build -x jar -x serverPlugin
-            -Dversion=%system.version% -PrepositoryUrl=%repository.url% -PrepositoryUsername=%repository.user% -PrepositoryPassword=%repository.password%
-        """.trimIndent())
-            param("repository.password", "%bintray.repository.password%")
-            param("repository.url", "%bintray.repository.url%/teamcity-jmx-plugin")
-            param("repository.user", "%bintray.repository.user%")
-            param("system.teamcity.version", "%version%")
-            param("system.version", "1.1-b%dep.TeamCityJmxPlugin_BuildTeamCity80.build.number%")
-        }
-    })
-    buildType(publishToBintray)
-
-    val publishToNexus = BuildType({
-        template(publishTemplate)
-        uuid = "1f64bac8-8bf1-4488-bd74-75e462492e41"
-        id = "TeamCityJmxPlugin_PublishToNexus"
-        name = "Publish to Nexus"
-
-        params {
-            param("repository.password", "%nexus.repository.password%")
-            param("repository.url", "%nexus.repository.snapshots.url%")
-            param("repository.user", "%nexus.repository.user%")
-        }
-    })
-    buildType(publishToNexus)
 
     val reportCodeQuality = BuildType({
         template(buildTemplate)
