@@ -189,4 +189,6 @@ project {
         disableSettings("vcsTrigger")
     })
     buildType(reportCodeQuality)
+
+    buildTypesOrder = arrayListOf(build80, build81, build90, build91, build100, reportCodeQuality)
 }
