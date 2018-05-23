@@ -1,7 +1,17 @@
+
 language: java
 
 jdk:
-  - oraclejdk7
+  - oraclejdk8
 
 script:
-  - ./gradlew clean build -Dteamcity.version=8.1.5
+  - ./gradlew -s clean build -Dteamcity.version=8.1.5
+
+before_cache:
+  - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
+  - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
+
+cache:
+  directories:
+    - $HOME/.gradle/caches/
+    - $HOME/.gradle/wrapper/
