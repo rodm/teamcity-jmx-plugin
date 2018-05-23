@@ -43,6 +43,11 @@ teamcity {
             email = 'rod.n.mackenzie@gmail.com'
             useSeparateClassloader = false
         }
+
+        publish {
+            username = findProperty('jetbrains.username')
+            password = findProperty('jetbrains.password')
+        }
     }
 
     environments {
