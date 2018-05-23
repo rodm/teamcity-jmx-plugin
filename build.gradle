@@ -37,36 +37,22 @@ dependencies {
     testCompile group: 'org.mockito', name: 'mockito-core', version: '1.9.5'
 }
 
-serverPlugin {
-    baseName = project.archivesBaseName
-}
-
 teamcity {
     version = "${teamcityVersion}"
 
     server {
+        archiveName = "${archivesBaseName}-${project.version}.zip"
+
         descriptor = file("$rootDir/src/main/descriptor/teamcity-plugin.xml")
         tokens VERSION: project.version, VCS_REVISION: buildVcsNumber, BUILD_NUMBER: buildNumber
+    }
 
+    environments {
         downloadsDir = project.downloadsDir
         baseHomeDir = project.serversDir
 
-        environments {
-            teamcity81 {
-                version = '8.1.5'
-            }
-
-            teamcity91 {
-                version = '9.1.7'
-            }
-
-            teamcity10 {
-                version = '10-EAP3'
-                downloadUrl = 'https://download.jetbrains.com/teamcity/eap/TeamCity-41843.tar.gz'
-                homeDir = file("${baseHomeDir}/TeamCity-${version}")
-                dataDir = file("${baseDataDir}/10.0")
-                javaHome = file(java8Home)
-            }
+        teamcity10 {
+            version = '10.0.5'
         }
     }
 }
