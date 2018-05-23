@@ -51,7 +51,6 @@ project {
             param("gradle.opts", "")
             param("gradle.tasks", "clean build")
             param("java.home", "%java8.home%")
-            param("system.teamcity.version", "%version%")
             param("version", "%teamcity80.version%")
         }
 
@@ -117,7 +116,7 @@ project {
         name = "Build - TeamCity 8.1"
 
         params {
-            param("gradle.opts", "-Dteamcity.version=%version% -Dteamcity.home=%teamcity.agent.jvm.user.home%/servers/TeamCity-%version%")
+            param("gradle.opts", "-Dteamcity.version=%version%")
             param("version", "%teamcity81.version%")
         }
     })
@@ -130,13 +129,9 @@ project {
         name = "Build - TeamCity 9.0"
 
         params {
-            param("env.JAVA_HOME", "%java.home%")
-            param("gradle.opts", "-Dteamcity.version=%version% -Dteamcity.home=%teamcity.agent.jvm.user.home%/servers/TeamCity-%version%")
-            param("system.teamcity.home", "%teamcity.agent.jvm.user.home%/servers/TeamCity-%version%")
+            param("gradle.opts", "-Dteamcity.version=%version%")
             param("version", "%teamcity90.version%")
         }
-
-        disableSettings("RUNNER_5")
     })
     buildType(build90)
 
@@ -147,13 +142,9 @@ project {
         name = "Build - TeamCity 9.1"
 
         params {
-            param("env.JAVA_HOME", "%java.home%")
-            param("gradle.opts", "-Dteamcity.version=%version% -Dteamcity.home=%teamcity.agent.jvm.user.home%/servers/TeamCity-%version%")
-            param("system.teamcity.home", "%teamcity.agent.jvm.user.home%/servers/TeamCity-%version%")
+            param("gradle.opts", "-Dteamcity.version=%version%")
             param("version", "%teamcity91.version%")
         }
-
-        disableSettings("RUNNER_5")
     })
     buildType(build91)
 
@@ -164,13 +155,9 @@ project {
         name = "Build - TeamCity 10.0"
 
         params {
-            param("env.JAVA_HOME", "%java.home%")
-            param("gradle.opts", "-Dteamcity.version=%version% -Dteamcity.home=%teamcity.agent.jvm.user.home%/servers/TeamCity-%version%")
-            param("system.teamcity.home", "%teamcity.agent.jvm.user.home%/servers/TeamCity-%version%")
+            param("gradle.opts", "-Dteamcity.version=%version%")
             param("version", "%teamcity100.version%")
         }
-
-        disableSettings("RUNNER_5")
     })
     buildType(build100)
 
@@ -181,27 +168,9 @@ project {
         name = "Report - Code Quality"
 
         params {
-            param("gradle.opts", """
-            %sonar.opts%
-            -Dteamcity.version=%version% -Dteamcity.home=%teamcity.agent.jvm.user.home%/servers/TeamCity-%version%
-        """.trimIndent())
-            param("gradle.tasks", "clean sonarqube")
-            param("java.home", "%java8.home%")
+            param("gradle.opts", "%sonar.opts% -Dteamcity.version=%version%")
+            param("gradle.tasks", "clean build sonarqube")
             param("version", "%teamcity81.version%")
-        }
-
-        steps {
-            gradle {
-                id = "RUNNER_37"
-                enabled = false
-                tasks = "sonarqube"
-                buildFile = ""
-                gradleParams = "%gradle.opts%"
-                useGradleWrapper = true
-                enableStacktrace = true
-                jdkHome = "%java.home%"
-            }
-            stepsOrder = arrayListOf("RUNNER_19", "RUNNER_37")
         }
 
         triggers {
@@ -217,7 +186,7 @@ project {
             }
         }
 
-        disableSettings("RUNNER_5", "vcsTrigger")
+        disableSettings("vcsTrigger")
     })
     buildType(reportCodeQuality)
 }
