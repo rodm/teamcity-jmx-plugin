@@ -8,57 +8,57 @@ import java.util.Date;
 
 public class Agent implements AgentMBean {
 
-    private SBuildAgent agent;
+    private SBuildAgent buildAgent;
 
-    private BuildAgentManager agentManager;
+    private BuildAgentManager buildAgentManager;
 
-    public Agent(SBuildAgent agent, BuildAgentManager agentManager) {
-        this.agent = agent;
-        this.agentManager = agentManager;
+    public Agent(SBuildAgent buildAgent, BuildAgentManager buildAgentManager) {
+        this.buildAgent = buildAgent;
+        this.buildAgentManager = buildAgentManager;
     }
 
     @Override
     public String getHostName() {
-        return agent.getHostName();
+        return buildAgent.getHostName();
     }
 
     @Override
     public String getHostAddress() {
-        return agent.getHostAddress();
+        return buildAgent.getHostAddress();
     }
 
     @Override
     public int getPort() {
-        return agent.getPort();
+        return buildAgent.getPort();
     }
 
     @Override
     public String getOperatingSystemName() {
-        return agent.getOperatingSystemName();
+        return buildAgent.getOperatingSystemName();
     }
 
     @Override
     public Date getRegistrationTimestamp() {
-        return agent.getRegistrationTimestamp();
+        return buildAgent.getRegistrationTimestamp();
     }
 
     @Override
     public Date getLastCommunicationTimestamp() {
-        return agent.getLastCommunicationTimestamp();
+        return buildAgent.getLastCommunicationTimestamp();
     }
 
     @Override
     public int getCpuBenchmarkIndex() {
-        return agent.getCpuBenchmarkIndex();
+        return buildAgent.getCpuBenchmarkIndex();
     }
 
     @Override
     public int getNumberOfCompatibleConfigurations() {
-        return agentManager.getNumberOfCompatibleConfigurations(agent);
+        return buildAgentManager.getNumberOfCompatibleConfigurations(buildAgent);
     }
 
     @Override
     public int getNumberOfIncompatibleConfigurations() {
-        return agentManager.getNumberOfIncompatibleConfigurations(agent);
+        return buildAgentManager.getNumberOfIncompatibleConfigurations(buildAgent);
     }
 }

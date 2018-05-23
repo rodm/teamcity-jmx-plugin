@@ -7,7 +7,7 @@ import java.util.List;
 
 public class Project implements ProjectMBean {
 
-    private SProject project;
+    private SProject serverProject;
 
     private String name;
 
@@ -18,7 +18,7 @@ public class Project implements ProjectMBean {
     private int pausedBuildTypes = 0;
 
     public Project(final SProject project) {
-        this.project = project;
+        this.serverProject = project;
         this.name = project.getName();
         update();
     }
@@ -33,7 +33,7 @@ public class Project implements ProjectMBean {
 
     @Override
     public int getNumberOfBuildTypes() {
-        return project.getBuildTypes().size();
+        return serverProject.getBuildTypes().size();
     }
 
     @Override
@@ -63,7 +63,7 @@ public class Project implements ProjectMBean {
         int successCount = 0;
         int failedCount = 0;
         int pausedCount = 0;
-        List<SBuildType> buildTypes = project.getBuildTypes();
+        List<SBuildType> buildTypes = serverProject.getBuildTypes();
         for (SBuildType buildType : buildTypes) {
             if (buildType.isPaused()) {
                 pausedCount++;
