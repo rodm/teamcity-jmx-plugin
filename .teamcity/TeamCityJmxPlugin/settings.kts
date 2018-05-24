@@ -7,8 +7,6 @@ import jetbrains.buildServer.configs.kotlin.v2017_2.buildSteps.gradle
 import jetbrains.buildServer.configs.kotlin.v2017_2.project
 import jetbrains.buildServer.configs.kotlin.v2017_2.projectFeatures.VersionedSettings
 import jetbrains.buildServer.configs.kotlin.v2017_2.projectFeatures.versionedSettings
-import jetbrains.buildServer.configs.kotlin.v2017_2.triggers.ScheduleTrigger
-import jetbrains.buildServer.configs.kotlin.v2017_2.triggers.schedule
 import jetbrains.buildServer.configs.kotlin.v2017_2.triggers.vcs
 import jetbrains.buildServer.configs.kotlin.v2017_2.vcs.GitVcsRoot
 import jetbrains.buildServer.configs.kotlin.v2017_2.version
@@ -144,21 +142,6 @@ project {
             param("gradle.tasks", "clean build sonarqube")
             param("version", "10.0")
         }
-
-        triggers {
-            schedule {
-                id = "TRIGGER_3"
-                schedulingPolicy = weekly {
-                    dayOfWeek = ScheduleTrigger.DAY.Saturday
-                    hour = 11
-                    minute = 15
-                }
-                branchFilter = ""
-                triggerBuild = always()
-            }
-        }
-
-        disableSettings("vcsTrigger")
     })
     buildType(reportCodeQuality)
 
