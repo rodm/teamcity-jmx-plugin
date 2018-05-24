@@ -1,0 +1,53 @@
+= JMX Support plugin for TeamCity
+:uri-teamcity: https://www.jetbrains.com/teamcity/[TeamCity]
+:uri-gradle: https://gradle.org/[Gradle]
+:uri-travis-build: https://travis-ci.org/rodm/teamcity-jmx-plugin
+:uri-travis-image: https://travis-ci.org/rodm/teamcity-jmx-plugin.svg
+:uri-jetbrains-plugin: https://plugins.jetbrains.com/plugin/9004-jmx-plugin
+:uri-bintray-plugin: https://bintray.com/rodm/teamcity-plugins/teamcity-jmx-plugin/_latestVersion
+:uri-bintray-image: https://api.bintray.com/packages/rodm/teamcity-plugins/teamcity-jmx-plugin/images/download.svg
+:uri-teamcity-install-plugin: https://confluence.jetbrains.com/display/TCD10/Installing+Additional+Plugins[Installing Additional Plugins]
+
+The JMX Support plugin exposes attributes of the Build Server and Build Agents using JMX.
+
+image:{uri-travis-image}[Build Status,link={uri-travis-build}]
+image:{uri-bintray-image}[Download,link={uri-bintray-plugin}]
+
+== How to install
+
+* Download the plugin from {uri-jetbrains-plugin}[JetBrains TeamCity Plugin Repository] or {uri-bintray-plugin}[Bintray]
+(see the _Downloads_ section at the bottom of the page).
+
+* Go to the plugin list of your TeamCity installation at `&lt;TeamCity URL&gt;/admin/admin.html?item=plugins` and
+click on the link _Upload plugin zip_ to install the downloaded plugin file.
+
+* Restart TeamCity.
+
+== How to use the plugin
+
+* Run the `jvisualvm` command
+* Select the TeamCity Server process, it will appear as Tomcat
+* Select MBean tab and then expand the node 'com.jetbrains.teamcity'
+
+== How to build the plugin
+
+The build uses {uri-gradle}, the following tasks can be used to build the plugin and deploy it to a
+local TeamCity Server for testing.
+
+Build the plugin
+
+    ./gradlew build
+
+The plugin is packaged into a zip file and found in the following directory `build/distributions/`
+
+Start the TeamCity Server
+
+    ./gradlew startTeamcity10Server
+
+Stop the TeamCity Server
+
+    ./gradlew stopTeamcity10Server
+
+== How to configure Munin to monitor TeamCity
+
+See the link:config/munin/README.md[README] in the `config/munin` directory.
