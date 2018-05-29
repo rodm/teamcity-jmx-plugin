@@ -37,6 +37,21 @@ public class Project implements ProjectMBean {
     }
 
     @Override
+    public int getNumberOfBuildTypeTemplates() {
+        return serverProject.getOwnBuildTypeTemplates().size();
+    }
+
+    @Override
+    public int getNumberOfSubProjects() {
+        return serverProject.getOwnProjects().size();
+    }
+
+    @Override
+    public int getNumberOfVcsRoots() {
+        return serverProject.getOwnVcsRoots().size();
+    }
+
+    @Override
     public int getNumberOfSuccessfulBuildTypes() {
         return successfulBuildTypes;
     }

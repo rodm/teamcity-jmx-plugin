@@ -4,6 +4,12 @@ public interface ProjectMBean {
 
     int getNumberOfBuildTypes();
 
+    int getNumberOfBuildTypeTemplates();
+
+    int getNumberOfSubProjects();
+
+    int getNumberOfVcsRoots();
+
     int getNumberOfSuccessfulBuildTypes();
 
     int getNumberOfFailedBuildTypes();
