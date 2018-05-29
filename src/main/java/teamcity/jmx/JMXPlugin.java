@@ -72,7 +72,7 @@ public class JMXPlugin extends BuildServerAdapter {
         projectCreated(projectId);
     }
 
-    public void projectCreated(String projectId) {
+    private void projectCreated(String projectId) {
         ProjectManager projectManager = server.getProjectManager();
         SProject project = projectManager.findProjectById(projectId);
         if (project != null) {
@@ -83,7 +83,8 @@ public class JMXPlugin extends BuildServerAdapter {
     }
 
     @Override
-    public void projectRemoved(@NotNull String projectId) {
+    public void projectRemoved(@NotNull SProject project) {
+        String projectId = project.getProjectId();
         Project projectMBean = projectMBeans.get(projectId);
         if (projectMBean != null) {
             unregisterMBean(JMX_DOMAIN, createProjectTypeName(projectMBean.getName()));

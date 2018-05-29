@@ -33,7 +33,7 @@ public class Project implements ProjectMBean {
 
     @Override
     public int getNumberOfBuildTypes() {
-        return serverProject.getBuildTypes().size();
+        return serverProject.getOwnBuildTypes().size();
     }
 
     @Override
@@ -63,7 +63,7 @@ public class Project implements ProjectMBean {
         int successCount = 0;
         int failedCount = 0;
         int pausedCount = 0;
-        List<SBuildType> buildTypes = serverProject.getBuildTypes();
+        List<SBuildType> buildTypes = serverProject.getOwnBuildTypes();
         for (SBuildType buildType : buildTypes) {
             if (buildType.isPaused()) {
                 pausedCount++;
