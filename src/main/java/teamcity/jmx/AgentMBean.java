@@ -11,9 +11,21 @@ public interface AgentMBean {
 
     String getOperatingSystemName();
 
+    boolean isRegistered();
+
+    String getUnregistrationComment();
+
     Date getRegistrationTimestamp();
 
     Date getLastCommunicationTimestamp();
+
+    boolean isEnabled();
+
+    String getStatusComment();
+
+    boolean isAuthorized();
+
+    String getAuthorizeComment();
 
     int getCpuBenchmarkIndex();
 

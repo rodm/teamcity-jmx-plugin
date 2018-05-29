@@ -38,6 +38,16 @@ public class Agent implements AgentMBean {
     }
 
     @Override
+    public boolean isRegistered() {
+        return getBuildAgent().isRegistered();
+    }
+
+    @Override
+    public String getUnregistrationComment() {
+        return getBuildAgent().getUnregistrationComment();
+    }
+
+    @Override
     public Date getRegistrationTimestamp() {
         return getBuildAgent().getRegistrationTimestamp();
     }
@@ -45,6 +55,26 @@ public class Agent implements AgentMBean {
     @Override
     public Date getLastCommunicationTimestamp() {
         return getBuildAgent().getLastCommunicationTimestamp();
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return getBuildAgent().isEnabled();
+    }
+
+    @Override
+    public String getStatusComment() {
+        return getBuildAgent().getStatusComment().getComment();
+    }
+
+    @Override
+    public boolean isAuthorized() {
+        return getBuildAgent().isAuthorized();
+    }
+
+    @Override
+    public String getAuthorizeComment() {
+        return getBuildAgent().getAuthorizeComment().getComment();
     }
 
     @Override
