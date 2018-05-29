@@ -65,6 +65,7 @@ public class JMXPlugin extends BuildServerAdapter {
 
     @Override
     public void agentRemoved(@NotNull SBuildAgent agent) {
+        unregisterMBean(JMX_DOMAIN, createAgentTypeName(agent.getName()) + ",stats=BuildStatistics");
         unregisterMBean(JMX_DOMAIN, createAgentTypeName(agent.getName()));
     }
 

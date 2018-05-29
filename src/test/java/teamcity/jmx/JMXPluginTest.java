@@ -64,13 +64,25 @@ public class JMXPluginTest {
     }
 
     @Test
-    public void shouldUnregisterAgentBuildStatisticsMBeanOnAgentRegistered() throws Exception {
+    public void unregisterAgentBuildStatisticsMBeanOnAgentUnregister() throws Exception {
         final ObjectName name = new ObjectName(JMX_DOMAIN + ":type=Agent,name=" + AGENT_NAME + ",stats=BuildStatistics");
         SBuildAgent agent = mock(SBuildAgent.class);
         when(agent.getName()).thenReturn(AGENT_NAME);
         when(mbeanServer.isRegistered(any(ObjectName.class))).thenReturn(true);
 
         plugin.agentUnregistered(agent);
+
+        verify(mbeanServer).unregisterMBean(eq(name));
+    }
+
+    @Test
+    public void unregisterAgentBuildStatisticsMBeanOnAgentRemove() throws Exception {
+        final ObjectName name = new ObjectName(JMX_DOMAIN + ":type=Agent,name=" + AGENT_NAME + ",stats=BuildStatistics");
+        SBuildAgent agent = mock(SBuildAgent.class);
+        when(agent.getName()).thenReturn(AGENT_NAME);
+        when(mbeanServer.isRegistered(any(ObjectName.class))).thenReturn(true);
+
+        plugin.agentRemoved(agent);
 
         verify(mbeanServer).unregisterMBean(eq(name));
     }
