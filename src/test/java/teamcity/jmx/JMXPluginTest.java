@@ -12,9 +12,10 @@ import javax.management.ObjectName;
 
 import java.util.Collections;
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -53,7 +54,7 @@ public class JMXPluginTest {
     }
 
     @Test
-    public void shouldRegisterAgentBuildStatisticsMBeanOnAgentRegistered() throws Exception {
+    public void onNewAgentRegisteringRegisterAgentBuildStatisticsMBean() throws Exception {
         final ObjectName name = new ObjectName(JMX_DOMAIN + ":type=Agent,name=" + AGENT_NAME + ",stats=BuildStatistics");
         SBuildAgent agent = mock(SBuildAgent.class);
         when(agent.getName()).thenReturn(AGENT_NAME);
@@ -64,7 +65,7 @@ public class JMXPluginTest {
     }
 
     @Test
-    public void unregisterAgentBuildStatisticsMBeanOnAgentUnregister() throws Exception {
+    public void onAgentUnregisteringAgentBuildStatisticsRemainRegistered() throws Exception {
         final ObjectName name = new ObjectName(JMX_DOMAIN + ":type=Agent,name=" + AGENT_NAME + ",stats=BuildStatistics");
         SBuildAgent agent = mock(SBuildAgent.class);
         when(agent.getName()).thenReturn(AGENT_NAME);
@@ -72,7 +73,7 @@ public class JMXPluginTest {
 
         plugin.agentUnregistered(agent);
 
-        verify(mbeanServer).unregisterMBean(eq(name));
+        verify(mbeanServer, never()).unregisterMBean(eq(name));
     }
 
     @Test
