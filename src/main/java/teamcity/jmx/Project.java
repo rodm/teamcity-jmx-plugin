@@ -4,6 +4,7 @@ import jetbrains.buildServer.serverSide.SBuildType;
 import jetbrains.buildServer.serverSide.SProject;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class Project implements ProjectMBean {
 
@@ -11,11 +12,11 @@ public class Project implements ProjectMBean {
 
     private String name;
 
-    private int successfulBuildTypes = 0;
+    private AtomicInteger successfulBuildTypes = new AtomicInteger();
 
-    private int failedBuildTypes = 0;
+    private AtomicInteger failedBuildTypes = new AtomicInteger();
 
-    private int pausedBuildTypes = 0;
+    private AtomicInteger pausedBuildTypes = new AtomicInteger();
 
     public Project(final SProject project) {
         this.serverProject = project;
@@ -53,23 +54,23 @@ public class Project implements ProjectMBean {
 
     @Override
     public int getNumberOfSuccessfulBuildTypes() {
-        return successfulBuildTypes;
+        return successfulBuildTypes.get();
     }
 
     @Override
     public int getNumberOfFailedBuildTypes() {
-        return failedBuildTypes;
+        return failedBuildTypes.get();
     }
 
     @Override
     public int getNumberOfPausedBuildTypes() {
-        return pausedBuildTypes;
+        return pausedBuildTypes.get();
     }
 
     @Override
     public int getSuccessPercentage() {
         if (getNumberOfBuildTypes() > 0) {
-            return (successfulBuildTypes / getNumberOfBuildTypes()) * 100;
+            return (successfulBuildTypes.get() / getNumberOfBuildTypes()) * 100;
         }
         return 0;
     }
@@ -90,8 +91,8 @@ public class Project implements ProjectMBean {
                 }
             }
         }
-        this.successfulBuildTypes = successCount;
-        this.failedBuildTypes = failedCount;
-        this.pausedBuildTypes = pausedCount;
+        this.successfulBuildTypes.set(successCount);
+        this.failedBuildTypes.set(failedCount);
+        this.pausedBuildTypes.set(pausedCount);
     }
 }

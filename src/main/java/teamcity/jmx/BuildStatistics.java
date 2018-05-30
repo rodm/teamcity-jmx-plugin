@@ -6,16 +6,18 @@ import jetbrains.buildServer.serverSide.SBuildServer;
 import jetbrains.buildServer.serverSide.SRunningBuild;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.concurrent.atomic.AtomicLong;
+
 public class BuildStatistics extends BuildServerAdapter implements BuildStatisticsMBean {
 
     private BuildFilter filter;
 
-    private long buildsStarted = 0;
-    private long buildsFinished = 0;
-    private long buildsInterrupted = 0;
-    private long successfulBuilds = 0;
-    private long failedBuilds = 0;
-    private long ignoredBuilds = 0;
+    private AtomicLong buildsStarted = new AtomicLong();
+    private AtomicLong buildsFinished = new AtomicLong();
+    private AtomicLong buildsInterrupted = new AtomicLong();
+    private AtomicLong successfulBuilds = new AtomicLong();
+    private AtomicLong failedBuilds = new AtomicLong();
+    private AtomicLong ignoredBuilds = new AtomicLong();
 
     public BuildStatistics(SBuildServer server) {
         this(server, new AcceptAllBuildFilter());
@@ -28,54 +30,54 @@ public class BuildStatistics extends BuildServerAdapter implements BuildStatisti
 
     @Override
     public long getBuildsStarted() {
-        return buildsStarted;
+        return buildsStarted.get();
     }
 
     @Override
     public long getBuildsFinished() {
-        return buildsFinished;
+        return buildsFinished.get();
     }
 
     @Override
     public long getBuildsInterrupted() {
-        return buildsInterrupted;
+        return buildsInterrupted.get();
     }
 
     @Override
     public long getSuccessfulBuilds() {
-        return successfulBuilds;
+        return successfulBuilds.get();
     }
 
     @Override
     public long getFailedBuilds() {
-        return failedBuilds;
+        return failedBuilds.get();
     }
 
     @Override
     public long getIgnoredBuilds() {
-        return ignoredBuilds;
+        return ignoredBuilds.get();
     }
 
     @Override
     public void buildStarted(@NotNull SRunningBuild build) {
         if (filter.accept(build)) {
-            buildsStarted++;
+            buildsStarted.incrementAndGet();
         }
     }
 
     @Override
     public void buildFinished(@NotNull SRunningBuild build) {
         if (filter.accept(build)) {
-            buildsFinished++;
+            buildsFinished.incrementAndGet();
             Status status = build.getBuildStatus();
             if (status.isSuccessful()) {
-                successfulBuilds++;
+                successfulBuilds.incrementAndGet();
             }
             if (status.isFailed()) {
-                failedBuilds++;
+                failedBuilds.incrementAndGet();
             }
             if (status.isIgnored()) {
-                ignoredBuilds++;
+                ignoredBuilds.incrementAndGet();
             }
         }
     }
@@ -83,7 +85,7 @@ public class BuildStatistics extends BuildServerAdapter implements BuildStatisti
     @Override
     public void buildInterrupted(@NotNull SRunningBuild build) {
         if (filter.accept(build)) {
-            buildsInterrupted++;
+            buildsInterrupted.incrementAndGet();
         }
     }
 }
