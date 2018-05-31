@@ -35,21 +35,21 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class JMXPluginTest {
+public class JMXSupportTest {
 
     private static final String JMX_DOMAIN = "com.jetbrains.teamcity";
     private static final String AGENT_NAME = "TestAgent";
 
     private MBeanServer mbeanServer;
     private SBuildServer server;
-    private JMXPlugin plugin;
+    private JMXSupport plugin;
 
     @Before
     public void setup() {
         mbeanServer = mock(MBeanServer.class);
         server = mock(SBuildServer.class);
 
-        plugin = new JMXPlugin(server) {
+        plugin = new JMXSupport(server) {
             @Override
             MBeanServer getMBeanServer() {
                 return mbeanServer;

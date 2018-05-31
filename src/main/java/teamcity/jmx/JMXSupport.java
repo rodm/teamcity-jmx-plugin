@@ -33,9 +33,11 @@ import java.lang.management.ManagementFactory;
 import java.util.HashMap;
 import java.util.Map;
 
-public class JMXPlugin extends BuildServerAdapter {
+import static jetbrains.buildServer.log.Loggers.SERVER_CATEGORY;
 
-    private static final Logger LOGGER = Logger.getLogger("jetbrains.buildServer.SERVER");
+public class JMXSupport extends BuildServerAdapter {
+
+    private static final Logger LOGGER = Logger.getLogger(SERVER_CATEGORY + "." + JMXSupport.class.getSimpleName());
 
     private static final String JMX_DOMAIN = "com.jetbrains.teamcity";
 
@@ -46,7 +48,7 @@ public class JMXPlugin extends BuildServerAdapter {
     private Map<String, Project> projectMBeans = new HashMap<>();
 
     @SuppressWarnings("WeakerAccess")
-    public JMXPlugin(@NotNull SBuildServer server) {
+    public JMXSupport(@NotNull SBuildServer server) {
         this.server = server;
         this.name = this.getClass().getSimpleName();
         server.addListener(this);
@@ -54,7 +56,7 @@ public class JMXPlugin extends BuildServerAdapter {
 
     @Override
     public void serverStartup() {
-        LOGGER.info(name + " started");
+        LOGGER.info(name + " plugin started");
 
         BuildServerMBean buildServer = new BuildServer(server);
         registerMBean(JMX_DOMAIN, "type=BuildServer", buildServer);
@@ -68,7 +70,7 @@ public class JMXPlugin extends BuildServerAdapter {
 
     @Override
     public void serverShutdown() {
-        LOGGER.info(name + " stopped");
+        LOGGER.info(name + " plugin stopped");
     }
 
     @Override
