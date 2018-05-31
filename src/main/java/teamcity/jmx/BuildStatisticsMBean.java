@@ -8,4 +8,7 @@ public interface BuildStatisticsMBean {
     long getSuccessfulBuilds();
     long getFailedBuilds();
     long getIgnoredBuilds();
+
+    long getQueueTime();
+    long getBuildTime();
 }

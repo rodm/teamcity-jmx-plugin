@@ -1,39 +1,54 @@
 package teamcity.jmx;
 
 import jetbrains.buildServer.messages.Status;
+import jetbrains.buildServer.serverSide.BuildHistory;
 import jetbrains.buildServer.serverSide.SBuild;
 import jetbrains.buildServer.serverSide.SBuildServer;
+import jetbrains.buildServer.serverSide.SFinishedBuild;
 import jetbrains.buildServer.serverSide.SRunningBuild;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.Date;
+
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 public class BuildStatisticsTest {
 
+    private static final long BUILD_ID = 1234;
+
     private SBuildServer server;
+    private BuildHistory history;
     private BuildStatistics stats;
-    private SRunningBuild DUMMY_BUILD = null;
+    private SRunningBuild DUMMY_BUILD;
     private SRunningBuild SUCCESSFUL_BUILD;
     private SRunningBuild FAILED_BUILD;
     private SRunningBuild IGNORED_BUILD;
+    private SRunningBuild RUNNING_BUILD;
 
     @Before
     public void setup() {
         server = mock(SBuildServer.class);
+        history = mock(BuildHistory.class);
         stats = new BuildStatistics(server);
 
+        when(server.getHistory()).thenReturn(history);
+
+        DUMMY_BUILD = mock(SRunningBuild.class);
         SUCCESSFUL_BUILD = mock(SRunningBuild.class);
         when(SUCCESSFUL_BUILD.getBuildStatus()).thenReturn(Status.NORMAL);
         FAILED_BUILD = mock(SRunningBuild.class);
         when(FAILED_BUILD.getBuildStatus()).thenReturn(Status.FAILURE);
         IGNORED_BUILD = mock(SRunningBuild.class);
         when(IGNORED_BUILD.getBuildStatus()).thenReturn(Status.UNKNOWN);
+        RUNNING_BUILD = mock(SRunningBuild.class);
+        when(RUNNING_BUILD.getBuildId()).thenReturn(BUILD_ID);
+        when(RUNNING_BUILD.getBuildStatus()).thenReturn(Status.NORMAL);
     }
 
     @Test
@@ -173,5 +188,57 @@ public class BuildStatisticsTest {
         stats.buildInterrupted(SUCCESSFUL_BUILD);
 
         assertEquals(0, stats.getBuildsInterrupted());
+    }
+
+    @Test
+    public void recordQueueTimeOfFinishedBuild() {
+        SFinishedBuild finishedBuild = createFinishedBuild(15, 10);
+        when(history.findEntry(BUILD_ID)).thenReturn(finishedBuild);
+
+        stats.buildFinished(RUNNING_BUILD);
+
+        assertEquals(15, stats.getQueueTime());
+    }
+
+    @Test
+    public void recordBuildTimeOfFinishedBuild() {
+        SFinishedBuild finishedBuild = createFinishedBuild(15, 10);
+        when(history.findEntry(BUILD_ID)).thenReturn(finishedBuild);
+
+        stats.buildFinished(RUNNING_BUILD);
+
+        assertEquals(10, stats.getBuildTime());
+    }
+
+    @Test
+    public void recordQueueTimeOfInterruptedBuild() {
+        SFinishedBuild finishedBuild = createFinishedBuild(10, 5);
+        when(history.findEntry(BUILD_ID)).thenReturn(finishedBuild);
+
+        stats.buildInterrupted(RUNNING_BUILD);
+
+        assertEquals(10, stats.getQueueTime());
+    }
+
+    @Test
+    public void recordBuildTimeOfInterruptedBuild() {
+        SFinishedBuild finishedBuild = createFinishedBuild(10, 5);
+        when(history.findEntry(BUILD_ID)).thenReturn(finishedBuild);
+
+        stats.buildInterrupted(RUNNING_BUILD);
+
+        assertEquals(5, stats.getBuildTime());
+    }
+
+    private SFinishedBuild createFinishedBuild(int queueTime, int buildTime) {
+        long time = System.currentTimeMillis();
+        Date queuedDate = new Date(time);
+        Date startDate = new Date(time + (queueTime * 1000));
+        Date finishDate = new Date(time + ((queueTime + buildTime) * 1000));
+        SFinishedBuild finishedBuild = mock((SFinishedBuild.class));
+        when(finishedBuild.getQueuedDate()).thenReturn(queuedDate);
+        when(finishedBuild.getStartDate()).thenReturn(startDate);
+        when(finishedBuild.getFinishDate()).thenReturn(finishDate);
+        return finishedBuild;
     }
 }
