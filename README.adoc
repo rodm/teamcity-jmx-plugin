@@ -51,3 +51,11 @@ Stop the TeamCity Server
 == How to configure Munin to monitor TeamCity
 
 See the link:config/munin/README.md[README] in the `config/munin` directory.
+
+== Compatibility
+
+The plugin is compatible with TeamCity 10.0 and later.
+
+== License
+
+This plugin is available under the http://www.apache.org/licenses/LICENSE-2.0.html[Apache License, Version 2.0].
