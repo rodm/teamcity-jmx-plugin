@@ -41,7 +41,7 @@ teamcity {
             vendorName = 'Rod MacKenzie'
             vendorUrl = 'https://github.com/rodm'
             email = 'rod.n.mackenzie@gmail.com'
-            useSeparateClassloader = false
+            useSeparateClassloader = true
         }
 
         publish {
