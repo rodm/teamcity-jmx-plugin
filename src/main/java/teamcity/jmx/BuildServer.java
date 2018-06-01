@@ -92,4 +92,16 @@ public class BuildServer extends BuildServerAdapter implements BuildServerMBean 
     public void cleanupFinished() {
         cleanupDuration = (System.currentTimeMillis() - cleanupStartTime) / 1000;
     }
+
+    long getCleanupStartTime() {
+        return cleanupStartTime;
+    }
+
+    void setCleanupStartTime(long startTime) {
+        cleanupStartTime = startTime;
+    }
+
+    void setCleanupDuration(long duration) {
+        cleanupDuration = duration;
+    }
 }

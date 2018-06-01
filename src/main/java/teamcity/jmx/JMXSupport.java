@@ -16,15 +16,17 @@
 
 package teamcity.jmx;
 
-import jetbrains.buildServer.serverSide.BuildServerAdapter;
 import jetbrains.buildServer.serverSide.ProjectManager;
 import jetbrains.buildServer.serverSide.SBuildAgent;
 import jetbrains.buildServer.serverSide.SBuildServer;
 import jetbrains.buildServer.serverSide.SBuildType;
 import jetbrains.buildServer.serverSide.SProject;
 import jetbrains.buildServer.serverSide.SRunningBuild;
+import jetbrains.buildServer.serverSide.ServerPaths;
 import jetbrains.buildServer.users.SUser;
+import jetbrains.buildServer.util.BasePluginStatePersister;
 import org.apache.log4j.Logger;
+import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
 import javax.management.MBeanServer;
@@ -35,7 +37,7 @@ import java.util.Map;
 
 import static jetbrains.buildServer.log.Loggers.SERVER_CATEGORY;
 
-public class JMXSupport extends BuildServerAdapter {
+public class JMXSupport extends BasePluginStatePersister {
 
     private static final Logger LOGGER = Logger.getLogger(SERVER_CATEGORY + "." + JMXSupport.class.getSimpleName());
 
@@ -45,33 +47,68 @@ public class JMXSupport extends BuildServerAdapter {
 
     private String name;
 
+    private BuildServer buildServer;
+    private BuildStatistics serverBuildStatistics;
     private Map<String, Project> projectMBeans = new HashMap<>();
     private Map<String, BuildStatistics> projectBuildStatisticsMBeans = new HashMap<>();
 
     @SuppressWarnings("WeakerAccess")
-    public JMXSupport(@NotNull SBuildServer server) {
+    public JMXSupport(@NotNull SBuildServer server, @NotNull ServerPaths serverPaths) {
+        super(server, serverPaths);
         this.server = server;
         this.name = this.getClass().getSimpleName();
-        server.addListener(this);
     }
 
     @Override
     public void serverStartup() {
         LOGGER.info(name + " plugin started");
 
-        BuildServerMBean buildServer = new BuildServer(server);
+        buildServer = new BuildServer(server);
         registerMBean(JMX_DOMAIN, "type=BuildServer", buildServer);
-        BuildStatistics serverBuildStatistics = new BuildStatistics(server);
+        serverBuildStatistics = new BuildStatistics(server);
         registerMBean(JMX_DOMAIN, "type=BuildServer,stats=BuildStatistics", serverBuildStatistics);
 
         for (SProject project : server.getProjectManager().getProjects()) {
             projectCreated(project.getProjectId());
         }
+        super.serverStartup();
     }
 
     @Override
     public void serverShutdown() {
+        super.serverShutdown();
         LOGGER.info(name + " plugin stopped");
+    }
+
+    @NotNull
+    @Override
+    protected String getPluginName() {
+        return "jmx-support";
+    }
+
+    @NotNull
+    @Override
+    protected String getStateName() {
+        return "state";
+    }
+
+    @Override
+    protected void writeExternal(@NotNull Element root) {
+        final Element server = new Element("server");
+        server.setAttribute("cleanup-starttime", Long.toString(buildServer.getCleanupStartTime()));
+        server.setAttribute("cleanup-duration", Long.toString(buildServer.getCleanupDuration()));
+        root.addContent(server);
+    }
+
+    @Override
+    protected void readExternal(@NotNull Element root) {
+        Element server = root.getChild("server");
+        if (server != null) {
+            String cleanupStartTime = server.getAttributeValue("cleanup-starttime", "0");
+            String cleanupDuration = server.getAttributeValue("cleanup-duration", "0");
+            buildServer.setCleanupStartTime(Long.parseLong(cleanupStartTime));
+            buildServer.setCleanupDuration(Long.parseLong(cleanupDuration));
+        }
     }
 
     @Override
