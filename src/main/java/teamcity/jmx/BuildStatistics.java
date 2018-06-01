@@ -21,6 +21,7 @@ import jetbrains.buildServer.serverSide.BuildServerAdapter;
 import jetbrains.buildServer.serverSide.SBuildServer;
 import jetbrains.buildServer.serverSide.SFinishedBuild;
 import jetbrains.buildServer.serverSide.SRunningBuild;
+import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Date;
@@ -132,5 +133,37 @@ public class BuildStatistics extends BuildServerAdapter implements BuildStatisti
             queueTime.getAndAdd((startDate.getTime() - queuedDate.getTime()) / 1000);
             buildTime.getAndAdd((finishDate.getTime() - startDate.getTime()) / 1000);
         }
+    }
+
+    void writeExternal(@NotNull Element parent) {
+        final Element statistics = new Element("build-statistics");
+        statistics.setAttribute("started", Long.toString(getBuildsStarted()));
+        statistics.setAttribute("finished", Long.toString(getBuildsFinished()));
+        statistics.setAttribute("interrupted", Long.toString(getBuildsInterrupted()));
+        statistics.setAttribute("successful", Long.toString(getSuccessfulBuilds()));
+        statistics.setAttribute("failed", Long.toString(getFailedBuilds()));
+        statistics.setAttribute("ignored", Long.toString(getIgnoredBuilds()));
+        statistics.setAttribute("queue-time", Long.toString(getQueueTime()));
+        statistics.setAttribute("build-time", Long.toString(getBuildTime()));
+        parent.addContent(statistics);
+    }
+
+    void readExternal(@NotNull Element parent) {
+        Element statistics = parent.getChild("build-statistics");
+        if (statistics != null) {
+            buildsStarted.set(getValue(statistics, "started"));
+            buildsFinished.set(getValue(statistics, "finished"));
+            buildsInterrupted.set(getValue(statistics, "interrupted"));
+            successfulBuilds.set(getValue(statistics, "successful"));
+            failedBuilds.set(getValue(statistics, "failed"));
+            ignoredBuilds.set(getValue(statistics, "ignored"));
+            queueTime.set(getValue(statistics, "queue-time"));
+            buildTime.set(getValue(statistics, "build-time"));
+        }
+    }
+
+    private long getValue(@NotNull Element element, String attributeName) {
+        String value = element.getAttributeValue(attributeName, "0");
+        return Long.parseLong(value);
     }
 }

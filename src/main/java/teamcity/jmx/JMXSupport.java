@@ -98,6 +98,7 @@ public class JMXSupport extends BasePluginStatePersister {
         server.setAttribute("cleanup-starttime", Long.toString(buildServer.getCleanupStartTime()));
         server.setAttribute("cleanup-duration", Long.toString(buildServer.getCleanupDuration()));
         root.addContent(server);
+        serverBuildStatistics.writeExternal(server);
     }
 
     @Override
@@ -108,6 +109,7 @@ public class JMXSupport extends BasePluginStatePersister {
             String cleanupDuration = server.getAttributeValue("cleanup-duration", "0");
             buildServer.setCleanupStartTime(Long.parseLong(cleanupStartTime));
             buildServer.setCleanupDuration(Long.parseLong(cleanupDuration));
+            serverBuildStatistics.readExternal(server);
         }
     }
 
