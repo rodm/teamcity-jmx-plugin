@@ -46,6 +46,7 @@ public class JMXSupport extends BuildServerAdapter {
     private String name;
 
     private Map<String, Project> projectMBeans = new HashMap<>();
+    private Map<String, BuildStatistics> projectBuildStatisticsMBeans = new HashMap<>();
 
     @SuppressWarnings("WeakerAccess")
     public JMXSupport(@NotNull SBuildServer server) {
@@ -102,7 +103,10 @@ public class JMXSupport extends BuildServerAdapter {
         if (project != null) {
             Project projectMBean = new Project(project);
             projectMBeans.put(projectId, projectMBean);
+            BuildStatistics buildStatisticsMBean = new BuildStatistics(server, new ProjectBuildFilter(project));
+            projectBuildStatisticsMBeans.put(projectId, buildStatisticsMBean);
             registerMBean(JMX_DOMAIN, createProjectTypeName(project.getName()), projectMBean);
+            registerMBean(JMX_DOMAIN, createProjectTypeName(project.getName()) + ",stats=BuildStatistics", buildStatisticsMBean);
         }
     }
 
@@ -111,18 +115,23 @@ public class JMXSupport extends BuildServerAdapter {
         String projectId = project.getProjectId();
         Project projectMBean = projectMBeans.get(projectId);
         if (projectMBean != null) {
+            unregisterMBean(JMX_DOMAIN, createProjectTypeName(projectMBean.getName()) + ",stats=BuildStatistics");
             unregisterMBean(JMX_DOMAIN, createProjectTypeName(projectMBean.getName()));
             projectMBeans.remove(projectId);
+            projectBuildStatisticsMBeans.remove(projectId);
         }
     }
 
     @Override
     public void projectPersisted(@NotNull String projectId) {
-        SProject project = server.getProjectManager().findProjectById(projectId);
         Project projectMBean = projectMBeans.get(projectId);
+        BuildStatistics buildStatisticsMBean = projectBuildStatisticsMBeans.get(projectId);
+        SProject project = server.getProjectManager().findProjectById(projectId);
         if (project != null && projectMBean != null && !project.getName().equals(projectMBean.getName())) {
             registerMBean(JMX_DOMAIN, createProjectTypeName(project.getName()), projectMBean);
+            registerMBean(JMX_DOMAIN, createProjectTypeName(project.getName()) + ",stats=BuildStatistics", buildStatisticsMBean);
             unregisterMBean(JMX_DOMAIN, createProjectTypeName(projectMBean.getName()));
+            unregisterMBean(JMX_DOMAIN, createProjectTypeName(projectMBean.getName()) + ",stats=BuildStatistics");
             projectMBean.setName(project.getName());
         }
     }
