@@ -125,15 +125,14 @@ public class JMXSupport extends BasePluginStatePersister {
     }
 
     private BuildStatistics createProjectBuildStatistics(String projectId) {
-        SProject project = server.getProjectManager().findProjectById(projectId);
-        return new BuildStatistics(server, new ProjectBuildFilter(project));
+        return new BuildStatistics(server, new ProjectBuildFilter(projectId));
     }
 
     @Override
     public void agentRegistered(@NotNull SBuildAgent agent, long currentlyRunningBuildId) {
         AgentMBean agentMBean = new Agent(agent, server.getBuildAgentManager());
         registerMBean(JMX_DOMAIN, createAgentTypeName(agent.getName()), agentMBean);
-        BuildStatisticsMBean agentBuildStatistics = new BuildStatistics(server, new AgentBuildFilter(agent));
+        BuildStatisticsMBean agentBuildStatistics = new BuildStatistics(server, new AgentBuildFilter(agent.getId()));
         registerMBean(JMX_DOMAIN, createAgentTypeName(agent.getName()) + ",stats=BuildStatistics", agentBuildStatistics);
     }
 
@@ -158,7 +157,7 @@ public class JMXSupport extends BasePluginStatePersister {
         if (project != null) {
             Project projectMBean = new Project(project);
             projectMBeans.put(projectId, projectMBean);
-            BuildStatistics buildStatisticsMBean = new BuildStatistics(server, new ProjectBuildFilter(project));
+            BuildStatistics buildStatisticsMBean = new BuildStatistics(server, new ProjectBuildFilter(projectId));
             projectBuildStatisticsMBeans.put(projectId, buildStatisticsMBean);
             registerMBean(JMX_DOMAIN, createProjectTypeName(project.getName()), projectMBean);
             registerMBean(JMX_DOMAIN, createProjectTypeName(project.getName()) + ",stats=BuildStatistics", buildStatisticsMBean);

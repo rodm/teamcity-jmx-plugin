@@ -34,9 +34,7 @@ public class AgentBuildFilterTest {
 
     @Before
     public void setup() {
-        SBuildAgent statsAgent = mock(SBuildAgent.class);
-        when(statsAgent.getId()).thenReturn(123);
-        filter = new AgentBuildFilter(statsAgent);
+        filter = new AgentBuildFilter(123);
 
         buildAgent = mock(SBuildAgent.class);
         build = mock(SBuild.class);

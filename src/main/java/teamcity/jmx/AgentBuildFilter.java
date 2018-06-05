@@ -17,18 +17,17 @@
 package teamcity.jmx;
 
 import jetbrains.buildServer.serverSide.SBuild;
-import jetbrains.buildServer.serverSide.SBuildAgent;
 
 public class AgentBuildFilter implements BuildFilter {
 
-    private SBuildAgent agent;
+    private int agentId;
 
-    public AgentBuildFilter(SBuildAgent agent) {
-        this.agent = agent;
+    public AgentBuildFilter(int agentId) {
+        this.agentId = agentId;
     }
 
     @Override
     public boolean accept(SBuild build) {
-        return agent.getId() == build.getAgent().getId();
+        return agentId == build.getAgent().getId();
     }
 }

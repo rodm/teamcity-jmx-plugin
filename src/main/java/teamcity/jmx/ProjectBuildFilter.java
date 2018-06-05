@@ -17,18 +17,17 @@
 package teamcity.jmx;
 
 import jetbrains.buildServer.serverSide.SBuild;
-import jetbrains.buildServer.serverSide.SProject;
 
 public class ProjectBuildFilter implements BuildFilter {
 
-    private SProject project;
+    private String projectId;
 
-    public ProjectBuildFilter(SProject project) {
-        this.project = project;
+    public ProjectBuildFilter(String projectId) {
+        this.projectId = projectId;
     }
 
     @Override
     public boolean accept(SBuild build) {
-        return project.getProjectId().equals(build.getProjectId());
+        return projectId.equals(build.getProjectId());
     }
 }
