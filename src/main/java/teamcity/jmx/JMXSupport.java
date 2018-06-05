@@ -49,6 +49,8 @@ public class JMXSupport extends BasePluginStatePersister {
 
     private BuildServer buildServer;
     private BuildStatistics serverBuildStatistics;
+    private Map<Integer, Agent> agentMBeans = new HashMap<>();
+    private Map<Integer, BuildStatistics> agentBuildStatisticsMBeans = new HashMap<>();
     private Map<String, Project> projectMBeans = new HashMap<>();
     private Map<String, BuildStatistics> projectBuildStatisticsMBeans = new HashMap<>();
 
@@ -95,6 +97,16 @@ public class JMXSupport extends BasePluginStatePersister {
         server.setAttribute("cleanup-duration", Long.toString(buildServer.getCleanupDuration()));
         root.addContent(server);
         serverBuildStatistics.writeExternal(server);
+
+        final Element agents = new Element("agents");
+        for (Map.Entry<Integer, BuildStatistics> entry : agentBuildStatisticsMBeans.entrySet()) {
+            final Element agent = new Element("agent");
+            agent.setAttribute("id", Integer.toString(entry.getKey()));
+            entry.getValue().writeExternal(agent);
+            agents.addContent(agent);
+        }
+        root.addContent(agents);
+
         final Element projects = new Element("projects");
         for (Map.Entry<String, BuildStatistics> entry : projectBuildStatisticsMBeans.entrySet()) {
             final Element project = new Element("project");
@@ -115,6 +127,15 @@ public class JMXSupport extends BasePluginStatePersister {
             buildServer.setCleanupDuration(Long.parseLong(cleanupDuration));
             serverBuildStatistics.readExternal(server);
         }
+
+        Element agents = root.getChild("agents");
+        for (Object object : agents.getChildren("agent")) {
+            Element agent = (Element) object;
+            Integer agentId = Integer.parseInt(agent.getAttributeValue("id", "0"));
+            BuildStatistics buildStatistics = agentBuildStatisticsMBeans.computeIfAbsent(agentId, this::createAgentBuildStatistics);
+            buildStatistics.readExternal(agent);
+        }
+
         Element projects = root.getChild("projects");
         for (Object object : projects.getChildren("project")) {
             Element project = (Element) object;
@@ -130,10 +151,15 @@ public class JMXSupport extends BasePluginStatePersister {
 
     @Override
     public void agentRegistered(@NotNull SBuildAgent agent, long currentlyRunningBuildId) {
-        AgentMBean agentMBean = new Agent(agent, server.getBuildAgentManager());
+        int agentId = agent.getId();
+        AgentMBean agentMBean = agentMBeans.computeIfAbsent(agentId, (k) -> new Agent(agent, server.getBuildAgentManager()));
         registerMBean(JMX_DOMAIN, createAgentTypeName(agent.getName()), agentMBean);
-        BuildStatisticsMBean agentBuildStatistics = new BuildStatistics(server, new AgentBuildFilter(agent.getId()));
+        BuildStatisticsMBean agentBuildStatistics = agentBuildStatisticsMBeans.computeIfAbsent(agentId, this::createAgentBuildStatistics);
         registerMBean(JMX_DOMAIN, createAgentTypeName(agent.getName()) + ",stats=BuildStatistics", agentBuildStatistics);
+    }
+
+    private BuildStatistics createAgentBuildStatistics(int agentId) {
+        return new BuildStatistics(server, new AgentBuildFilter(agentId));
     }
 
     @Override
@@ -144,6 +170,8 @@ public class JMXSupport extends BasePluginStatePersister {
     public void agentRemoved(@NotNull SBuildAgent agent) {
         unregisterMBean(JMX_DOMAIN, createAgentTypeName(agent.getName()) + ",stats=BuildStatistics");
         unregisterMBean(JMX_DOMAIN, createAgentTypeName(agent.getName()));
+        agentMBeans.remove(agent.getId());
+        agentBuildStatisticsMBeans.remove(agent.getId());
     }
 
     @Override
