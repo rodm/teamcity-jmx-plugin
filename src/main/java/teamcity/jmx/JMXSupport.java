@@ -67,10 +67,6 @@ public class JMXSupport extends BasePluginStatePersister {
         registerMBean(JMX_DOMAIN, "type=BuildServer", buildServer);
         serverBuildStatistics = new BuildStatistics(server);
         registerMBean(JMX_DOMAIN, "type=BuildServer,stats=BuildStatistics", serverBuildStatistics);
-
-        for (SProject project : server.getProjectManager().getProjects()) {
-            projectCreated(project.getProjectId());
-        }
         super.serverStartup();
     }
 
@@ -99,6 +95,14 @@ public class JMXSupport extends BasePluginStatePersister {
         server.setAttribute("cleanup-duration", Long.toString(buildServer.getCleanupDuration()));
         root.addContent(server);
         serverBuildStatistics.writeExternal(server);
+        final Element projects = new Element("projects");
+        for (Map.Entry<String, BuildStatistics> entry : projectBuildStatisticsMBeans.entrySet()) {
+            final Element project = new Element("project");
+            project.setAttribute("id", entry.getKey());
+            entry.getValue().writeExternal(project);
+            projects.addContent(project);
+        }
+        root.addContent(projects);
     }
 
     @Override
@@ -111,6 +115,18 @@ public class JMXSupport extends BasePluginStatePersister {
             buildServer.setCleanupDuration(Long.parseLong(cleanupDuration));
             serverBuildStatistics.readExternal(server);
         }
+        Element projects = root.getChild("projects");
+        for (Object object : projects.getChildren("project")) {
+            Element project = (Element) object;
+            String projectId = project.getAttributeValue("id");
+            BuildStatistics buildStatistics = projectBuildStatisticsMBeans.computeIfAbsent(projectId, this::createProjectBuildStatistics);
+            buildStatistics.readExternal(project);
+        }
+    }
+
+    private BuildStatistics createProjectBuildStatistics(String projectId) {
+        SProject project = server.getProjectManager().findProjectById(projectId);
+        return new BuildStatistics(server, new ProjectBuildFilter(project));
     }
 
     @Override
