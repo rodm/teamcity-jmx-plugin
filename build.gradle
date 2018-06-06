@@ -37,7 +37,7 @@ teamcity {
             name = 'jmxPlugin'
             displayName = 'JMX support'
             version = project.version
-            description = 'Makes BuildServer and Agent attributes available via JMX.'
+            description = 'Exposes Server, Agent and Project attributes and related build statistics via JMX.'
             vendorName = 'Rod MacKenzie'
             vendorUrl = 'https://github.com/rodm'
             email = 'rod.n.mackenzie@gmail.com'
