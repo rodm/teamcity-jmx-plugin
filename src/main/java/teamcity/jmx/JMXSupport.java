@@ -126,12 +126,20 @@ public class JMXSupport extends BasePluginStatePersister implements Runnable {
 
     @Override
     protected void writeExternal(@NotNull Element root) {
+        writeServer(root);
+        writeAgents(root);
+        writeProjects(root);
+    }
+
+    private void writeServer(@NotNull Element root) {
         final Element server = new Element("server");
         server.setAttribute("cleanup-starttime", Long.toString(buildServer.getCleanupStartTime()));
         server.setAttribute("cleanup-duration", Long.toString(buildServer.getCleanupDuration()));
         root.addContent(server);
         serverBuildStatistics.writeExternal(server);
+    }
 
+    private void writeAgents(@NotNull Element root) {
         final Element agents = new Element("agents");
         for (Map.Entry<Integer, BuildStatistics> entry : agentBuildStatisticsMBeans.entrySet()) {
             final Element agent = new Element("agent");
@@ -140,7 +148,9 @@ public class JMXSupport extends BasePluginStatePersister implements Runnable {
             agents.addContent(agent);
         }
         root.addContent(agents);
+    }
 
+    private void writeProjects(@NotNull Element root) {
         final Element projects = new Element("projects");
         for (Map.Entry<String, BuildStatistics> entry : projectBuildStatisticsMBeans.entrySet()) {
             final Element project = new Element("project");
@@ -153,6 +163,12 @@ public class JMXSupport extends BasePluginStatePersister implements Runnable {
 
     @Override
     protected void readExternal(@NotNull Element root) {
+        readServer(root);
+        readAgents(root);
+        readProjects(root);
+    }
+
+    private void readServer(@NotNull Element root) {
         Element server = root.getChild("server");
         if (server != null) {
             String cleanupStartTime = server.getAttributeValue("cleanup-starttime", "0");
@@ -161,7 +177,9 @@ public class JMXSupport extends BasePluginStatePersister implements Runnable {
             buildServer.setCleanupDuration(Long.parseLong(cleanupDuration));
             serverBuildStatistics.readExternal(server);
         }
+    }
 
+    private void readAgents(@NotNull Element root) {
         Element agents = root.getChild("agents");
         for (Object object : agents.getChildren("agent")) {
             Element agent = (Element) object;
@@ -169,7 +187,9 @@ public class JMXSupport extends BasePluginStatePersister implements Runnable {
             BuildStatistics buildStatistics = agentBuildStatisticsMBeans.computeIfAbsent(agentId, this::createAgentBuildStatistics);
             buildStatistics.readExternal(agent);
         }
+    }
 
+    private void readProjects(@NotNull Element root) {
         Element projects = root.getChild("projects");
         for (Object object : projects.getChildren("project")) {
             Element project = (Element) object;
