@@ -44,7 +44,6 @@ public class BuildStatisticsTest {
     private SRunningBuild DUMMY_BUILD;
     private SRunningBuild SUCCESSFUL_BUILD;
     private SRunningBuild FAILED_BUILD;
-    private SRunningBuild IGNORED_BUILD;
     private SRunningBuild RUNNING_BUILD;
 
     @Before
@@ -60,8 +59,6 @@ public class BuildStatisticsTest {
         when(SUCCESSFUL_BUILD.getBuildStatus()).thenReturn(Status.NORMAL);
         FAILED_BUILD = mock(SRunningBuild.class);
         when(FAILED_BUILD.getBuildStatus()).thenReturn(Status.FAILURE);
-        IGNORED_BUILD = mock(SRunningBuild.class);
-        when(IGNORED_BUILD.getBuildStatus()).thenReturn(Status.UNKNOWN);
         RUNNING_BUILD = mock(SRunningBuild.class);
         when(RUNNING_BUILD.getBuildId()).thenReturn(BUILD_ID);
         when(RUNNING_BUILD.getBuildStatus()).thenReturn(Status.NORMAL);
@@ -119,27 +116,6 @@ public class BuildStatisticsTest {
         stats.buildFinished(SUCCESSFUL_BUILD);
 
         assertEquals(0, stats.getFailedBuilds());
-    }
-
-    @Test
-    public void shouldRecordIgnoredBuilds() {
-        stats.buildFinished(IGNORED_BUILD);
-
-        assertEquals(1, stats.getIgnoredBuilds());
-    }
-
-    @Test
-    public void shouldNotRecordSuccessfulBuildsAsIgnored() {
-        stats.buildFinished(SUCCESSFUL_BUILD);
-
-        assertEquals(0, stats.getIgnoredBuilds());
-    }
-
-    @Test
-    public void shouldNotRecordFailedBuildsAsIgnored() {
-        stats.buildFinished(FAILED_BUILD);
-
-        assertEquals(0, stats.getIgnoredBuilds());
     }
 
     @Test

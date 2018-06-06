@@ -40,7 +40,6 @@ public class BuildStatistics extends BuildServerAdapter implements BuildStatisti
     private AtomicLong buildsInterrupted = new AtomicLong();
     private AtomicLong successfulBuilds = new AtomicLong();
     private AtomicLong failedBuilds = new AtomicLong();
-    private AtomicLong ignoredBuilds = new AtomicLong();
     private AtomicLong queueTime = new AtomicLong();
     private AtomicLong buildTime = new AtomicLong();
 
@@ -80,11 +79,6 @@ public class BuildStatistics extends BuildServerAdapter implements BuildStatisti
     }
 
     @Override
-    public long getIgnoredBuilds() {
-        return ignoredBuilds.get();
-    }
-
-    @Override
     public long getQueueTime() {
         return queueTime.get();
     }
@@ -111,9 +105,6 @@ public class BuildStatistics extends BuildServerAdapter implements BuildStatisti
             }
             if (status.isFailed()) {
                 failedBuilds.incrementAndGet();
-            }
-            if (status.isIgnored()) {
-                ignoredBuilds.incrementAndGet();
             }
             recordTimes(build);
         }
@@ -146,7 +137,6 @@ public class BuildStatistics extends BuildServerAdapter implements BuildStatisti
         statistics.setAttribute("interrupted", Long.toString(getBuildsInterrupted()));
         statistics.setAttribute("successful", Long.toString(getSuccessfulBuilds()));
         statistics.setAttribute("failed", Long.toString(getFailedBuilds()));
-        statistics.setAttribute("ignored", Long.toString(getIgnoredBuilds()));
         statistics.setAttribute("queue-time", Long.toString(getQueueTime()));
         statistics.setAttribute("build-time", Long.toString(getBuildTime()));
         parent.addContent(statistics);
@@ -162,7 +152,6 @@ public class BuildStatistics extends BuildServerAdapter implements BuildStatisti
                 buildsInterrupted.set(getValue(statistics, "interrupted"));
                 successfulBuilds.set(getValue(statistics, "successful"));
                 failedBuilds.set(getValue(statistics, "failed"));
-                ignoredBuilds.set(getValue(statistics, "ignored"));
                 queueTime.set(getValue(statistics, "queue-time"));
                 buildTime.set(getValue(statistics, "build-time"));
             }
@@ -190,7 +179,6 @@ public class BuildStatistics extends BuildServerAdapter implements BuildStatisti
             buildsInterrupted.set(0);
             successfulBuilds.set(0);
             failedBuilds.set(0);
-            ignoredBuilds.set(0);
             queueTime.set(0);
             buildTime.set(0);
         }
