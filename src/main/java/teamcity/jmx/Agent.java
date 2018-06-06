@@ -27,9 +27,20 @@ public class Agent implements AgentMBean {
 
     private BuildAgentManager buildAgentManager;
 
+    private String name;
+
     public Agent(SBuildAgent buildAgent, BuildAgentManager buildAgentManager) {
         this.agentId = buildAgent.getId();
         this.buildAgentManager = buildAgentManager;
+        this.name = buildAgent.getName();
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     @Override

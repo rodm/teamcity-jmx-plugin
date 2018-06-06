@@ -189,10 +189,15 @@ public class JMXSupport extends BasePluginStatePersister implements Runnable {
     @Override
     public void agentRegistered(@NotNull SBuildAgent agent, long currentlyRunningBuildId) {
         int agentId = agent.getId();
-        AgentMBean agentMBean = agentMBeans.computeIfAbsent(agentId, (k) -> new Agent(agent, server.getBuildAgentManager()));
-        registerMBean(JMX_DOMAIN, createAgentTypeName(agent.getName()), agentMBean);
+        Agent agentMBean = agentMBeans.computeIfAbsent(agentId, (k) -> new Agent(agent, server.getBuildAgentManager()));
         BuildStatisticsMBean agentBuildStatistics = agentBuildStatisticsMBeans.computeIfAbsent(agentId, this::createAgentBuildStatistics);
+        registerMBean(JMX_DOMAIN, createAgentTypeName(agent.getName()), agentMBean);
         registerMBean(JMX_DOMAIN, createAgentTypeName(agent.getName()) + ",stats=BuildStatistics", agentBuildStatistics);
+        if (!agentMBean.getName().equals(agent.getName())) {
+            unregisterMBean(JMX_DOMAIN, createAgentTypeName(agentMBean.getName()));
+            unregisterMBean(JMX_DOMAIN, createAgentTypeName(agentMBean.getName() + ",stats=BuildStatistics"));
+            agentMBean.setName(agent.getName());
+        }
     }
 
     private BuildStatistics createAgentBuildStatistics(int agentId) {
