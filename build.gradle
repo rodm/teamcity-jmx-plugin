@@ -20,7 +20,7 @@ ext {
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
-archivesBaseName = "jmx-plugin"
+archivesBaseName = "jmx-support"
 
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
