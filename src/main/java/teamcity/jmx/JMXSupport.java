@@ -32,12 +32,19 @@ import org.jetbrains.annotations.NotNull;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 import java.lang.management.ManagementFactory;
+import java.time.Duration;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import static jetbrains.buildServer.log.Loggers.SERVER_CATEGORY;
 
-public class JMXSupport extends BasePluginStatePersister {
+public class JMXSupport extends BasePluginStatePersister implements Runnable {
 
     private static final Logger LOGGER = Logger.getLogger(SERVER_CATEGORY + "." + JMXSupport.class.getSimpleName());
 
@@ -53,6 +60,9 @@ public class JMXSupport extends BasePluginStatePersister {
     private Map<Integer, BuildStatistics> agentBuildStatisticsMBeans = new HashMap<>();
     private Map<String, Project> projectMBeans = new HashMap<>();
     private Map<String, BuildStatistics> projectBuildStatisticsMBeans = new HashMap<>();
+
+    private LocalDate date;
+    private ScheduledExecutorService executor;
 
     @SuppressWarnings("WeakerAccess")
     public JMXSupport(@NotNull SBuildServer server, @NotNull ServerPaths serverPaths) {
@@ -70,12 +80,39 @@ public class JMXSupport extends BasePluginStatePersister {
         serverBuildStatistics = new BuildStatistics(server);
         registerMBean(JMX_DOMAIN, "type=BuildServer,stats=BuildStatistics", serverBuildStatistics);
         super.serverStartup();
+
+        date = LocalDate.now();
+        executor = Executors.newSingleThreadScheduledExecutor();
+        scheduleCounterReset();
     }
 
     @Override
     public void serverShutdown() {
+        executor.shutdown();
         super.serverShutdown();
         LOGGER.info(name + " plugin stopped");
+    }
+
+    @Override
+    public void run() {
+        LocalDate now = LocalDate.now();
+        if (!date.equals(now)) {
+            date = now;
+            serverBuildStatistics.reset();
+            for (BuildStatistics statistics : agentBuildStatisticsMBeans.values()) {
+                statistics.reset();
+            }
+            for (BuildStatistics statistics : projectBuildStatisticsMBeans.values()) {
+                statistics.reset();
+            }
+        }
+        scheduleCounterReset();
+    }
+
+    private void scheduleCounterReset() {
+        LocalDateTime startOfNextDay = LocalDateTime.of(LocalDate.now().plusDays(1), LocalTime.MIDNIGHT);
+        Duration durationUntilMidnight = Duration.between(LocalDateTime.now(), startOfNextDay);
+        executor.schedule(this, durationUntilMidnight.getSeconds() + 5, TimeUnit.SECONDS);
     }
 
     @NotNull

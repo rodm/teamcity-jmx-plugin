@@ -24,6 +24,8 @@ import jetbrains.buildServer.serverSide.SRunningBuild;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -32,6 +34,7 @@ public class BuildStatistics extends BuildServerAdapter implements BuildStatisti
     private SBuildServer server;
     private BuildFilter filter;
 
+    private LocalDate date = LocalDate.now();
     private AtomicLong buildsStarted = new AtomicLong();
     private AtomicLong buildsFinished = new AtomicLong();
     private AtomicLong buildsInterrupted = new AtomicLong();
@@ -137,6 +140,7 @@ public class BuildStatistics extends BuildServerAdapter implements BuildStatisti
 
     void writeExternal(@NotNull Element parent) {
         final Element statistics = new Element("build-statistics");
+        statistics.setAttribute("date", date.format(DateTimeFormatter.ISO_LOCAL_DATE));
         statistics.setAttribute("started", Long.toString(getBuildsStarted()));
         statistics.setAttribute("finished", Long.toString(getBuildsFinished()));
         statistics.setAttribute("interrupted", Long.toString(getBuildsInterrupted()));
@@ -151,19 +155,44 @@ public class BuildStatistics extends BuildServerAdapter implements BuildStatisti
     void readExternal(@NotNull Element parent) {
         Element statistics = parent.getChild("build-statistics");
         if (statistics != null) {
-            buildsStarted.set(getValue(statistics, "started"));
-            buildsFinished.set(getValue(statistics, "finished"));
-            buildsInterrupted.set(getValue(statistics, "interrupted"));
-            successfulBuilds.set(getValue(statistics, "successful"));
-            failedBuilds.set(getValue(statistics, "failed"));
-            ignoredBuilds.set(getValue(statistics, "ignored"));
-            queueTime.set(getValue(statistics, "queue-time"));
-            buildTime.set(getValue(statistics, "build-time"));
+            LocalDate savedDate = getDate(statistics);
+            if (savedDate != null && savedDate.equals(date)) {
+                buildsStarted.set(getValue(statistics, "started"));
+                buildsFinished.set(getValue(statistics, "finished"));
+                buildsInterrupted.set(getValue(statistics, "interrupted"));
+                successfulBuilds.set(getValue(statistics, "successful"));
+                failedBuilds.set(getValue(statistics, "failed"));
+                ignoredBuilds.set(getValue(statistics, "ignored"));
+                queueTime.set(getValue(statistics, "queue-time"));
+                buildTime.set(getValue(statistics, "build-time"));
+            }
         }
+    }
+
+    private LocalDate getDate(@NotNull Element element) {
+        String value = element.getAttributeValue("date");
+        if (value != null) {
+            return LocalDate.parse(value, DateTimeFormatter.ISO_LOCAL_DATE);
+        }
+        return null;
     }
 
     private long getValue(@NotNull Element element, String attributeName) {
         String value = element.getAttributeValue(attributeName, "0");
         return Long.parseLong(value);
+    }
+
+    void reset() {
+        synchronized (this) {
+            date = LocalDate.now();
+            buildsStarted.set(0);
+            buildsFinished.set(0);
+            buildsInterrupted.set(0);
+            successfulBuilds.set(0);
+            failedBuilds.set(0);
+            ignoredBuilds.set(0);
+            queueTime.set(0);
+            buildTime.set(0);
+        }
     }
 }
