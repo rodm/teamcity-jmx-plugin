@@ -52,8 +52,6 @@ public class JMXSupport extends BasePluginStatePersister implements Runnable {
 
     private SBuildServer server;
 
-    private String name;
-
     private BuildServer buildServer;
     private BuildStatistics serverBuildStatistics;
     private Map<Integer, Agent> agentMBeans = new HashMap<>();
@@ -68,12 +66,11 @@ public class JMXSupport extends BasePluginStatePersister implements Runnable {
     public JMXSupport(@NotNull SBuildServer server, @NotNull ServerPaths serverPaths) {
         super(server, serverPaths);
         this.server = server;
-        this.name = this.getClass().getSimpleName();
     }
 
     @Override
     public void serverStartup() {
-        LOGGER.info(name + " plugin started");
+        LOGGER.info("JMX Support plugin started");
 
         buildServer = new BuildServer(server);
         registerMBean(JMX_DOMAIN, "type=BuildServer", buildServer);
@@ -90,7 +87,7 @@ public class JMXSupport extends BasePluginStatePersister implements Runnable {
     public void serverShutdown() {
         executor.shutdown();
         super.serverShutdown();
-        LOGGER.info(name + " plugin stopped");
+        LOGGER.info("JMX Support plugin stopped");
     }
 
     @Override
