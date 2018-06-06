@@ -31,6 +31,4 @@ public interface ProjectMBean {
     int getNumberOfFailedBuildTypes();
 
     int getNumberOfPausedBuildTypes();
-
-    int getSuccessPercentage();
 }

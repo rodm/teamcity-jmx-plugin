@@ -83,14 +83,6 @@ public class Project implements ProjectMBean {
         return pausedBuildTypes.get();
     }
 
-    @Override
-    public int getSuccessPercentage() {
-        if (getNumberOfBuildTypes() > 0) {
-            return (successfulBuildTypes.get() / getNumberOfBuildTypes()) * 100;
-        }
-        return 0;
-    }
-
     public void update() {
         int successCount = 0;
         int failedCount = 0;
