@@ -29,6 +29,66 @@ click on the link _Upload plugin zip_ to install the downloaded plugin file.
 * Select the TeamCity Server process, it will appear as Tomcat
 * Select MBean tab and then expand the node 'com.jetbrains.teamcity'
 
+The following MBeans are made available by the plugin.
+
+* com.jetbrains.teamcity:type=BuildServer
+* com.jetbrains.teamcity:type=BuildServer,stats=BuildStatistics
+* com.jetbrains.teamcity:type=Agent,name=<agent name>
+* com.jetbrains.teamcity:type=Agent,name=<agent name>,stats=BuildStatistics
+* com.jetbrains.teamcity:type=Project,name=<project name>
+* com.jetbrains.teamcity:type=Project,name=<project name>,stats=BuildStatistics
+
+=== BuildServer attributes
+
+* RegisteredAgents - number of authorized agents currently connected to the server
+* UnregisteredAgents - number of authorized agents not currently connected to the server
+* UnauthorizedAgents - number of unauthorized agents currently connected to the server
+* NumberOfRunningBuilds - number of builds currently running on build agents
+* BuildQueueSize - number of builds in the build queue
+* FullServerVersion - TeamCity version and build number
+* NumberOfRegisteredUsers - number of users registered with the server
+* NumberOfProjects - number of projects on the server
+* NumberOfBuildTypes - number of build configurations on the server
+* CleanupDuration - number of seconds spent performing the last cleanup
+
+=== Agent attributes
+
+* HostName - hostname of the machine running the build agent
+* HostAddress - IP address of the machine running the build agent
+* Port - port used by the build agent
+* OperatingSystemName - operating system and version of the machine running the build agent
+* Registered - true if the build agent is connected to the server
+* UnregistrationComment - message with the reason for the build agent un-registering
+* RegistrationTimestamp - data and time the build agent registered with the server
+* LastCommunicationTimestamp - data and time the build agent last communicated with the server
+* Enabled - true if the build agent is enabled
+* StatusComment - message with the reason for the build agent being enabled or disabled
+* Authorized - true if the build agent is authorized
+* AuthorizeComment - message with the reason for the build agent being authorized or unauthorized
+* CpuBenchmarkIndex - CPU benchmark index of the build agent
+* NumberOfCompatibleConfigurations - number of build configurations compatible with the build agent
+* NumberOfIncompatibleConfigurations - number of build configurations not compatible with the build agent
+
+=== Project attributes
+
+* NumberOfBuildTypes - number of build configurations excluding sub-projects
+* NumberOfBuildTypeTemplates - number of build templates excluding sub-projects
+* NumberOfSubProjects - number of sub-projects
+* NumberOfVcsRoots - number of VCS roots excluding sub-projects
+* NumberOfSuccessfulBuildTypes - number of build configurations with a success status
+* NumberOfFailedBuildTypes - number of build configurations with a failed status
+* NumberOfPausedBuildTypes - number of build configurations currently paused
+
+=== BuildStatistics attributes
+
+* BuildsStarted - number of builds started
+* BuildsFinished - number of builds finished
+* BuildsInterrupted - number of builds that were interrupted
+* SuccessfulBuilds - number of builds that finished with a success status
+* FailedBuilds - number of builds that finished with a failed status
+* QueueTime - amount of time in seconds that builds spent in the build queue
+* BuildTime - amount of time in seconds that builds spent on a build agent
+
 == How to build the plugin
 
 The build uses {uri-gradle}, the following tasks can be used to build the plugin and deploy it to a
