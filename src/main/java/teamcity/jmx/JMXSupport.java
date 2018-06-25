@@ -86,6 +86,11 @@ public class JMXSupport extends BasePluginStatePersister implements Runnable {
     @Override
     public void serverShutdown() {
         executor.shutdownNow();
+        try {
+            executor.awaitTermination(1, TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+            // ignore
+        }
         super.serverShutdown();
         LOGGER.info("JMX Support plugin stopped");
     }
