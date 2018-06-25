@@ -126,6 +126,18 @@ project {
     })
     buildType(build3)
 
+    val build4 =  BuildType({
+        template(buildTemplate)
+        uuid = "162abe89-c678-4a4d-a29b-165564719e1f"
+        id = "TeamCityJmxPlugin_BuildTeamCity20181"
+        name = "Build - TeamCity 2018.1"
+
+        params {
+            param("version", "2018.1")
+        }
+    })
+    buildType(build4)
+
     val reportCodeQuality = BuildType({
         template(buildTemplate)
         uuid = "28454d8c-3494-428e-ac2f-bcafab96e47c"
@@ -140,5 +152,5 @@ project {
     })
     buildType(reportCodeQuality)
 
-    buildTypesOrder = arrayListOf(build1, build2, build3, reportCodeQuality)
+    buildTypesOrder = arrayListOf(build1, build2, build3, build4, reportCodeQuality)
 }
