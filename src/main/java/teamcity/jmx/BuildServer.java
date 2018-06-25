@@ -21,15 +21,23 @@ import jetbrains.buildServer.serverSide.SBuildServer;
 
 public class BuildServer extends BuildServerAdapter implements BuildServerMBean {
 
+    private StateSaver stateSaver;
+
     private SBuildServer server;
 
     private long cleanupStartTime = 0;
 
     private long cleanupDuration = 0;
 
-    public BuildServer(SBuildServer server) {
+    public BuildServer(StateSaver stateSaver, SBuildServer server) {
+        this.stateSaver = stateSaver;
         this.server = server;
         this.server.addListener(this);
+    }
+
+    @Override
+    public void saveState() {
+        stateSaver.saveState();
     }
 
     @Override

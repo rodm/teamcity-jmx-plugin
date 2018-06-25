@@ -44,7 +44,7 @@ import java.util.concurrent.TimeUnit;
 
 import static jetbrains.buildServer.log.Loggers.SERVER_CATEGORY;
 
-public class JMXSupport extends BasePluginStatePersister implements Runnable {
+public class JMXSupport extends BasePluginStatePersister implements StateSaver, Runnable {
 
     private static final Logger LOGGER = Logger.getLogger(SERVER_CATEGORY + "." + JMXSupport.class.getSimpleName());
 
@@ -72,7 +72,7 @@ public class JMXSupport extends BasePluginStatePersister implements Runnable {
     public void serverStartup() {
         LOGGER.info("JMX Support plugin started");
 
-        buildServer = new BuildServer(server);
+        buildServer = new BuildServer(this, server);
         registerMBean(JMX_DOMAIN, "type=BuildServer", buildServer);
         serverBuildStatistics = new BuildStatistics(server);
         registerMBean(JMX_DOMAIN, "type=BuildServer,stats=BuildStatistics", serverBuildStatistics);
@@ -115,6 +115,10 @@ public class JMXSupport extends BasePluginStatePersister implements Runnable {
         LocalDateTime startOfNextDay = LocalDateTime.of(LocalDate.now().plusDays(1), LocalTime.MIDNIGHT);
         Duration durationUntilMidnight = Duration.between(LocalDateTime.now(), startOfNextDay);
         executor.schedule(this, durationUntilMidnight.getSeconds() + 5, TimeUnit.SECONDS);
+    }
+
+    public void saveState() {
+        super.saveState();
     }
 
     @NotNull
