@@ -58,5 +58,10 @@ teamcity {
             version = '10.0.5'
             serverOptions '-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005'
         }
+
+        'teamcity2018.1' {
+            version = '2018.1'
+            serverOptions '-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005'
+        }
     }
 }
