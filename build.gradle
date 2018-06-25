@@ -34,7 +34,7 @@ teamcity {
         archiveName = "${archivesBaseName}-${project.version}.zip"
 
         descriptor {
-            name = 'jmxPlugin'
+            name = 'jmx-support'
             displayName = 'JMX support'
             version = project.version
             description = 'Exposes Server, Agent and Project attributes and related build statistics via JMX.'
