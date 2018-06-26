@@ -8,7 +8,7 @@
 :uri-bintray-image: https://api.bintray.com/packages/rodm/teamcity-plugins/teamcity-jmx-plugin/images/download.svg
 :uri-teamcity-install-plugin: https://confluence.jetbrains.com/display/TCD10/Installing+Additional+Plugins[Installing Additional Plugins]
 
-The JMX Support plugin exposes attributes of the Build Server and Build Agents using JMX.
+The JMX Support plugin exposes attributes of the Build Server, Build Agents and Projects using JMX.
 
 image:{uri-travis-image}[Build Status,link={uri-travis-build}]
 image:{uri-bintray-image}[Download,link={uri-bintray-plugin}]
@@ -50,6 +50,11 @@ The following MBeans are made available by the plugin.
 * NumberOfProjects - number of projects on the server
 * NumberOfBuildTypes - number of build configurations on the server
 * CleanupDuration - number of seconds spent performing the last cleanup
+
+=== BuildServer operations
+
+* saveState - saves the plugin's state to a file, this is used by the plugin when the server
+is restarted to restore the previous state
 
 === Agent attributes
 
