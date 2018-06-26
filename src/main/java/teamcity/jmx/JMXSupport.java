@@ -80,12 +80,8 @@ public class JMXSupport extends BasePluginStatePersister implements StateSaver, 
         super.serverStartup();
 
         BuildAgentManager agentManager = server.getBuildAgentManager();
-        for (SBuildAgent agent : agentManager.getRegisteredAgents(true)) {
-            agentRegistered(agent, -1);
-        }
-        for (SBuildAgent agent : agentManager.getUnregisteredAgents()) {
-            agentRegistered(agent, -1);
-        }
+        agentManager.getRegisteredAgents(true).forEach(agent -> agentRegistered(agent, -1));
+        agentManager.getUnregisteredAgents().forEach(agent -> agentRegistered(agent, -1));
 
         date = LocalDate.now();
         executor = Executors.newSingleThreadScheduledExecutor();
@@ -110,12 +106,8 @@ public class JMXSupport extends BasePluginStatePersister implements StateSaver, 
         if (!date.equals(now)) {
             date = now;
             serverBuildStatistics.reset();
-            for (BuildStatistics statistics : agentBuildStatisticsMBeans.values()) {
-                statistics.reset();
-            }
-            for (BuildStatistics statistics : projectBuildStatisticsMBeans.values()) {
-                statistics.reset();
-            }
+            agentBuildStatisticsMBeans.values().forEach(BuildStatistics::reset);
+            projectBuildStatisticsMBeans.values().forEach(BuildStatistics::reset);
         }
         scheduleCounterReset();
     }
