@@ -16,6 +16,7 @@
 
 package teamcity.jmx;
 
+import jetbrains.buildServer.serverSide.BuildAgentManager;
 import jetbrains.buildServer.serverSide.ProjectManager;
 import jetbrains.buildServer.serverSide.SBuildAgent;
 import jetbrains.buildServer.serverSide.SBuildServer;
@@ -77,6 +78,14 @@ public class JMXSupport extends BasePluginStatePersister implements StateSaver, 
         serverBuildStatistics = new BuildStatistics(server);
         registerMBean(JMX_DOMAIN, "type=BuildServer,stats=BuildStatistics", serverBuildStatistics);
         super.serverStartup();
+
+        BuildAgentManager agentManager = server.getBuildAgentManager();
+        for (SBuildAgent agent : agentManager.getRegisteredAgents(true)) {
+            agentRegistered(agent, -1);
+        }
+        for (SBuildAgent agent : agentManager.getUnregisteredAgents()) {
+            agentRegistered(agent, -1);
+        }
 
         date = LocalDate.now();
         executor = Executors.newSingleThreadScheduledExecutor();

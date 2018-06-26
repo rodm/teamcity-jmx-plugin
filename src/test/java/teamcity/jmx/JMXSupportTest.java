@@ -16,6 +16,7 @@
 
 package teamcity.jmx;
 
+import jetbrains.buildServer.serverSide.BuildAgentManager;
 import jetbrains.buildServer.serverSide.ProjectManager;
 import jetbrains.buildServer.serverSide.SBuildAgent;
 import jetbrains.buildServer.serverSide.SBuildServer;
@@ -29,6 +30,7 @@ import org.junit.rules.TemporaryFolder;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
+import java.util.ArrayList;
 import java.util.Collections;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -65,6 +67,10 @@ public class JMXSupportTest {
 
     @Test
     public void shouldRegisterBuildStatisticsMBeanOnServerStartup() throws Exception {
+        BuildAgentManager agentManager = mock(BuildAgentManager.class);
+        when(agentManager.getRegisteredAgents(true)).thenReturn(new ArrayList<>());
+        when(agentManager.getUnregisteredAgents()).thenReturn(new ArrayList<>());
+        when(server.getBuildAgentManager()).thenReturn(agentManager);
         final ObjectName name = new ObjectName(JMX_DOMAIN + ":type=BuildServer,stats=BuildStatistics");
         ProjectManager projectManager = mock(ProjectManager.class);
         when(projectManager.getProjects()).thenReturn(Collections.<SProject>emptyList());
