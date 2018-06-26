@@ -102,6 +102,7 @@ public class JMXSupport extends BasePluginStatePersister implements StateSaver, 
 
     @Override
     public void run() {
+        LOGGER.info("Resetting build statistics");
         LocalDate now = LocalDate.now();
         if (!date.equals(now)) {
             date = now;
@@ -119,6 +120,7 @@ public class JMXSupport extends BasePluginStatePersister implements StateSaver, 
     }
 
     public void saveState() {
+        LOGGER.info("Saving plugin state");
         super.saveState();
     }
 
