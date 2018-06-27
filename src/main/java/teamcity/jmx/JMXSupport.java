@@ -98,7 +98,8 @@ public class JMXSupport extends BasePluginStatePersister implements StateSaver, 
         try {
             executor.awaitTermination(1, TimeUnit.SECONDS);
         } catch (InterruptedException e) {
-            // ignore
+            LOGGER.warn("Scheduled executor shutdown interrupted", e);
+            Thread.currentThread().interrupt();
         }
         super.serverShutdown();
         LOGGER.info("JMX Support plugin stopped");
