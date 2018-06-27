@@ -23,7 +23,6 @@ project {
         uuid = "3a482ecb-7e55-4537-b473-340658b5680a"
         id = vcsId
         name = "jmx plugin"
-        pollInterval = 3600
         url = "https://github.com/rodm/teamcity-jmx-plugin"
         useMirrors = false
     })
