@@ -50,6 +50,10 @@ public class JMXSupport extends BasePluginStatePersister implements StateSaver, 
     private static final Logger LOGGER = Logger.getLogger(SERVER_CATEGORY + "." + JMXSupport.class.getSimpleName());
 
     private static final String JMX_DOMAIN = "com.jetbrains.teamcity";
+    private static final String BUILD_SERVER_NAME = "type=BuildServer";
+    private static final String AGENT_NAME = "type=Agent,name=";
+    private static final String PROJECT_NAME = "type=Project,name=";
+    private static final String BUILD_STATISTICS_NAME = ",stats=BuildStatistics";
 
     private SBuildServer buildServer;
 
@@ -74,9 +78,9 @@ public class JMXSupport extends BasePluginStatePersister implements StateSaver, 
         LOGGER.info("JMX Support plugin started");
 
         buildServerMBean = new BuildServer(this, buildServer);
-        registerMBean(JMX_DOMAIN, "type=BuildServer", buildServerMBean);
+        registerMBean(JMX_DOMAIN, BUILD_SERVER_NAME, buildServerMBean);
         serverBuildStatistics = new BuildStatistics(buildServer);
-        registerMBean(JMX_DOMAIN, "type=BuildServer,stats=BuildStatistics", serverBuildStatistics);
+        registerMBean(JMX_DOMAIN, BUILD_SERVER_NAME + BUILD_STATISTICS_NAME, serverBuildStatistics);
         super.serverStartup();
 
         BuildAgentManager agentManager = buildServer.getBuildAgentManager();
@@ -221,10 +225,10 @@ public class JMXSupport extends BasePluginStatePersister implements StateSaver, 
         Agent agentMBean = agentMBeans.computeIfAbsent(agentId, key -> new Agent(agent, buildServer.getBuildAgentManager()));
         BuildStatisticsMBean agentBuildStatistics = agentBuildStatisticsMBeans.computeIfAbsent(agentId, this::createAgentBuildStatistics);
         registerMBean(JMX_DOMAIN, createAgentTypeName(agent.getName()), agentMBean);
-        registerMBean(JMX_DOMAIN, createAgentTypeName(agent.getName()) + ",stats=BuildStatistics", agentBuildStatistics);
+        registerMBean(JMX_DOMAIN, createAgentBuildStatisticsName(agent.getName()), agentBuildStatistics);
         if (!agentMBean.getName().equals(agent.getName())) {
             unregisterMBean(JMX_DOMAIN, createAgentTypeName(agentMBean.getName()));
-            unregisterMBean(JMX_DOMAIN, createAgentTypeName(agentMBean.getName() + ",stats=BuildStatistics"));
+            unregisterMBean(JMX_DOMAIN, createAgentBuildStatisticsName(agentMBean.getName()));
             agentMBean.setName(agent.getName());
         }
     }
@@ -239,7 +243,7 @@ public class JMXSupport extends BasePluginStatePersister implements StateSaver, 
 
     @Override
     public void agentRemoved(@NotNull SBuildAgent agent) {
-        unregisterMBean(JMX_DOMAIN, createAgentTypeName(agent.getName()) + ",stats=BuildStatistics");
+        unregisterMBean(JMX_DOMAIN, createAgentBuildStatisticsName(agent.getName()));
         unregisterMBean(JMX_DOMAIN, createAgentTypeName(agent.getName()));
         agentMBeans.remove(agent.getId());
         agentBuildStatisticsMBeans.remove(agent.getId());
@@ -259,7 +263,7 @@ public class JMXSupport extends BasePluginStatePersister implements StateSaver, 
             BuildStatistics buildStatisticsMBean = new BuildStatistics(buildServer, new ProjectBuildFilter(projectId));
             projectBuildStatisticsMBeans.put(projectId, buildStatisticsMBean);
             registerMBean(JMX_DOMAIN, createProjectTypeName(project.getName()), projectMBean);
-            registerMBean(JMX_DOMAIN, createProjectTypeName(project.getName()) + ",stats=BuildStatistics", buildStatisticsMBean);
+            registerMBean(JMX_DOMAIN, createProjectBuildStatisticsName(project.getName()), buildStatisticsMBean);
         }
     }
 
@@ -268,7 +272,7 @@ public class JMXSupport extends BasePluginStatePersister implements StateSaver, 
         String projectId = project.getProjectId();
         Project projectMBean = projectMBeans.get(projectId);
         if (projectMBean != null) {
-            unregisterMBean(JMX_DOMAIN, createProjectTypeName(projectMBean.getName()) + ",stats=BuildStatistics");
+            unregisterMBean(JMX_DOMAIN, createProjectBuildStatisticsName(projectMBean.getName()));
             unregisterMBean(JMX_DOMAIN, createProjectTypeName(projectMBean.getName()));
             projectMBeans.remove(projectId);
             projectBuildStatisticsMBeans.remove(projectId);
@@ -282,9 +286,9 @@ public class JMXSupport extends BasePluginStatePersister implements StateSaver, 
         SProject project = buildServer.getProjectManager().findProjectById(projectId);
         if (project != null && projectMBean != null && !project.getName().equals(projectMBean.getName())) {
             registerMBean(JMX_DOMAIN, createProjectTypeName(project.getName()), projectMBean);
-            registerMBean(JMX_DOMAIN, createProjectTypeName(project.getName()) + ",stats=BuildStatistics", buildStatisticsMBean);
+            registerMBean(JMX_DOMAIN, createProjectBuildStatisticsName(project.getName()), buildStatisticsMBean);
             unregisterMBean(JMX_DOMAIN, createProjectTypeName(projectMBean.getName()));
-            unregisterMBean(JMX_DOMAIN, createProjectTypeName(projectMBean.getName()) + ",stats=BuildStatistics");
+            unregisterMBean(JMX_DOMAIN, createProjectBuildStatisticsName(projectMBean.getName()));
             projectMBean.setName(project.getName());
         }
     }
@@ -314,12 +318,20 @@ public class JMXSupport extends BasePluginStatePersister implements StateSaver, 
         project.update();
     }
 
+    private String createAgentBuildStatisticsName(String agentName) {
+        return createAgentTypeName(agentName) + BUILD_STATISTICS_NAME;
+    }
+
+    private String createProjectBuildStatisticsName(String projectName) {
+        return createProjectTypeName(projectName) + BUILD_STATISTICS_NAME;
+    }
+
     private String createAgentTypeName(String agentName) {
-        return "type=Agent,name=" + agentName;
+        return AGENT_NAME + agentName;
     }
 
     private String createProjectTypeName(String projectName) {
-        return "type=Project,name=" + projectName;
+        return PROJECT_NAME + projectName;
     }
 
     private void registerMBean(String domain, String name, Object mbean) {
