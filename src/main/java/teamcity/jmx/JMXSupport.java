@@ -238,10 +238,6 @@ public class JMXSupport extends BasePluginStatePersister implements StateSaver, 
     }
 
     @Override
-    public void agentUnregistered(@NotNull SBuildAgent agent) {
-    }
-
-    @Override
     public void agentRemoved(@NotNull SBuildAgent agent) {
         unregisterMBean(JMX_DOMAIN, createAgentBuildStatisticsName(agent.getName()));
         unregisterMBean(JMX_DOMAIN, createAgentTypeName(agent.getName()));
