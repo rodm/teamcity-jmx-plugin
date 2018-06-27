@@ -51,9 +51,9 @@ public class JMXSupport extends BasePluginStatePersister implements StateSaver, 
 
     private static final String JMX_DOMAIN = "com.jetbrains.teamcity";
 
-    private SBuildServer server;
+    private SBuildServer buildServer;
 
-    private BuildServer buildServer;
+    private BuildServer buildServerMBean;
     private BuildStatistics serverBuildStatistics;
     private Map<Integer, Agent> agentMBeans = new HashMap<>();
     private Map<Integer, BuildStatistics> agentBuildStatisticsMBeans = new HashMap<>();
@@ -64,22 +64,22 @@ public class JMXSupport extends BasePluginStatePersister implements StateSaver, 
     private ScheduledExecutorService executor;
 
     @SuppressWarnings("WeakerAccess")
-    public JMXSupport(@NotNull SBuildServer server, @NotNull ServerPaths serverPaths) {
-        super(server, serverPaths);
-        this.server = server;
+    public JMXSupport(@NotNull SBuildServer buildServer, @NotNull ServerPaths serverPaths) {
+        super(buildServer, serverPaths);
+        this.buildServer = buildServer;
     }
 
     @Override
     public void serverStartup() {
         LOGGER.info("JMX Support plugin started");
 
-        buildServer = new BuildServer(this, server);
-        registerMBean(JMX_DOMAIN, "type=BuildServer", buildServer);
-        serverBuildStatistics = new BuildStatistics(server);
+        buildServerMBean = new BuildServer(this, buildServer);
+        registerMBean(JMX_DOMAIN, "type=BuildServer", buildServerMBean);
+        serverBuildStatistics = new BuildStatistics(buildServer);
         registerMBean(JMX_DOMAIN, "type=BuildServer,stats=BuildStatistics", serverBuildStatistics);
         super.serverStartup();
 
-        BuildAgentManager agentManager = server.getBuildAgentManager();
+        BuildAgentManager agentManager = buildServer.getBuildAgentManager();
         agentManager.getRegisteredAgents(true).forEach(agent -> agentRegistered(agent, -1));
         agentManager.getUnregisteredAgents().forEach(agent -> agentRegistered(agent, -1));
 
@@ -145,8 +145,8 @@ public class JMXSupport extends BasePluginStatePersister implements StateSaver, 
 
     private void writeServer(@NotNull Element root) {
         final Element server = new Element("server");
-        server.setAttribute("cleanup-starttime", Long.toString(buildServer.getCleanupStartTime()));
-        server.setAttribute("cleanup-duration", Long.toString(buildServer.getCleanupDuration()));
+        server.setAttribute("cleanup-starttime", Long.toString(buildServerMBean.getCleanupStartTime()));
+        server.setAttribute("cleanup-duration", Long.toString(buildServerMBean.getCleanupDuration()));
         root.addContent(server);
         serverBuildStatistics.writeExternal(server);
     }
@@ -185,8 +185,8 @@ public class JMXSupport extends BasePluginStatePersister implements StateSaver, 
         if (server != null) {
             String cleanupStartTime = server.getAttributeValue("cleanup-starttime", "0");
             String cleanupDuration = server.getAttributeValue("cleanup-duration", "0");
-            buildServer.setCleanupStartTime(Long.parseLong(cleanupStartTime));
-            buildServer.setCleanupDuration(Long.parseLong(cleanupDuration));
+            buildServerMBean.setCleanupStartTime(Long.parseLong(cleanupStartTime));
+            buildServerMBean.setCleanupDuration(Long.parseLong(cleanupDuration));
             serverBuildStatistics.readExternal(server);
         }
     }
@@ -212,13 +212,13 @@ public class JMXSupport extends BasePluginStatePersister implements StateSaver, 
     }
 
     private BuildStatistics createProjectBuildStatistics(String projectId) {
-        return new BuildStatistics(server, new ProjectBuildFilter(projectId));
+        return new BuildStatistics(buildServer, new ProjectBuildFilter(projectId));
     }
 
     @Override
     public void agentRegistered(@NotNull SBuildAgent agent, long currentlyRunningBuildId) {
         int agentId = agent.getId();
-        Agent agentMBean = agentMBeans.computeIfAbsent(agentId, (k) -> new Agent(agent, server.getBuildAgentManager()));
+        Agent agentMBean = agentMBeans.computeIfAbsent(agentId, key -> new Agent(agent, buildServer.getBuildAgentManager()));
         BuildStatisticsMBean agentBuildStatistics = agentBuildStatisticsMBeans.computeIfAbsent(agentId, this::createAgentBuildStatistics);
         registerMBean(JMX_DOMAIN, createAgentTypeName(agent.getName()), agentMBean);
         registerMBean(JMX_DOMAIN, createAgentTypeName(agent.getName()) + ",stats=BuildStatistics", agentBuildStatistics);
@@ -230,7 +230,7 @@ public class JMXSupport extends BasePluginStatePersister implements StateSaver, 
     }
 
     private BuildStatistics createAgentBuildStatistics(int agentId) {
-        return new BuildStatistics(server, new AgentBuildFilter(agentId));
+        return new BuildStatistics(buildServer, new AgentBuildFilter(agentId));
     }
 
     @Override
@@ -251,12 +251,12 @@ public class JMXSupport extends BasePluginStatePersister implements StateSaver, 
     }
 
     private void projectCreated(String projectId) {
-        ProjectManager projectManager = server.getProjectManager();
+        ProjectManager projectManager = buildServer.getProjectManager();
         SProject project = projectManager.findProjectById(projectId);
         if (project != null) {
             Project projectMBean = new Project(project);
             projectMBeans.put(projectId, projectMBean);
-            BuildStatistics buildStatisticsMBean = new BuildStatistics(server, new ProjectBuildFilter(projectId));
+            BuildStatistics buildStatisticsMBean = new BuildStatistics(buildServer, new ProjectBuildFilter(projectId));
             projectBuildStatisticsMBeans.put(projectId, buildStatisticsMBean);
             registerMBean(JMX_DOMAIN, createProjectTypeName(project.getName()), projectMBean);
             registerMBean(JMX_DOMAIN, createProjectTypeName(project.getName()) + ",stats=BuildStatistics", buildStatisticsMBean);
@@ -279,7 +279,7 @@ public class JMXSupport extends BasePluginStatePersister implements StateSaver, 
     public void projectPersisted(@NotNull String projectId) {
         Project projectMBean = projectMBeans.get(projectId);
         BuildStatistics buildStatisticsMBean = projectBuildStatisticsMBeans.get(projectId);
-        SProject project = server.getProjectManager().findProjectById(projectId);
+        SProject project = buildServer.getProjectManager().findProjectById(projectId);
         if (project != null && projectMBean != null && !project.getName().equals(projectMBean.getName())) {
             registerMBean(JMX_DOMAIN, createProjectTypeName(project.getName()), projectMBean);
             registerMBean(JMX_DOMAIN, createProjectTypeName(project.getName()) + ",stats=BuildStatistics", buildStatisticsMBean);
