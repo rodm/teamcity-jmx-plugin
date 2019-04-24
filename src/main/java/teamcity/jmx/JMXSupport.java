@@ -67,12 +67,6 @@ public class JMXSupport extends BasePluginStatePersister implements StateSaver, 
     private ScheduledExecutorService executor;
 
     @SuppressWarnings("WeakerAccess")
-    public JMXSupport(@NotNull SBuildServer buildServer, @NotNull ServerPaths serverPaths) {
-        super(buildServer, serverPaths);
-        this.buildServer = buildServer;
-    }
-
-    @SuppressWarnings("WeakerAccess")
     public JMXSupport(@NotNull SBuildServer buildServer,
                       @NotNull ServerPaths serverPaths,
                       @NotNull BuildStatisticsListener statisticsListener)
