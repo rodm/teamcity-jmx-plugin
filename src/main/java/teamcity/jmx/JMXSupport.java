@@ -57,12 +57,11 @@ public class JMXSupport extends BasePluginStatePersister implements StateSaver, 
 
     private SBuildServer buildServer;
 
+    private BuildStatisticsListener statisticsListener;
+
     private BuildServer buildServerMBean;
-    private BuildStatistics serverBuildStatistics;
     private Map<Integer, Agent> agentMBeans = new HashMap<>();
-    private Map<Integer, BuildStatistics> agentBuildStatisticsMBeans = new HashMap<>();
     private Map<String, Project> projectMBeans = new HashMap<>();
-    private Map<String, BuildStatistics> projectBuildStatisticsMBeans = new HashMap<>();
 
     private LocalDate date;
     private ScheduledExecutorService executor;
@@ -73,13 +72,23 @@ public class JMXSupport extends BasePluginStatePersister implements StateSaver, 
         this.buildServer = buildServer;
     }
 
+    @SuppressWarnings("WeakerAccess")
+    public JMXSupport(@NotNull SBuildServer buildServer,
+                      @NotNull ServerPaths serverPaths,
+                      @NotNull BuildStatisticsListener statisticsListener)
+    {
+        super(buildServer, serverPaths);
+        this.buildServer = buildServer;
+        this.statisticsListener = statisticsListener;
+    }
+
     @Override
     public void serverStartup() {
         LOGGER.info("JMX Support plugin started");
 
         buildServerMBean = new BuildServer(this, buildServer);
         registerMBean(JMX_DOMAIN, BUILD_SERVER_NAME, buildServerMBean);
-        serverBuildStatistics = new BuildStatistics(buildServer);
+        BuildStatistics serverBuildStatistics = statisticsListener.getServerBuildStatistics();
         registerMBean(JMX_DOMAIN, BUILD_SERVER_NAME + BUILD_STATISTICS_NAME, serverBuildStatistics);
         super.serverStartup();
 
@@ -111,9 +120,7 @@ public class JMXSupport extends BasePluginStatePersister implements StateSaver, 
         LocalDate now = LocalDate.now();
         if (!date.equals(now)) {
             date = now;
-            serverBuildStatistics.reset();
-            agentBuildStatisticsMBeans.values().forEach(BuildStatistics::reset);
-            projectBuildStatisticsMBeans.values().forEach(BuildStatistics::reset);
+            statisticsListener.reset();
         }
         scheduleCounterReset();
     }
@@ -153,15 +160,15 @@ public class JMXSupport extends BasePluginStatePersister implements StateSaver, 
         server.setAttribute("cleanup-starttime", Long.toString(buildServerMBean.getCleanupStartTime()));
         server.setAttribute("cleanup-duration", Long.toString(buildServerMBean.getCleanupDuration()));
         root.addContent(server);
-        serverBuildStatistics.writeExternal(server);
+        statisticsListener.getServerBuildStatistics().writeExternal(server);
     }
 
     private void writeAgents(@NotNull Element root) {
         final Element agents = new Element("agents");
-        for (Map.Entry<Integer, BuildStatistics> entry : agentBuildStatisticsMBeans.entrySet()) {
+        for (Map.Entry<Integer, Agent> entry : agentMBeans.entrySet()) {
             final Element agent = new Element("agent");
             agent.setAttribute("id", Integer.toString(entry.getKey()));
-            entry.getValue().writeExternal(agent);
+            statisticsListener.getAgentBuildStatistics(entry.getKey()).writeExternal(agent);
             agents.addContent(agent);
         }
         root.addContent(agents);
@@ -169,10 +176,10 @@ public class JMXSupport extends BasePluginStatePersister implements StateSaver, 
 
     private void writeProjects(@NotNull Element root) {
         final Element projects = new Element("projects");
-        for (Map.Entry<String, BuildStatistics> entry : projectBuildStatisticsMBeans.entrySet()) {
+        for (Map.Entry<String, Project> entry : projectMBeans.entrySet()) {
             final Element project = new Element("project");
             project.setAttribute("id", entry.getKey());
-            entry.getValue().writeExternal(project);
+            statisticsListener.getProjectBuildStatistics(entry.getKey()).writeExternal(project);
             projects.addContent(project);
         }
         root.addContent(projects);
@@ -192,7 +199,7 @@ public class JMXSupport extends BasePluginStatePersister implements StateSaver, 
             String cleanupDuration = server.getAttributeValue("cleanup-duration", "0");
             buildServerMBean.setCleanupStartTime(Long.parseLong(cleanupStartTime));
             buildServerMBean.setCleanupDuration(Long.parseLong(cleanupDuration));
-            serverBuildStatistics.readExternal(server);
+            statisticsListener.getServerBuildStatistics().readExternal(server);
         }
     }
 
@@ -201,7 +208,7 @@ public class JMXSupport extends BasePluginStatePersister implements StateSaver, 
         for (Object object : agents.getChildren("agent")) {
             Element agent = (Element) object;
             Integer agentId = Integer.parseInt(agent.getAttributeValue("id", "0"));
-            BuildStatistics buildStatistics = agentBuildStatisticsMBeans.computeIfAbsent(agentId, this::createAgentBuildStatistics);
+            BuildStatistics buildStatistics = statisticsListener.getAgentBuildStatistics(agentId);
             buildStatistics.readExternal(agent);
         }
     }
@@ -211,20 +218,16 @@ public class JMXSupport extends BasePluginStatePersister implements StateSaver, 
         for (Object object : projects.getChildren("project")) {
             Element project = (Element) object;
             String projectId = project.getAttributeValue("id");
-            BuildStatistics buildStatistics = projectBuildStatisticsMBeans.computeIfAbsent(projectId, this::createProjectBuildStatistics);
+            BuildStatistics buildStatistics = statisticsListener.getProjectBuildStatistics(projectId);
             buildStatistics.readExternal(project);
         }
-    }
-
-    private BuildStatistics createProjectBuildStatistics(String projectId) {
-        return new BuildStatistics(buildServer, new ProjectBuildFilter(projectId));
     }
 
     @Override
     public void agentRegistered(@NotNull SBuildAgent agent, long currentlyRunningBuildId) {
         int agentId = agent.getId();
         Agent agentMBean = agentMBeans.computeIfAbsent(agentId, key -> new Agent(agent, buildServer.getBuildAgentManager()));
-        BuildStatisticsMBean agentBuildStatistics = agentBuildStatisticsMBeans.computeIfAbsent(agentId, this::createAgentBuildStatistics);
+        BuildStatisticsMBean agentBuildStatistics = statisticsListener.getAgentBuildStatistics(agentId);
         registerMBean(JMX_DOMAIN, createAgentTypeName(agent.getName()), agentMBean);
         registerMBean(JMX_DOMAIN, createAgentBuildStatisticsName(agent.getName()), agentBuildStatistics);
         if (!agentMBean.getName().equals(agent.getName())) {
@@ -234,16 +237,12 @@ public class JMXSupport extends BasePluginStatePersister implements StateSaver, 
         }
     }
 
-    private BuildStatistics createAgentBuildStatistics(int agentId) {
-        return new BuildStatistics(buildServer, new AgentBuildFilter(agentId));
-    }
-
     @Override
     public void agentRemoved(@NotNull SBuildAgent agent) {
         unregisterMBean(JMX_DOMAIN, createAgentBuildStatisticsName(agent.getName()));
         unregisterMBean(JMX_DOMAIN, createAgentTypeName(agent.getName()));
         agentMBeans.remove(agent.getId());
-        agentBuildStatisticsMBeans.remove(agent.getId());
+        statisticsListener.removeAgentBuildStatistics(agent.getId());
     }
 
     @Override
@@ -257,8 +256,7 @@ public class JMXSupport extends BasePluginStatePersister implements StateSaver, 
         if (project != null) {
             Project projectMBean = new Project(project);
             projectMBeans.put(projectId, projectMBean);
-            BuildStatistics buildStatisticsMBean = new BuildStatistics(buildServer, new ProjectBuildFilter(projectId));
-            projectBuildStatisticsMBeans.put(projectId, buildStatisticsMBean);
+            BuildStatistics buildStatisticsMBean = statisticsListener.getProjectBuildStatistics(projectId);
             registerMBean(JMX_DOMAIN, createProjectTypeName(project.getName()), projectMBean);
             registerMBean(JMX_DOMAIN, createProjectBuildStatisticsName(project.getName()), buildStatisticsMBean);
         }
@@ -272,14 +270,14 @@ public class JMXSupport extends BasePluginStatePersister implements StateSaver, 
             unregisterMBean(JMX_DOMAIN, createProjectBuildStatisticsName(projectMBean.getName()));
             unregisterMBean(JMX_DOMAIN, createProjectTypeName(projectMBean.getName()));
             projectMBeans.remove(projectId);
-            projectBuildStatisticsMBeans.remove(projectId);
+            statisticsListener.removeProjectBuildStatistics(projectId);
         }
     }
 
     @Override
     public void projectPersisted(@NotNull String projectId) {
         Project projectMBean = projectMBeans.get(projectId);
-        BuildStatistics buildStatisticsMBean = projectBuildStatisticsMBeans.get(projectId);
+        BuildStatistics buildStatisticsMBean = statisticsListener.getProjectBuildStatistics(projectId);
         SProject project = buildServer.getProjectManager().findProjectById(projectId);
         if (project != null && projectMBean != null && !project.getName().equals(projectMBean.getName())) {
             registerMBean(JMX_DOMAIN, createProjectTypeName(project.getName()), projectMBean);

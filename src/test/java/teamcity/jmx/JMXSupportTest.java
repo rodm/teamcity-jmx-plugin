@@ -56,8 +56,9 @@ public class JMXSupportTest {
     public void setup() {
         mbeanServer = mock(MBeanServer.class);
         server = mock(SBuildServer.class);
+        BuildStatisticsListener statisticsListener = new BuildStatisticsListener(server);
 
-        plugin = new JMXSupport(server, new ServerPaths(folder.getRoot())) {
+        plugin = new JMXSupport(server, new ServerPaths(folder.getRoot()), statisticsListener) {
             @Override
             MBeanServer getMBeanServer() {
                 return mbeanServer;
@@ -68,12 +69,9 @@ public class JMXSupportTest {
     @Test
     public void shouldRegisterBuildStatisticsMBeanOnServerStartup() throws Exception {
         BuildAgentManager agentManager = mock(BuildAgentManager.class);
-        when(agentManager.getRegisteredAgents(true)).thenReturn(new ArrayList<>());
-        when(agentManager.getUnregisteredAgents()).thenReturn(new ArrayList<>());
         when(server.getBuildAgentManager()).thenReturn(agentManager);
         final ObjectName name = new ObjectName(JMX_DOMAIN + ":type=BuildServer,stats=BuildStatistics");
         ProjectManager projectManager = mock(ProjectManager.class);
-        when(projectManager.getProjects()).thenReturn(Collections.<SProject>emptyList());
         when(server.getProjectManager()).thenReturn(projectManager);
 
         plugin.serverStartup();
