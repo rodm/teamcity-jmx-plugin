@@ -46,7 +46,7 @@ public class BuildStatisticsTest {
     public void setup() {
         server = mock(SBuildServer.class);
         history = mock(BuildHistory.class);
-        stats = new BuildStatistics(server);
+        stats = new BuildStatistics();
 
         when(server.getHistory()).thenReturn(history);
 
@@ -62,49 +62,49 @@ public class BuildStatisticsTest {
 
     @Test
     public void shouldRecordNumberOfBuildsStarted() {
-        stats.buildStarted(DUMMY_BUILD);
+        stats.buildStarted();
 
         assertEquals(1, stats.getBuildsStarted());
     }
 
     @Test
     public void shouldRecordNumberOfBuildsFinished() {
-        stats.buildFinished(SUCCESSFUL_BUILD);
+        stats.buildFinished(SUCCESSFUL_BUILD, server);
 
         assertEquals(1, stats.getBuildsFinished());
     }
 
     @Test
     public void shouldRecordNumberOfBuildsInterrupted() {
-        stats.buildInterrupted(DUMMY_BUILD);
+        stats.buildInterrupted(DUMMY_BUILD, server);
 
         assertEquals(1, stats.getBuildsInterrupted());
     }
 
     @Test
     public void shouldRecordSuccessfulBuilds() {
-        stats.buildFinished(SUCCESSFUL_BUILD);
+        stats.buildFinished(SUCCESSFUL_BUILD, server);
 
         assertEquals(1, stats.getSuccessfulBuilds());
     }
 
     @Test
     public void shouldNotRecordUnsuccessfulBuilds() {
-        stats.buildFinished(FAILED_BUILD);
+        stats.buildFinished(FAILED_BUILD, server);
 
         assertEquals(0, stats.getSuccessfulBuilds());
     }
 
     @Test
     public void shouldRecordFailedBuilds() {
-        stats.buildFinished(FAILED_BUILD);
+        stats.buildFinished(FAILED_BUILD, server);
 
         assertEquals(1, stats.getFailedBuilds());
     }
 
     @Test
     public void shouldNotRecordSuccessfulBuildsAsFailed() {
-        stats.buildFinished(SUCCESSFUL_BUILD);
+        stats.buildFinished(SUCCESSFUL_BUILD, server);
 
         assertEquals(0, stats.getFailedBuilds());
     }
@@ -114,7 +114,7 @@ public class BuildStatisticsTest {
         SFinishedBuild finishedBuild = createFinishedBuild(15, 10);
         when(history.findEntry(BUILD_ID)).thenReturn(finishedBuild);
 
-        stats.buildFinished(RUNNING_BUILD);
+        stats.buildFinished(RUNNING_BUILD, server);
 
         assertEquals(15, stats.getQueueTime());
     }
@@ -124,7 +124,7 @@ public class BuildStatisticsTest {
         SFinishedBuild finishedBuild = createFinishedBuild(15, 10);
         when(history.findEntry(BUILD_ID)).thenReturn(finishedBuild);
 
-        stats.buildFinished(RUNNING_BUILD);
+        stats.buildFinished(RUNNING_BUILD, server);
 
         assertEquals(10, stats.getBuildTime());
     }
@@ -134,7 +134,7 @@ public class BuildStatisticsTest {
         SFinishedBuild finishedBuild = createFinishedBuild(10, 5);
         when(history.findEntry(BUILD_ID)).thenReturn(finishedBuild);
 
-        stats.buildInterrupted(RUNNING_BUILD);
+        stats.buildInterrupted(RUNNING_BUILD, server);
 
         assertEquals(10, stats.getQueueTime());
     }
@@ -144,7 +144,7 @@ public class BuildStatisticsTest {
         SFinishedBuild finishedBuild = createFinishedBuild(10, 5);
         when(history.findEntry(BUILD_ID)).thenReturn(finishedBuild);
 
-        stats.buildInterrupted(RUNNING_BUILD);
+        stats.buildInterrupted(RUNNING_BUILD, server);
 
         assertEquals(5, stats.getBuildTime());
     }

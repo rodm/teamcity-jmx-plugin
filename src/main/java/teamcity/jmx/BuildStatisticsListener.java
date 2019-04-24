@@ -28,14 +28,13 @@ public class BuildStatisticsListener extends BuildServerAdapter {
 
     private SBuildServer server;
 
-    private BuildStatistics serverBuildStatistics;
+    private BuildStatistics serverBuildStatistics = new BuildStatistics();
     private Map<Integer, BuildStatistics> agentBuildStatistics = new HashMap<>();
     private Map<String, BuildStatistics> projectBuildStatistics = new HashMap<>();
 
     public BuildStatisticsListener(SBuildServer server) {
         this.server = server;
         this.server.addListener(this);
-        this.serverBuildStatistics = new BuildStatistics(server);
     }
 
     public BuildStatistics getServerBuildStatistics() {
@@ -60,7 +59,7 @@ public class BuildStatisticsListener extends BuildServerAdapter {
         agentBuildStatistics.remove(agentId);
     }
     private BuildStatistics createBuildStatistics(int agentId) {
-        return new BuildStatistics(server);
+        return new BuildStatistics();
     }
 
     public boolean hasProjectBuildStatistics(String projectId) {
@@ -76,39 +75,39 @@ public class BuildStatisticsListener extends BuildServerAdapter {
     }
 
     private BuildStatistics createProjectBuildStatistics(String projectId) {
-        return new BuildStatistics(server);
+        return new BuildStatistics();
     }
 
     @Override
     public void buildStarted(@NotNull SRunningBuild build) {
-        serverBuildStatistics.buildStarted(build);
+        serverBuildStatistics.buildStarted();
         if (agentBuildStatistics.containsKey(build.getAgentId())) {
-            agentBuildStatistics.get(build.getAgentId()).buildStarted(build);
+            agentBuildStatistics.get(build.getAgentId()).buildStarted();
         }
         if (projectBuildStatistics.containsKey(build.getProjectId())) {
-            projectBuildStatistics.get(build.getProjectId()).buildStarted(build);
+            projectBuildStatistics.get(build.getProjectId()).buildStarted();
         }
     }
 
     @Override
     public void buildFinished(@NotNull SRunningBuild build) {
-        serverBuildStatistics.buildFinished(build);
+        serverBuildStatistics.buildFinished(build, server);
         if (agentBuildStatistics.containsKey(build.getAgentId())) {
-            agentBuildStatistics.get(build.getAgentId()).buildFinished(build);
+            agentBuildStatistics.get(build.getAgentId()).buildFinished(build, server);
         }
         if (projectBuildStatistics.containsKey(build.getProjectId())) {
-            projectBuildStatistics.get(build.getProjectId()).buildFinished(build);
+            projectBuildStatistics.get(build.getProjectId()).buildFinished(build, server);
         }
     }
 
     @Override
     public void buildInterrupted(@NotNull SRunningBuild build) {
-        serverBuildStatistics.buildInterrupted(build);
+        serverBuildStatistics.buildInterrupted(build, server);
         if (agentBuildStatistics.containsKey(build.getAgentId())) {
-            agentBuildStatistics.get(build.getAgentId()).buildInterrupted(build);
+            agentBuildStatistics.get(build.getAgentId()).buildInterrupted(build, server);
         }
         if (projectBuildStatistics.containsKey(build.getProjectId())) {
-            projectBuildStatistics.get(build.getProjectId()).buildInterrupted(build);
+            projectBuildStatistics.get(build.getProjectId()).buildInterrupted(build, server);
         }
     }
 }

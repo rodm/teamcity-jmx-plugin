@@ -30,8 +30,6 @@ import java.util.concurrent.atomic.AtomicLong;
 
 public class BuildStatistics implements BuildStatisticsMBean {
 
-    private SBuildServer server;
-
     private LocalDate date = LocalDate.now();
     private AtomicLong buildsStarted = new AtomicLong();
     private AtomicLong buildsFinished = new AtomicLong();
@@ -40,10 +38,6 @@ public class BuildStatistics implements BuildStatisticsMBean {
     private AtomicLong failedBuilds = new AtomicLong();
     private AtomicLong queueTime = new AtomicLong();
     private AtomicLong buildTime = new AtomicLong();
-
-    public BuildStatistics(SBuildServer server) {
-        this.server = server;
-    }
 
     @Override
     public long getBuildsStarted() {
@@ -80,11 +74,11 @@ public class BuildStatistics implements BuildStatisticsMBean {
         return buildTime.get();
     }
 
-    public void buildStarted(@NotNull SRunningBuild build) {
+    public void buildStarted() {
         buildsStarted.incrementAndGet();
     }
 
-    public void buildFinished(@NotNull SRunningBuild build) {
+    public void buildFinished(@NotNull SRunningBuild build, @NotNull SBuildServer server) {
         buildsFinished.incrementAndGet();
         Status status = build.getBuildStatus();
         if (status.isSuccessful()) {
@@ -93,15 +87,15 @@ public class BuildStatistics implements BuildStatisticsMBean {
         if (status.isFailed()) {
             failedBuilds.incrementAndGet();
         }
-        recordTimes(build);
+        recordTimes(build, server);
     }
 
-    public void buildInterrupted(@NotNull SRunningBuild build) {
+    public void buildInterrupted(@NotNull SRunningBuild build, @NotNull SBuildServer server) {
         buildsInterrupted.incrementAndGet();
-        recordTimes(build);
+        recordTimes(build, server);
     }
 
-    private void recordTimes(@NotNull SRunningBuild build) {
+    private void recordTimes(@NotNull SRunningBuild build, @NotNull SBuildServer server) {
         SFinishedBuild finishedBuild = server.getHistory().findEntry(build.getBuildId());
         if (finishedBuild != null) {
             Date queuedDate = finishedBuild.getQueuedDate();
