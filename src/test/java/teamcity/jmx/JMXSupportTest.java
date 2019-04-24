@@ -20,7 +20,6 @@ import jetbrains.buildServer.serverSide.BuildAgentManager;
 import jetbrains.buildServer.serverSide.ProjectManager;
 import jetbrains.buildServer.serverSide.SBuildAgent;
 import jetbrains.buildServer.serverSide.SBuildServer;
-import jetbrains.buildServer.serverSide.SProject;
 import jetbrains.buildServer.serverSide.ServerPaths;
 import org.junit.Before;
 import org.junit.Rule;
@@ -29,9 +28,6 @@ import org.junit.rules.TemporaryFolder;
 
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
-
-import java.util.ArrayList;
-import java.util.Collections;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;

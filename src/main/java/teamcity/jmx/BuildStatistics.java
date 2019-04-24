@@ -74,11 +74,11 @@ public class BuildStatistics implements BuildStatisticsMBean {
         return buildTime.get();
     }
 
-    public void buildStarted() {
+    void buildStarted() {
         buildsStarted.incrementAndGet();
     }
 
-    public void buildFinished(@NotNull SRunningBuild build, @NotNull SBuildServer server) {
+    void buildFinished(@NotNull SRunningBuild build, @NotNull SBuildServer server) {
         buildsFinished.incrementAndGet();
         Status status = build.getBuildStatus();
         if (status.isSuccessful()) {
@@ -90,7 +90,7 @@ public class BuildStatistics implements BuildStatisticsMBean {
         recordTimes(build, server);
     }
 
-    public void buildInterrupted(@NotNull SRunningBuild build, @NotNull SBuildServer server) {
+    void buildInterrupted(@NotNull SRunningBuild build, @NotNull SBuildServer server) {
         buildsInterrupted.incrementAndGet();
         recordTimes(build, server);
     }

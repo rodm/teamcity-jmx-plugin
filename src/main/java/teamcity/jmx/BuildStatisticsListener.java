@@ -32,50 +32,43 @@ public class BuildStatisticsListener extends BuildServerAdapter {
     private Map<Integer, BuildStatistics> agentBuildStatistics = new HashMap<>();
     private Map<String, BuildStatistics> projectBuildStatistics = new HashMap<>();
 
-    public BuildStatisticsListener(SBuildServer server) {
+    public BuildStatisticsListener(@NotNull SBuildServer server) {
         this.server = server;
         this.server.addListener(this);
     }
 
-    public BuildStatistics getServerBuildStatistics() {
+    BuildStatistics getServerBuildStatistics() {
         return serverBuildStatistics;
     }
 
-    public void reset() {
+    void reset() {
         serverBuildStatistics.reset();
         agentBuildStatistics.values().forEach(BuildStatistics::reset);
         projectBuildStatistics.values().forEach(BuildStatistics::reset);
     }
 
-    public boolean hasAgentBuildStatistics(int agentId) {
+    boolean hasAgentBuildStatistics(int agentId) {
         return agentBuildStatistics.containsKey(agentId);
     }
 
-    public BuildStatistics getAgentBuildStatistics(int agentId) {
-        return agentBuildStatistics.computeIfAbsent(agentId, this::createBuildStatistics);
+    BuildStatistics getAgentBuildStatistics(int agentId) {
+        return agentBuildStatistics.computeIfAbsent(agentId, id -> new BuildStatistics());
     }
 
-    public void removeAgentBuildStatistics(int agentId) {
+    void removeAgentBuildStatistics(int agentId) {
         agentBuildStatistics.remove(agentId);
     }
-    private BuildStatistics createBuildStatistics(int agentId) {
-        return new BuildStatistics();
-    }
 
-    public boolean hasProjectBuildStatistics(String projectId) {
+    boolean hasProjectBuildStatistics(String projectId) {
         return projectBuildStatistics.containsKey(projectId);
     }
 
-    public BuildStatistics getProjectBuildStatistics(String projectId) {
-        return projectBuildStatistics.computeIfAbsent(projectId, this::createProjectBuildStatistics);
+    BuildStatistics getProjectBuildStatistics(String projectId) {
+        return projectBuildStatistics.computeIfAbsent(projectId, id -> new BuildStatistics());
     }
 
-    public void removeProjectBuildStatistics(String projectId) {
+    void removeProjectBuildStatistics(String projectId) {
         projectBuildStatistics.remove(projectId);
-    }
-
-    private BuildStatistics createProjectBuildStatistics(String projectId) {
-        return new BuildStatistics();
     }
 
     @Override
