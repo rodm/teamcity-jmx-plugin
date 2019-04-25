@@ -1,7 +1,5 @@
 
-import jetbrains.buildServer.configs.kotlin.v2018_2.BuildType
 import jetbrains.buildServer.configs.kotlin.v2018_2.CheckoutMode
-import jetbrains.buildServer.configs.kotlin.v2018_2.Template
 import jetbrains.buildServer.configs.kotlin.v2018_2.buildSteps.gradle
 import jetbrains.buildServer.configs.kotlin.v2018_2.project
 import jetbrains.buildServer.configs.kotlin.v2018_2.triggers.vcs
@@ -13,15 +11,15 @@ version = "2018.2"
 project {
 
     val vcsId = "JmxSupport"
-    val vcsRoot = GitVcsRoot({
+    val vcsRoot = GitVcsRoot {
         id(vcsId)
         name = "jmx-support"
         url = "https://github.com/rodm/teamcity-jmx-plugin"
         useMirrors = false
-    })
+    }
     vcsRoot(vcsRoot)
 
-    val buildTemplate = Template({
+    val buildTemplate = template {
         uuid = "6b487b15-714d-41de-8ea4-312183a1a2ea"
         id("Build")
         name = "build plugin"
@@ -65,20 +63,18 @@ project {
             param("gradle.tasks", "clean build")
             param("java.home", "%java8.home%")
         }
-    })
-    template(buildTemplate)
+    }
 
-    val build1 = BuildType({
+    val build1 = buildType {
         templates(buildTemplate)
         uuid = "7b13548f-b973-4b45-80c0-91b76d44dc98"
         id("Build1")
         name = "Build - TeamCity 2018.1"
 
         artifactRules = "build/distributions/*.zip"
-    })
-    buildType(build1)
+    }
 
-    val build2 = BuildType({
+    val build2 = buildType {
         templates(buildTemplate)
         uuid = "57c8decb-afc5-40a6-890b-e938b93606a7"
         id("Build2")
@@ -87,10 +83,9 @@ project {
         params {
             param("gradle.opts", "-Dteamcity.version=2018.2")
         }
-    })
-    buildType(build2)
+    }
 
-    val build3 =  BuildType({
+    val build3 =  buildType {
         templates(buildTemplate)
         uuid = "162abe89-c678-4a4d-a29b-719e1f165564"
         id("Build3")
@@ -99,10 +94,9 @@ project {
         params {
             param("gradle.opts", "-Dteamcity.version=2019.1-SNAPSHOT")
         }
-    })
-    buildType(build3)
+    }
 
-    val reportCodeQuality = BuildType({
+    val reportCodeQuality = buildType {
         templates(buildTemplate)
         uuid = "28454d8c-3494-428e-ac2f-bcafab96e47c"
         id("ReportCodeQuality")
@@ -112,8 +106,7 @@ project {
             param("gradle.opts", "%sonar.opts%")
             param("gradle.tasks", "clean build sonarqube")
         }
-    })
-    buildType(reportCodeQuality)
+    }
 
     buildTypesOrder = arrayListOf(build1, build2, build3, reportCodeQuality)
 }
