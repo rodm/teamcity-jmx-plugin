@@ -258,7 +258,7 @@ public class JMXSupport extends BasePluginStatePersister implements StateSaver, 
     private void projectCreated(String projectId) {
         ProjectManager projectManager = buildServer.getProjectManager();
         SProject project = projectManager.findProjectById(projectId);
-        if (project != null) {
+        if (project != null && !project.isRootProject()) {
             Project projectMBean = new Project(project);
             projectMBeans.put(projectId, projectMBean);
             BuildStatistics buildStatisticsMBean = statisticsListener.getProjectBuildStatistics(projectId);
