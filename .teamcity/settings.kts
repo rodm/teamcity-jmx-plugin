@@ -19,6 +19,10 @@ project {
     }
     vcsRoot(vcsRoot)
 
+    params {
+        param("teamcity.ui.settings.readOnly", "true")
+    }
+
     val buildTemplate = template {
         id("Build")
         name = "build plugin"
