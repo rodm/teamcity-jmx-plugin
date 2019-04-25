@@ -159,10 +159,10 @@ public class JMXSupport extends BasePluginStatePersister implements StateSaver, 
 
     private void writeAgents(@NotNull Element root) {
         final Element agents = new Element("agents");
-        for (Map.Entry<Integer, Agent> entry : agentMBeans.entrySet()) {
+        for (Integer agentId : agentMBeans.keySet()) {
             final Element agent = new Element("agent");
-            agent.setAttribute("id", Integer.toString(entry.getKey()));
-            statisticsListener.getAgentBuildStatistics(entry.getKey()).writeExternal(agent);
+            agent.setAttribute("id", Integer.toString(agentId));
+            statisticsListener.getAgentBuildStatistics(agentId).writeExternal(agent);
             agents.addContent(agent);
         }
         root.addContent(agents);
@@ -170,10 +170,10 @@ public class JMXSupport extends BasePluginStatePersister implements StateSaver, 
 
     private void writeProjects(@NotNull Element root) {
         final Element projects = new Element("projects");
-        for (Map.Entry<String, Project> entry : projectMBeans.entrySet()) {
+        for (String projectId : projectMBeans.keySet()) {
             final Element project = new Element("project");
-            project.setAttribute("id", entry.getKey());
-            statisticsListener.getProjectBuildStatistics(entry.getKey()).writeExternal(project);
+            project.setAttribute("id", projectId);
+            statisticsListener.getProjectBuildStatistics(projectId).writeExternal(project);
             projects.addContent(project);
         }
         root.addContent(projects);
