@@ -105,6 +105,17 @@ public class JMXSupport extends BasePluginStatePersister implements StateSaver, 
             Thread.currentThread().interrupt();
         }
         super.serverShutdown();
+
+        unregisterMBean(JMX_DOMAIN, BUILD_SERVER_NAME);
+        unregisterMBean(JMX_DOMAIN, BUILD_SERVER_NAME + BUILD_STATISTICS_NAME);
+        agentMBeans.values().forEach(agent -> {
+            unregisterMBean(JMX_DOMAIN, createAgentTypeName(agent.getName()));
+            unregisterMBean(JMX_DOMAIN, createAgentBuildStatisticsName(agent.getName()));
+        });
+        projectMBeans.values().forEach(project -> {
+            unregisterMBean(JMX_DOMAIN, createProjectTypeName(project.getName()));
+            unregisterMBean(JMX_DOMAIN, createProjectBuildStatisticsName(project.getName()));
+        });
         LOGGER.info("JMX Support plugin stopped");
     }
 
