@@ -251,8 +251,8 @@ public class JMXSupport extends BasePluginStatePersister implements StateSaver, 
             Project projectMBean = new Project(project);
             projectMBeans.put(projectId, projectMBean);
             BuildStatistics buildStatisticsMBean = statisticsListener.getProjectBuildStatistics(projectId);
-            registerMBean(JMX_DOMAIN, createProjectTypeName(project.getName()), projectMBean);
-            registerMBean(JMX_DOMAIN, createProjectBuildStatisticsName(project.getName()), buildStatisticsMBean);
+            registerMBean(JMX_DOMAIN, createProjectTypeName(project.getFullName()), projectMBean);
+            registerMBean(JMX_DOMAIN, createProjectBuildStatisticsName(project.getFullName()), buildStatisticsMBean);
         }
     }
 
@@ -273,12 +273,12 @@ public class JMXSupport extends BasePluginStatePersister implements StateSaver, 
         Project projectMBean = projectMBeans.get(projectId);
         BuildStatistics buildStatisticsMBean = statisticsListener.getProjectBuildStatistics(projectId);
         SProject project = buildServer.getProjectManager().findProjectById(projectId);
-        if (project != null && projectMBean != null && !project.getName().equals(projectMBean.getName())) {
-            registerMBean(JMX_DOMAIN, createProjectTypeName(project.getName()), projectMBean);
-            registerMBean(JMX_DOMAIN, createProjectBuildStatisticsName(project.getName()), buildStatisticsMBean);
+        if (project != null && projectMBean != null && !project.getFullName().equals(projectMBean.getName())) {
+            registerMBean(JMX_DOMAIN, createProjectTypeName(project.getFullName()), projectMBean);
+            registerMBean(JMX_DOMAIN, createProjectBuildStatisticsName(project.getFullName()), buildStatisticsMBean);
             unregisterMBean(JMX_DOMAIN, createProjectTypeName(projectMBean.getName()));
             unregisterMBean(JMX_DOMAIN, createProjectBuildStatisticsName(projectMBean.getName()));
-            projectMBean.setName(project.getName());
+            projectMBean.setName(project.getFullName());
         }
     }
 

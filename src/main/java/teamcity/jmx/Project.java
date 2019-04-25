@@ -36,7 +36,7 @@ public class Project implements ProjectMBean {
 
     public Project(final SProject project) {
         this.serverProject = project;
-        this.name = project.getName();
+        this.name = project.getFullName();
         update();
     }
 
