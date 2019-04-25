@@ -14,7 +14,6 @@ project {
 
     val vcsId = "JmxSupport"
     val vcsRoot = GitVcsRoot({
-        uuid = "3a482ecb-7e55-4537-b473-340658b5680a"
         id(vcsId)
         name = "jmx-support"
         url = "https://github.com/rodm/teamcity-jmx-plugin"
