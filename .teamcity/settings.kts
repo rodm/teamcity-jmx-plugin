@@ -85,11 +85,12 @@ project {
     val build3 =  buildType {
         templates(buildTemplate)
         id("Build3")
-        name = "Build - TeamCity 2019.1-SNAPSHOT"
+        name = "Build - TeamCity 2019.1"
 
         params {
-            param("gradle.opts", "-Dteamcity.version=2019.1-SNAPSHOT")
+            param("gradle.opts", "-Dteamcity.version=2019.1")
         }
+        paused = true
     }
 
     val reportCodeQuality = buildType {
