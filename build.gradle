@@ -43,6 +43,7 @@ teamcity {
             vendorUrl = 'https://github.com/rodm'
             email = 'rod.n.mackenzie@gmail.com'
             useSeparateClassloader = true
+            minimumBuild = '58245'
         }
 
         publish {

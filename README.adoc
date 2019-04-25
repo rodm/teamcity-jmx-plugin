@@ -3,8 +3,8 @@
 :uri-gradle: https://gradle.org/[Gradle]
 :uri-travis-build: https://travis-ci.org/rodm/teamcity-jmx-plugin
 :uri-travis-image: https://travis-ci.org/rodm/teamcity-jmx-plugin.svg
-:uri-jetbrains-plugin: https://plugins.jetbrains.com/plugin/9004-jmx-plugin
-:uri-teamcity-install-plugin: https://confluence.jetbrains.com/display/TCD10/Installing+Additional+Plugins[Installing Additional Plugins]
+:uri-jetbrains-plugin: https://plugins.jetbrains.com/plugin/10872-jmx-support
+:uri-teamcity-install-plugin: https://confluence.jetbrains.com/display/TCD18/Installing+Additional+Plugins[Installing Additional Plugins]
 
 The JMX Support plugin exposes attributes of the Build Server, Build Agents and Projects using JMX.
 
@@ -102,13 +102,13 @@ Build the plugin
 
 The plugin is packaged into a zip file and found in the following directory `build/distributions/`
 
-Start the TeamCity Server
+Start the TeamCity Server and Build Agent
 
-    ./gradlew startTeamcity10Server
+    ./gradlew startTeamcity2018.1
 
-Stop the TeamCity Server
+Stop the TeamCity Server and Build Agent
 
-    ./gradlew stopTeamcity10Server
+    ./gradlew stopTeamcity2018.1
 
 == How to configure Munin to monitor TeamCity
 
@@ -116,7 +116,7 @@ See the link:config/munin/README.md[README] in the `config/munin` directory.
 
 == Compatibility
 
-The plugin is compatible with TeamCity 10.0 and later.
+The plugin is compatible with TeamCity 2018.1 or later.
 
 == License
 
