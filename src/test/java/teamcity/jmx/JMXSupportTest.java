@@ -77,7 +77,7 @@ public class JMXSupportTest {
 
     @Test
     public void onNewAgentRegisteringRegisterAgentBuildStatisticsMBean() throws Exception {
-        final ObjectName name = new ObjectName(JMX_DOMAIN + ":type=Agent,name=" + AGENT_NAME + ",stats=BuildStatistics");
+        final ObjectName name = new ObjectName(JMX_DOMAIN + ":type=Agent,name=" + ObjectName.quote(AGENT_NAME) + ",stats=BuildStatistics");
         SBuildAgent agent = mock(SBuildAgent.class);
         when(agent.getName()).thenReturn(AGENT_NAME);
 
@@ -88,7 +88,7 @@ public class JMXSupportTest {
 
     @Test
     public void onAgentUnregisteringAgentBuildStatisticsRemainRegistered() throws Exception {
-        final ObjectName name = new ObjectName(JMX_DOMAIN + ":type=Agent,name=" + AGENT_NAME + ",stats=BuildStatistics");
+        final ObjectName name = new ObjectName(JMX_DOMAIN + ":type=Agent,name=" + ObjectName.quote(AGENT_NAME) + ",stats=BuildStatistics");
         SBuildAgent agent = mock(SBuildAgent.class);
         when(agent.getName()).thenReturn(AGENT_NAME);
         when(mbeanServer.isRegistered(any(ObjectName.class))).thenReturn(true);
@@ -100,7 +100,7 @@ public class JMXSupportTest {
 
     @Test
     public void unregisterAgentBuildStatisticsMBeanOnAgentRemove() throws Exception {
-        final ObjectName name = new ObjectName(JMX_DOMAIN + ":type=Agent,name=" + AGENT_NAME + ",stats=BuildStatistics");
+        final ObjectName name = new ObjectName(JMX_DOMAIN + ":type=Agent,name=" + ObjectName.quote(AGENT_NAME) + ",stats=BuildStatistics");
         SBuildAgent agent = mock(SBuildAgent.class);
         when(agent.getName()).thenReturn(AGENT_NAME);
         when(mbeanServer.isRegistered(any(ObjectName.class))).thenReturn(true);

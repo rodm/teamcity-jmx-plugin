@@ -327,11 +327,11 @@ public class JMXSupport extends BasePluginStatePersister implements StateSaver, 
     }
 
     private String createAgentTypeName(String agentName) {
-        return AGENT_NAME + agentName;
+        return AGENT_NAME + ObjectName.quote(agentName);
     }
 
     private String createProjectTypeName(String projectName) {
-        return PROJECT_NAME + projectName;
+        return PROJECT_NAME + ObjectName.quote(projectName);
     }
 
     private void registerMBean(String domain, String name, Object mbean) {
