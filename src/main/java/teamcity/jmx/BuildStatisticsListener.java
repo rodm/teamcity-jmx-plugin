@@ -37,6 +37,11 @@ public class BuildStatisticsListener extends BuildServerAdapter {
         this.server.addListener(this);
     }
 
+    @Override
+    public void serverShutdown() {
+        this.server.removeListener(this);
+    }
+
     BuildStatistics getServerBuildStatistics() {
         return serverBuildStatistics;
     }
