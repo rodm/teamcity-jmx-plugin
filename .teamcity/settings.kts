@@ -6,7 +6,7 @@ import jetbrains.buildServer.configs.kotlin.v2018_2.triggers.vcs
 import jetbrains.buildServer.configs.kotlin.v2018_2.vcs.GitVcsRoot
 import jetbrains.buildServer.configs.kotlin.v2018_2.version
 
-version = "2018.2"
+version = "2019.1"
 
 project {
 
@@ -94,7 +94,6 @@ project {
         params {
             param("gradle.opts", "-Dteamcity.version=2019.1")
         }
-        paused = true
     }
 
     val reportCodeQuality = buildType {
