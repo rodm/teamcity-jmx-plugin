@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -25,7 +25,6 @@ import jetbrains.buildServer.serverSide.SProject;
 import jetbrains.buildServer.serverSide.SRunningBuild;
 import jetbrains.buildServer.serverSide.ServerPaths;
 import jetbrains.buildServer.users.SUser;
-import jetbrains.buildServer.util.BasePluginStatePersister;
 import org.apache.log4j.Logger;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
@@ -45,7 +44,7 @@ import java.util.concurrent.TimeUnit;
 
 import static jetbrains.buildServer.log.Loggers.SERVER_CATEGORY;
 
-public class JMXSupport extends BasePluginStatePersister implements StateSaver, Runnable {
+public class JMXSupport extends PluginStateStore implements StateSaver, Runnable {
 
     private static final Logger LOGGER = Logger.getLogger(SERVER_CATEGORY + "." + JMXSupport.class.getSimpleName());
 
@@ -145,12 +144,6 @@ public class JMXSupport extends BasePluginStatePersister implements StateSaver, 
     @Override
     protected String getPluginName() {
         return "jmx-support";
-    }
-
-    @NotNull
-    @Override
-    protected String getStateName() {
-        return "state";
     }
 
     @Override
