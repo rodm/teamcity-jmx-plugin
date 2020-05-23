@@ -1,17 +1,21 @@
 
-.DS_Store
-
-.idea/
-*.iml
-
-target/
-
+# Gradle
 .gradle/
 build/
 build.properties
 gradle.properties
 
+# IDEA
+.idea
+*.iml
+out/
+
+# TeamCity Configs Maven plugin
+.teamcity/target/
+
 # gradle-teamcity-plugin
 data/
 downloads/
 servers/
+
+.DS_Store
