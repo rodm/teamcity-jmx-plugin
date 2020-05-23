@@ -30,6 +30,16 @@ java {
     targetCompatibility = JavaVersion.VERSION_1_8
 }
 
+test {
+    finalizedBy jacocoTestReport
+}
+
+jacocoTestReport {
+    reports {
+        xml.enabled = true
+    }
+}
+
 teamcity {
     version = "${teamcityVersion}"
 
