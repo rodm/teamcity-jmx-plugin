@@ -58,17 +58,12 @@ teamcity {
         baseHomeDir = project.serversDir
 
         'teamcity2018.1' {
-            version = '2018.1.4'
+            version = '2018.1.5'
             serverOptions '-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005'
         }
 
-        'teamcity2018.2' {
-            version = '2018.2.4'
-            serverOptions '-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005'
-        }
-
-        'teamcity2019.1' {
-            version = '2019.1'
+        'teamcity2020.1' {
+            version = '2020.1'
             serverOptions '-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005'
         }
     }
