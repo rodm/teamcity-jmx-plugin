@@ -8,7 +8,7 @@ plugins {
 }
 
 group = 'com.github.rodm'
-version = '1.3-SNAPSHOT'
+version = '1.2.1'
 
 ext {
     teamcityVersion = System.properties['teamcity.version'] ?: '2018.1'
@@ -60,6 +60,7 @@ teamcity {
 
         publish {
             token = findProperty('jetbrains.token')
+            notes = 'Fixes incompatibility with TeamCity 2020.1'
         }
     }
 
