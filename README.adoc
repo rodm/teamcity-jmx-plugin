@@ -1,14 +1,14 @@
 = JMX Support plugin for TeamCity
 :uri-teamcity: https://www.jetbrains.com/teamcity/[TeamCity]
 :uri-gradle: https://gradle.org/[Gradle]
-:uri-travis-build: https://travis-ci.org/rodm/teamcity-jmx-plugin
-:uri-travis-image: https://travis-ci.org/rodm/teamcity-jmx-plugin.svg
+:uri-github-build: https://github.com/rodm/teamcity-jmx-plugin/actions
+:uri-github-status: https://github.com/rodm/teamcity-jmx-plugin/workflows/Build/badge.svg
 :uri-jetbrains-plugin: https://plugins.jetbrains.com/plugin/10872-jmx-support
 :uri-teamcity-install-plugin: https://confluence.jetbrains.com/display/TCD18/Installing+Additional+Plugins[Installing Additional Plugins]
 
 The JMX Support plugin exposes attributes of the Build Server, Build Agents and Projects using JMX.
 
-image:{uri-travis-image}[Build Status,link={uri-travis-build}]
+image:{uri-github-status}?branch=master["Build Status", link="{uri-github-build}"]
 
 == How to install
 
