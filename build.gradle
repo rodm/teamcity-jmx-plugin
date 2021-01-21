@@ -73,8 +73,8 @@ teamcity {
             serverOptions '-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005'
         }
 
-        'teamcity2020.1' {
-            version = '2020.1'
+        'teamcity2020.2' {
+            version = '2020.2.1'
             serverOptions '-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005'
         }
     }
