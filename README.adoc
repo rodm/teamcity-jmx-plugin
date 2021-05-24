@@ -3,12 +3,17 @@
 :uri-gradle: https://gradle.org/[Gradle]
 :uri-github-build: https://github.com/rodm/teamcity-jmx-plugin/actions
 :uri-github-status: https://github.com/rodm/teamcity-jmx-plugin/workflows/Build/badge.svg
-:uri-jetbrains-plugin: https://plugins.jetbrains.com/plugin/10872-jmx-support
+:plugin-id: 10872-jmx-support
+:uri-jetbrains-plugin: https://plugins.jetbrains.com/plugin/{plugin-id}
+:uri-jetbrains-plugin-version: https://img.shields.io/jetbrains/plugin/v/{plugin-id}
+:uri-jetbrains-plugin-downloads: https://img.shields.io/jetbrains/plugin/d/{plugin-id}
 :uri-teamcity-install-plugin: https://confluence.jetbrains.com/display/TCD18/Installing+Additional+Plugins[Installing Additional Plugins]
 
 The JMX Support plugin exposes attributes of the Build Server, Build Agents and Projects using JMX.
 
 image:{uri-github-status}?branch=master["Build Status", link="{uri-github-build}"]
+image:{uri-jetbrains-plugin-version}["Version", link="{uri-jetbrains-plugin}"]
+image:{uri-jetbrains-plugin-downloads}["Downloads", link="{uri-jetbrains-plugin}"]
 
 == How to install
 
