@@ -11,7 +11,7 @@ group = 'com.github.rodm'
 version = '1.3-SNAPSHOT'
 
 ext {
-    teamcityVersion = System.properties['teamcity.version'] ?: '2018.1'
+    teamcityVersion = project.findProperty('teamcity.api.version') ?: "2018.1"
 
     downloadsDir = findProperty('downloads.dir') ?: "$rootDir/downloads"
     serversDir = findProperty('servers.dir') ?: "$rootDir/servers"

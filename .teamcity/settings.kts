@@ -80,7 +80,7 @@ project {
         name = "Build - TeamCity 2020.2"
 
         params {
-            param("gradle.opts", "-Dteamcity.version=2020.2")
+            param("gradle.opts", "-Pteamcity.api.version=2020.2")
         }
     }
 
