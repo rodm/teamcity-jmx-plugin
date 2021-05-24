@@ -5,7 +5,7 @@ import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.vcs
 import jetbrains.buildServer.configs.kotlin.v2019_2.vcs.GitVcsRoot
 import jetbrains.buildServer.configs.kotlin.v2019_2.version
 
-version = "2020.2"
+version = "2021.1"
 
 project {
 
