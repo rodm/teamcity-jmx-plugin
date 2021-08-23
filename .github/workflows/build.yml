@@ -18,11 +18,11 @@ jobs:
           java-version: 8
       - name: Gradle version
         uses: gradle/gradle-build-action@v1
-      - with:
+        with:
           arguments: --version
       - name: Build
         uses: gradle/gradle-build-action@v1
-      - with:
+        with:
           arguments: -s clean build
           distributions-cache-enabled: true
           dependencies-cache-enabled: true
