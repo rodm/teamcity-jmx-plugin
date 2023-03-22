@@ -3,27 +3,21 @@ name: Build
 
 on:
   push:
-    branches: [ master ]
+    branches: [ main ]
+    paths-ignore:
+      - 'README.adoc'
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Set up Java
-        uses: actions/setup-java@v2
+        uses: actions/setup-java@v3
         with:
           distribution: 'zulu'
           java-version: 8
-      - name: Gradle version
-        uses: gradle/gradle-build-action@v1
-        with:
-          arguments: --version
-      - name: Build
-        uses: gradle/gradle-build-action@v1
-        with:
-          arguments: -s clean build
-          distributions-cache-enabled: true
-          dependencies-cache-enabled: true
-          configuration-cache-enabled: false
+          cache: 'gradle'
+      - name: Build with Gradle
+        run: ./gradlew --show-version -s build --no-daemon
