@@ -13,7 +13,7 @@ version = "1.3-SNAPSHOT"
 extra["teamcityVersion"] = project.findProperty("teamcity.api.version") as String? ?: "2018.1"
 extra["downloadsDir"] = project.findProperty("downloads.dir") as String? ?: "$rootDir/downloads"
 extra["serversDir"] = project.findProperty("servers.dir") as String? ?: "$rootDir/servers"
-extra["java8Home"] = project.findProperty("java8.home") ?: "/opt/jdk1.8.0_152"
+extra["java11Home"] = project.findProperty("java11.home") ?: "/opt/jdk-11.0.2"
 
 base {
     archivesName.set("jmx-support")
@@ -72,8 +72,9 @@ teamcity {
             serverOptions = "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005"
         }
 
-        register("teamcity2020.2") {
-            version = "2020.2.1"
+        register("teamcity2022.10") {
+            version = "2022.10.2"
+            javaHome = extra["java11Home"] as String
             serverOptions = "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005"
         }
     }
