@@ -58,7 +58,7 @@ teamcity {
         }
 
         publish {
-            token = findProperty("jetbrains.token") as String
+            token = findProperty("jetbrains.token") as String?
             notes = "Fixes incompatibility with TeamCity 2020.1"
         }
     }
