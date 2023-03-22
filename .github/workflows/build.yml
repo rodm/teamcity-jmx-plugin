@@ -21,3 +21,10 @@ jobs:
           cache: 'gradle'
       - name: Build with Gradle
         run: ./gradlew --show-version -s build --no-daemon
+      - name: Upload test reports
+        uses: actions/upload-artifact@v3
+        if: failure()
+        with:
+          name: reports
+          path: build/reports/**
+          retention-days: 3
