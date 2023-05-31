@@ -307,8 +307,16 @@ public class JMXSupport extends PluginStateStore implements StateSaver, Runnable
     }
 
     private void updateProject(String projectId) {
-        Project project = projectMBeans.get(projectId);
+        Project project = lookupOrCreateProject(projectId);
         project.update();
+    }
+
+    private Project lookupOrCreateProject(String projectId) {
+        Project project = projectMBeans.get(projectId);
+        if (project == null) {
+            projectCreated(projectId);
+        }
+        return projectMBeans.get(projectId);
     }
 
     private String createAgentBuildStatisticsName(String agentName) {
