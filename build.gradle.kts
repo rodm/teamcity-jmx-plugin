@@ -69,13 +69,13 @@ teamcity {
 
         register("teamcity2018.1") {
             version = "2018.1.5"
-            serverOptions = "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005"
+            serverOptions ("-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005")
         }
 
         register("teamcity2022.10") {
             version = "2022.10.2"
             javaHome = extra["java11Home"] as String
-            serverOptions = "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005"
+            serverOptions ("-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005")
         }
     }
 }
