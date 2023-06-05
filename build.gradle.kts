@@ -8,7 +8,7 @@ plugins {
 }
 
 group = "com.github.rodm"
-version = "1.3-SNAPSHOT"
+version = "1.2.2"
 
 extra["teamcityVersion"] = project.findProperty("teamcity.api.version") as String? ?: "2018.1"
 extra["downloadsDir"] = project.findProperty("downloads.dir") as String? ?: "$rootDir/downloads"
@@ -59,7 +59,7 @@ teamcity {
 
         publish {
             token = findProperty("jetbrains.token") as String?
-            notes = "Fixes incompatibility with TeamCity 2020.1"
+            notes = "Fixes incompatibility with TeamCity 2023.05"
         }
     }
 
