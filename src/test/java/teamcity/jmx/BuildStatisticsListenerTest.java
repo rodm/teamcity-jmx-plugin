@@ -28,7 +28,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -62,7 +61,7 @@ public class BuildStatisticsListenerTest {
 
     @Test
     public void registersWithBuildServer() {
-        verify(server).addListener(eq(listener));
+        verify(server).addListener(listener);
     }
 
     @Test

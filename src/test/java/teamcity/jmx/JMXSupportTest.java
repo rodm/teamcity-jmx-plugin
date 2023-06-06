@@ -29,8 +29,8 @@ import org.junit.rules.TemporaryFolder;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -95,7 +95,7 @@ public class JMXSupportTest {
 
         plugin.agentUnregistered(agent);
 
-        verify(mbeanServer, never()).unregisterMBean(eq(name));
+        verify(mbeanServer, never()).unregisterMBean(name);
     }
 
     @Test
@@ -107,6 +107,6 @@ public class JMXSupportTest {
 
         plugin.agentRemoved(agent);
 
-        verify(mbeanServer).unregisterMBean(eq(name));
+        verify(mbeanServer).unregisterMBean(name);
     }
 }
