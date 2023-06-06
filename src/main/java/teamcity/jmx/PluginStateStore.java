@@ -93,7 +93,7 @@ public abstract class PluginStateStore extends BuildServerAdapter {
             return FileUtil.createDir(new File(serverPaths.getPluginDataDirectory(), getPluginName()));
         }
         catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new PluginStateException("Failed to create plugin data directory", e);
         }
     }
 }
