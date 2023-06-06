@@ -54,13 +54,13 @@ public class JMXSupport extends PluginStateStore implements StateSaver, Runnable
     private static final String PROJECT_NAME = "type=Project,name=";
     private static final String BUILD_STATISTICS_NAME = ",stats=BuildStatistics";
 
-    private SBuildServer buildServer;
+    private final SBuildServer buildServer;
 
-    private BuildStatisticsListener statisticsListener;
+    private final BuildStatisticsListener statisticsListener;
 
     private BuildServer buildServerMBean;
-    private Map<Integer, Agent> agentMBeans = new HashMap<>();
-    private Map<String, Project> projectMBeans = new HashMap<>();
+    private final Map<Integer, Agent> agentMBeans = new HashMap<>();
+    private final Map<String, Project> projectMBeans = new HashMap<>();
 
     private LocalDate date;
     private ScheduledExecutorService executor;
@@ -135,6 +135,7 @@ public class JMXSupport extends PluginStateStore implements StateSaver, Runnable
         executor.schedule(this, durationUntilMidnight.getSeconds() + 5, TimeUnit.SECONDS);
     }
 
+    @Override
     public void saveState() {
         LOGGER.info("Saving plugin state");
         super.saveState();
@@ -205,7 +206,7 @@ public class JMXSupport extends PluginStateStore implements StateSaver, Runnable
         Element agents = root.getChild("agents");
         for (Object object : agents.getChildren("agent")) {
             Element agent = (Element) object;
-            Integer agentId = Integer.parseInt(agent.getAttributeValue("id", "0"));
+            int agentId = Integer.parseInt(agent.getAttributeValue("id", "0"));
             BuildStatistics buildStatistics = statisticsListener.getAgentBuildStatistics(agentId);
             buildStatistics.readExternal(agent);
         }
