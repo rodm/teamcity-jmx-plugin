@@ -66,13 +66,35 @@ public class JMXSupportTest {
     public void shouldRegisterBuildStatisticsMBeanOnServerStartup() throws Exception {
         BuildAgentManager agentManager = mock(BuildAgentManager.class);
         when(server.getBuildAgentManager()).thenReturn(agentManager);
-        final ObjectName name = new ObjectName(JMX_DOMAIN + ":type=BuildServer,stats=BuildStatistics");
         ProjectManager projectManager = mock(ProjectManager.class);
         when(server.getProjectManager()).thenReturn(projectManager);
 
+        final ObjectName serverMBeanName = new ObjectName(JMX_DOMAIN + ":type=BuildServer");
+        final ObjectName serverStatsMBeanName = new ObjectName(JMX_DOMAIN + ":type=BuildServer,stats=BuildStatistics");
+
         plugin.serverStartup();
 
-        verify(mbeanServer).registerMBean(any(BuildStatistics.class), eq(name));
+        verify(mbeanServer).registerMBean(any(BuildServer.class), eq(serverMBeanName));
+        verify(mbeanServer).registerMBean(any(BuildStatistics.class), eq(serverStatsMBeanName));
+    }
+
+    @Test
+    public void shouldUnregisterBuildStatisticsMBeanOnServerShut() throws Exception {
+        BuildAgentManager agentManager = mock(BuildAgentManager.class);
+        when(server.getBuildAgentManager()).thenReturn(agentManager);
+        ProjectManager projectManager = mock(ProjectManager.class);
+        when(server.getProjectManager()).thenReturn(projectManager);
+        plugin.serverStartup();
+
+        final ObjectName serverMBeanName = new ObjectName(JMX_DOMAIN + ":type=BuildServer");
+        final ObjectName serverStatsMBeanName = new ObjectName(JMX_DOMAIN + ":type=BuildServer,stats=BuildStatistics");
+        when(mbeanServer.isRegistered(serverMBeanName)).thenReturn(true);
+        when(mbeanServer.isRegistered(serverStatsMBeanName)).thenReturn(true);
+
+        plugin.serverShutdown();
+
+        verify(mbeanServer).unregisterMBean(eq(serverMBeanName));
+        verify(mbeanServer).unregisterMBean(eq(serverStatsMBeanName));
     }
 
     @Test
