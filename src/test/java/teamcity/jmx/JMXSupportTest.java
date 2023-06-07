@@ -93,8 +93,8 @@ public class JMXSupportTest {
 
         plugin.serverShutdown();
 
-        verify(mbeanServer).unregisterMBean(eq(serverMBeanName));
-        verify(mbeanServer).unregisterMBean(eq(serverStatsMBeanName));
+        verify(mbeanServer).unregisterMBean(serverMBeanName);
+        verify(mbeanServer).unregisterMBean(serverStatsMBeanName);
     }
 
     @Test
