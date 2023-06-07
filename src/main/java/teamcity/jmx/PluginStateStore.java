@@ -32,6 +32,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
 
 import static jetbrains.buildServer.log.Loggers.SERVER_CATEGORY;
 
@@ -63,6 +64,10 @@ public abstract class PluginStateStore extends BuildServerAdapter {
     }
 
     protected void loadState() {
+        if (Files.notExists(stateFile.toPath())) {
+            LOGGER.warn("Plugin state file for \"" + getPluginName() + "\" does not exist");
+            return;
+        }
         try {
             SAXBuilder builder = new SAXBuilder();
             Document document = builder.build(new FileReader(stateFile));
