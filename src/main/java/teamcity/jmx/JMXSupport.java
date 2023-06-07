@@ -98,7 +98,10 @@ public class JMXSupport extends PluginStateStore implements StateSaver, Runnable
     public void serverShutdown() {
         executor.shutdownNow();
         try {
-            executor.awaitTermination(1, TimeUnit.SECONDS);
+            boolean terminated = executor.awaitTermination(1, TimeUnit.SECONDS);
+            if (!terminated) {
+                LOGGER.warn("Scheduled executor shutdown timed out");
+            }
         } catch (InterruptedException e) {
             LOGGER.warn("Scheduled executor shutdown interrupted", e);
             Thread.currentThread().interrupt();
