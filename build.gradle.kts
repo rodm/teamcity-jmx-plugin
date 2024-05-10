@@ -73,7 +73,7 @@ teamcity {
         }
 
         register("teamcity2024.03") {
-            version = "2024.03"
+            version = "2024.03.1"
             javaHome = extra["java11Home"] as String
             serverOptions ("-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005")
         }
