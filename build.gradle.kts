@@ -2,9 +2,9 @@
 plugins {
     id ("org.gradle.java")
     id ("org.gradle.jacoco")
-    id ("io.github.rodm.teamcity-server") version "1.5.3"
-    id ("io.github.rodm.teamcity-environments") version "1.5.3"
-    id ("org.sonarqube") version "4.0.0.2929"
+    id ("io.github.rodm.teamcity-server")
+    id ("io.github.rodm.teamcity-environments")
+    id ("org.sonarqube")
 }
 
 group = "com.github.rodm"
@@ -25,8 +25,9 @@ dependencies {
 }
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(8)
+    }
 }
 
 tasks {
@@ -36,7 +37,7 @@ tasks {
 
     jacocoTestReport {
         reports {
-            xml.required.set(true)
+            xml.required = true
         }
     }
 }
