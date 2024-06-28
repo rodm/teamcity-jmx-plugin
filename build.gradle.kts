@@ -10,13 +10,8 @@ plugins {
 group = "com.github.rodm"
 version = "1.3-SNAPSHOT"
 
-extra["teamcityVersion"] = project.findProperty("teamcity.api.version") as String? ?: "2018.1"
-extra["downloadsDir"] = project.findProperty("downloads.dir") as String? ?: "$rootDir/downloads"
-extra["serversDir"] = project.findProperty("servers.dir") as String? ?: "$rootDir/servers"
-extra["java11Home"] = project.findProperty("java11.home") ?: "/opt/jdk-11.0.2"
-
 base {
-    archivesName.set("jmx-support")
+    archivesName = "jmx-support"
 }
 
 dependencies {
@@ -42,8 +37,10 @@ tasks {
     }
 }
 
+val teamcityVersion = project.findProperty("teamcity.api.version") as String? ?: "2018.1"
+
 teamcity {
-    version = extra["teamcityVersion"] as String
+    version = teamcityVersion
 
     server {
         descriptor {
@@ -65,18 +62,18 @@ teamcity {
     }
 
     environments {
-        downloadsDir = extra["downloadsDir"] as String
-        baseHomeDir = extra["serversDir"] as String
+        val java11Home = project.findProperty("java11.home") as String? ?: "/opt/jdk-11.0.2"
+        val serverDebugOptions = "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005"
 
         register("teamcity2018.1") {
             version = "2018.1.5"
-            serverOptions ("-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005")
+            serverOptions (serverDebugOptions)
         }
 
         register("teamcity2024.03") {
-            version = "2024.03.1"
-            javaHome = extra["java11Home"] as String
-            serverOptions ("-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005")
+            version = "2024.03.3"
+            javaHome = java11Home
+            serverOptions (serverDebugOptions)
         }
     }
 }
