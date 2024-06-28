@@ -2,9 +2,9 @@
 plugins {
     id ("org.gradle.java")
     id ("org.gradle.jacoco")
-    id ("io.github.rodm.teamcity-server")
-    id ("io.github.rodm.teamcity-environments")
-    id ("org.sonarqube")
+    alias (libs.plugins.teamcity.server)
+    alias (libs.plugins.teamcity.environments)
+    alias (libs.plugins.sonarqube)
 }
 
 group = "com.github.rodm"
@@ -20,8 +20,8 @@ base {
 }
 
 dependencies {
-    testImplementation ("junit:junit:4.13.2")
-    testImplementation ("org.mockito:mockito-core:4.11.0")
+    testImplementation (libs.junit)
+    testImplementation (libs.mockito)
 }
 
 java {
