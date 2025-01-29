@@ -1,6 +1,6 @@
 
 [versions]
-teamcity = "1.5.4"
+teamcity = "1.5.5"
 
 [plugins]
 teamcity-server = { id = "io.github.rodm.teamcity-server", version.ref = "teamcity" }
