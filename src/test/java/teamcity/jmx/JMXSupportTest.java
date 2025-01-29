@@ -21,13 +21,14 @@ import jetbrains.buildServer.serverSide.ProjectManager;
 import jetbrains.buildServer.serverSide.SBuildAgent;
 import jetbrains.buildServer.serverSide.SBuildServer;
 import jetbrains.buildServer.serverSide.ServerPaths;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
+
+import java.io.File;
 
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.eq;
@@ -41,20 +42,20 @@ public class JMXSupportTest {
     private static final String JMX_DOMAIN = "com.jetbrains.teamcity";
     private static final String AGENT_NAME = "TestAgent";
 
-    @Rule
-    public TemporaryFolder folder = new TemporaryFolder();
+    @TempDir
+    public File folder;
 
     private MBeanServer mbeanServer;
     private SBuildServer server;
     private JMXSupport plugin;
 
-    @Before
+    @BeforeEach
     public void setup() {
         mbeanServer = mock(MBeanServer.class);
         server = mock(SBuildServer.class);
         BuildStatisticsListener statisticsListener = new BuildStatisticsListener(server);
 
-        plugin = new JMXSupport(server, new ServerPaths(folder.getRoot()), statisticsListener) {
+        plugin = new JMXSupport(server, new ServerPaths(folder), statisticsListener) {
             @Override
             MBeanServer getMBeanServer() {
                 return mbeanServer;

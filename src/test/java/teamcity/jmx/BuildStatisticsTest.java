@@ -21,12 +21,12 @@ import jetbrains.buildServer.serverSide.BuildHistory;
 import jetbrains.buildServer.serverSide.SBuildServer;
 import jetbrains.buildServer.serverSide.SFinishedBuild;
 import jetbrains.buildServer.serverSide.SRunningBuild;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.Date;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -42,7 +42,7 @@ public class BuildStatisticsTest {
     private SRunningBuild FAILED_BUILD;
     private SRunningBuild RUNNING_BUILD;
 
-    @Before
+    @BeforeEach
     public void setup() {
         server = mock(SBuildServer.class);
         history = mock(BuildHistory.class);
@@ -152,8 +152,8 @@ public class BuildStatisticsTest {
     private SFinishedBuild createFinishedBuild(int queueTime, int buildTime) {
         long time = System.currentTimeMillis();
         Date queuedDate = new Date(time);
-        Date startDate = new Date(time + (queueTime * 1000));
-        Date finishDate = new Date(time + ((queueTime + buildTime) * 1000));
+        Date startDate = new Date(time + (queueTime * 1000L));
+        Date finishDate = new Date(time + ((queueTime + buildTime) * 1000L));
         SFinishedBuild finishedBuild = mock((SFinishedBuild.class));
         when(finishedBuild.getQueuedDate()).thenReturn(queuedDate);
         when(finishedBuild.getStartDate()).thenReturn(startDate);
