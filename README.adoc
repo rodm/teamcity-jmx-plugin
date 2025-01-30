@@ -1,22 +1,22 @@
-:uri-teamcity: https://www.jetbrains.com/teamcity/[TeamCity]
-:uri-gradle: https://gradle.org/[Gradle]
-:uri-github: https://github.com
-:uri-shields: https://img.shields.io
-:uri-apache-license: https://www.apache.org/licenses/LICENSE-2.0.html[Apache License, Version 2.0]
 :plugin-id: 10872-jmx-support
 :plugin-name: teamcity-jmx-plugin
-:uri-project: {uri-github}/rodm/{plugin-name}
-:uri-download: https://plugins.jetbrains.com/plugin/{plugin-id}
+:uri-teamcity: https://www.jetbrains.com/teamcity/[TeamCity]
+:uri-gradle: https://gradle.org/[Gradle]
+:uri-apache-license: https://www.apache.org/licenses/LICENSE-2.0.html[Apache License, Version 2.0]
+:uri-github: https://github.com
+:uri-github-project: {uri-github}/rodm/{plugin-name}
+:uri-github-actions: {uri-github-project}/actions
+:uri-github-status: {uri-github-actions}/workflows/build.yml/badge.svg
+:uri-shields: https://img.shields.io
 :uri-version: {uri-shields}/jetbrains/plugin/v/{plugin-id}?label=TeamCity%20plugin
 :uri-downloads: {uri-shields}/jetbrains/plugin/d/{plugin-id}?label=Downloads
-:uri-build-history: {uri-project}/actions
-:uri-build-status: {uri-project}/workflows/Build/badge.svg
+:uri-download: https://plugins.jetbrains.com/plugin/{plugin-id}
 
 = JMX Support plugin for TeamCity
 
 The JMX Support plugin exposes attributes of the Build Server, Build Agents and Projects using JMX.
 
-image:{uri-build-status}?branch=main["Build Status", link="{uri-build-history}"]
+image:{uri-github-status}?branch=main["Build Status", link="{uri-github-actions}"]
 image:{uri-version}["Version", link={uri-download}]
 image:{uri-downloads}["Downloads", link="{uri-download}"]
 
