@@ -74,8 +74,8 @@ teamcity {
             serverOptions (serverDebugOptions)
         }
 
-        register("teamcity2024.12") {
-            version = "2024.12.1"
+        register("teamcity2025.03") {
+            version = "2025.03"
             javaHome = java11Home
             serverOptions (serverDebugOptions)
         }
