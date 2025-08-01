@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class BuildStatisticsTest {
+class BuildStatisticsTest {
 
     private static final long BUILD_ID = 1234;
 
@@ -43,7 +43,7 @@ public class BuildStatisticsTest {
     private SRunningBuild RUNNING_BUILD;
 
     @BeforeEach
-    public void setup() {
+    void setup() {
         server = mock(SBuildServer.class);
         history = mock(BuildHistory.class);
         stats = new BuildStatistics();
@@ -61,56 +61,56 @@ public class BuildStatisticsTest {
     }
 
     @Test
-    public void shouldRecordNumberOfBuildsStarted() {
+    void shouldRecordNumberOfBuildsStarted() {
         stats.buildStarted();
 
         assertEquals(1, stats.getBuildsStarted());
     }
 
     @Test
-    public void shouldRecordNumberOfBuildsFinished() {
+    void shouldRecordNumberOfBuildsFinished() {
         stats.buildFinished(SUCCESSFUL_BUILD, server);
 
         assertEquals(1, stats.getBuildsFinished());
     }
 
     @Test
-    public void shouldRecordNumberOfBuildsInterrupted() {
+    void shouldRecordNumberOfBuildsInterrupted() {
         stats.buildInterrupted(DUMMY_BUILD, server);
 
         assertEquals(1, stats.getBuildsInterrupted());
     }
 
     @Test
-    public void shouldRecordSuccessfulBuilds() {
+    void shouldRecordSuccessfulBuilds() {
         stats.buildFinished(SUCCESSFUL_BUILD, server);
 
         assertEquals(1, stats.getSuccessfulBuilds());
     }
 
     @Test
-    public void shouldNotRecordUnsuccessfulBuilds() {
+    void shouldNotRecordUnsuccessfulBuilds() {
         stats.buildFinished(FAILED_BUILD, server);
 
         assertEquals(0, stats.getSuccessfulBuilds());
     }
 
     @Test
-    public void shouldRecordFailedBuilds() {
+    void shouldRecordFailedBuilds() {
         stats.buildFinished(FAILED_BUILD, server);
 
         assertEquals(1, stats.getFailedBuilds());
     }
 
     @Test
-    public void shouldNotRecordSuccessfulBuildsAsFailed() {
+    void shouldNotRecordSuccessfulBuildsAsFailed() {
         stats.buildFinished(SUCCESSFUL_BUILD, server);
 
         assertEquals(0, stats.getFailedBuilds());
     }
 
     @Test
-    public void recordQueueTimeOfFinishedBuild() {
+    void recordQueueTimeOfFinishedBuild() {
         SFinishedBuild finishedBuild = createFinishedBuild(15, 10);
         when(history.findEntry(BUILD_ID)).thenReturn(finishedBuild);
 
@@ -120,7 +120,7 @@ public class BuildStatisticsTest {
     }
 
     @Test
-    public void recordBuildTimeOfFinishedBuild() {
+    void recordBuildTimeOfFinishedBuild() {
         SFinishedBuild finishedBuild = createFinishedBuild(15, 10);
         when(history.findEntry(BUILD_ID)).thenReturn(finishedBuild);
 
@@ -130,7 +130,7 @@ public class BuildStatisticsTest {
     }
 
     @Test
-    public void recordQueueTimeOfInterruptedBuild() {
+    void recordQueueTimeOfInterruptedBuild() {
         SFinishedBuild finishedBuild = createFinishedBuild(10, 5);
         when(history.findEntry(BUILD_ID)).thenReturn(finishedBuild);
 
@@ -140,7 +140,7 @@ public class BuildStatisticsTest {
     }
 
     @Test
-    public void recordBuildTimeOfInterruptedBuild() {
+    void recordBuildTimeOfInterruptedBuild() {
         SFinishedBuild finishedBuild = createFinishedBuild(10, 5);
         when(history.findEntry(BUILD_ID)).thenReturn(finishedBuild);
 

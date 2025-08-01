@@ -32,7 +32,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class BuildStatisticsListenerTest {
+class BuildStatisticsListenerTest {
 
     private static final int AGENT_ID = 123;
     private static final String PROJECT_ID = "project123";
@@ -44,7 +44,7 @@ public class BuildStatisticsListenerTest {
     private SRunningBuild SUCCESSFUL_BUILD;
 
     @BeforeEach
-    public void setup() {
+    void setup() {
         server = mock(SBuildServer.class);
         when(server.getHistory()).thenReturn(mock(BuildHistory.class));
         listener = new BuildStatisticsListener(server);
@@ -60,12 +60,12 @@ public class BuildStatisticsListenerTest {
     }
 
     @Test
-    public void registersWithBuildServer() {
+    void registersWithBuildServer() {
         verify(server).addListener(listener);
     }
 
     @Test
-    public void createsAndReturnsAgentBuildStatistics() {
+    void createsAndReturnsAgentBuildStatistics() {
         BuildStatistics stats = listener.getAgentBuildStatistics(AGENT_ID);
 
         assertNotNull(stats);
@@ -73,14 +73,14 @@ public class BuildStatisticsListenerTest {
     }
 
     @Test
-    public void returnsPreviouslyCreatedBuildStatisticsForAgent() {
+    void returnsPreviouslyCreatedBuildStatisticsForAgent() {
         BuildStatistics stats = listener.getAgentBuildStatistics(AGENT_ID);
 
         assertSame(stats, listener.getAgentBuildStatistics(AGENT_ID));
     }
 
     @Test
-    public void removeAgentBuildStatistics() {
+    void removeAgentBuildStatistics() {
         listener.getAgentBuildStatistics(AGENT_ID);
 
         listener.removeAgentBuildStatistics(AGENT_ID);
@@ -89,7 +89,7 @@ public class BuildStatisticsListenerTest {
     }
 
     @Test
-    public void createsAndReturnsProjectBuildStatistics() {
+    void createsAndReturnsProjectBuildStatistics() {
         BuildStatistics stats = listener.getProjectBuildStatistics(PROJECT_ID);
 
         assertNotNull(stats);
@@ -97,14 +97,14 @@ public class BuildStatisticsListenerTest {
     }
 
     @Test
-    public void returnsPreviouslyCreatedBuildStatisticsForProject() {
+    void returnsPreviouslyCreatedBuildStatisticsForProject() {
         BuildStatistics stats = listener.getProjectBuildStatistics(PROJECT_ID);
 
         assertSame(stats, listener.getProjectBuildStatistics(PROJECT_ID));
     }
 
     @Test
-    public void removeProjectBuildStatistics() {
+    void removeProjectBuildStatistics() {
         listener.getProjectBuildStatistics(PROJECT_ID);
 
         listener.removeProjectBuildStatistics(PROJECT_ID);
@@ -113,14 +113,14 @@ public class BuildStatisticsListenerTest {
     }
 
     @Test
-    public void recordBuildStartedInServerBuildStatistics() {
+    void recordBuildStartedInServerBuildStatistics() {
         listener.buildStarted(DUMMY_BUILD);
 
         assertEquals(1, listener.getServerBuildStatistics().getBuildsStarted());
     }
 
     @Test
-    public void recordBuildStartedInAgentBuildStatistics() {
+    void recordBuildStartedInAgentBuildStatistics() {
         listener.getAgentBuildStatistics(AGENT_ID);
 
         listener.buildStarted(DUMMY_BUILD);
@@ -129,7 +129,7 @@ public class BuildStatisticsListenerTest {
     }
 
     @Test
-    public void recordBuildStartedInProjectBuildStatistics() {
+    void recordBuildStartedInProjectBuildStatistics() {
         listener.getProjectBuildStatistics(PROJECT_ID);
 
         listener.buildStarted(DUMMY_BUILD);
@@ -138,14 +138,14 @@ public class BuildStatisticsListenerTest {
     }
 
     @Test
-    public void recordBuildFinishedInServerBuildStatistics() {
+    void recordBuildFinishedInServerBuildStatistics() {
         listener.buildFinished(SUCCESSFUL_BUILD);
 
         assertEquals(1, listener.getServerBuildStatistics().getBuildsFinished());
     }
 
     @Test
-    public void recordBuildFinishedInAgentBuildStatistics() {
+    void recordBuildFinishedInAgentBuildStatistics() {
         listener.getAgentBuildStatistics(AGENT_ID);
 
         listener.buildFinished(SUCCESSFUL_BUILD);
@@ -154,7 +154,7 @@ public class BuildStatisticsListenerTest {
     }
 
     @Test
-    public void recordBuildFinishedInProjectBuildStatistics() {
+    void recordBuildFinishedInProjectBuildStatistics() {
         listener.getProjectBuildStatistics(PROJECT_ID);
 
         listener.buildFinished(SUCCESSFUL_BUILD);
@@ -163,14 +163,14 @@ public class BuildStatisticsListenerTest {
     }
 
     @Test
-    public void recordBuildInterruptedInServerBuildStatistics() {
+    void recordBuildInterruptedInServerBuildStatistics() {
         listener.buildInterrupted(DUMMY_BUILD);
 
         assertEquals(1, listener.getServerBuildStatistics().getBuildsInterrupted());
     }
 
     @Test
-    public void recordBuildInterruptedInAgentBuildStatistics() {
+    void recordBuildInterruptedInAgentBuildStatistics() {
         listener.getAgentBuildStatistics(AGENT_ID);
 
         listener.buildInterrupted(DUMMY_BUILD);
@@ -179,7 +179,7 @@ public class BuildStatisticsListenerTest {
     }
 
     @Test
-    public void recordBuildInterruptedInProjectBuildStatistics() {
+    void recordBuildInterruptedInProjectBuildStatistics() {
         listener.getProjectBuildStatistics(PROJECT_ID);
 
         listener.buildInterrupted(DUMMY_BUILD);
@@ -188,7 +188,7 @@ public class BuildStatisticsListenerTest {
     }
 
     @Test
-    public void resetAllBuildStatistics() {
+    void resetAllBuildStatistics() {
         listener.getAgentBuildStatistics(AGENT_ID);
         listener.getProjectBuildStatistics(PROJECT_ID);
         listener.buildFinished(SUCCESSFUL_BUILD);

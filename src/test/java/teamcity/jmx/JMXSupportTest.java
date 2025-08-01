@@ -37,7 +37,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class JMXSupportTest {
+class JMXSupportTest {
 
     private static final String JMX_DOMAIN = "com.jetbrains.teamcity";
     private static final String AGENT_NAME = "TestAgent";
@@ -50,7 +50,7 @@ public class JMXSupportTest {
     private JMXSupport plugin;
 
     @BeforeEach
-    public void setup() {
+    void setup() {
         mbeanServer = mock(MBeanServer.class);
         server = mock(SBuildServer.class);
         BuildStatisticsListener statisticsListener = new BuildStatisticsListener(server);
@@ -64,7 +64,7 @@ public class JMXSupportTest {
     }
 
     @Test
-    public void shouldRegisterBuildStatisticsMBeanOnServerStartup() throws Exception {
+    void shouldRegisterBuildStatisticsMBeanOnServerStartup() throws Exception {
         BuildAgentManager agentManager = mock(BuildAgentManager.class);
         when(server.getBuildAgentManager()).thenReturn(agentManager);
         ProjectManager projectManager = mock(ProjectManager.class);
@@ -80,7 +80,7 @@ public class JMXSupportTest {
     }
 
     @Test
-    public void shouldUnregisterBuildStatisticsMBeanOnServerShut() throws Exception {
+    void shouldUnregisterBuildStatisticsMBeanOnServerShut() throws Exception {
         BuildAgentManager agentManager = mock(BuildAgentManager.class);
         when(server.getBuildAgentManager()).thenReturn(agentManager);
         ProjectManager projectManager = mock(ProjectManager.class);
@@ -99,7 +99,7 @@ public class JMXSupportTest {
     }
 
     @Test
-    public void onNewAgentRegisteringRegisterAgentBuildStatisticsMBean() throws Exception {
+    void onNewAgentRegisteringRegisterAgentBuildStatisticsMBean() throws Exception {
         final ObjectName name = new ObjectName(JMX_DOMAIN + ":type=Agent,name=" + ObjectName.quote(AGENT_NAME) + ",stats=BuildStatistics");
         SBuildAgent agent = mock(SBuildAgent.class);
         when(agent.getName()).thenReturn(AGENT_NAME);
@@ -110,7 +110,7 @@ public class JMXSupportTest {
     }
 
     @Test
-    public void onAgentUnregisteringAgentBuildStatisticsRemainRegistered() throws Exception {
+    void onAgentUnregisteringAgentBuildStatisticsRemainRegistered() throws Exception {
         final ObjectName name = new ObjectName(JMX_DOMAIN + ":type=Agent,name=" + ObjectName.quote(AGENT_NAME) + ",stats=BuildStatistics");
         SBuildAgent agent = mock(SBuildAgent.class);
         when(agent.getName()).thenReturn(AGENT_NAME);
@@ -122,7 +122,7 @@ public class JMXSupportTest {
     }
 
     @Test
-    public void unregisterAgentBuildStatisticsMBeanOnAgentRemove() throws Exception {
+    void unregisterAgentBuildStatisticsMBeanOnAgentRemove() throws Exception {
         final ObjectName name = new ObjectName(JMX_DOMAIN + ":type=Agent,name=" + ObjectName.quote(AGENT_NAME) + ",stats=BuildStatistics");
         SBuildAgent agent = mock(SBuildAgent.class);
         when(agent.getName()).thenReturn(AGENT_NAME);
