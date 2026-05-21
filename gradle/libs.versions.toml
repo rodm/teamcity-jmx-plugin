@@ -8,7 +8,7 @@ teamcity-environments = { id = "io.github.rodm.teamcity-environments", version.r
 sonarqube = { id = "org.sonarqube", version = "7.3.0.8198" }
 
 [libraries]
-junit-bom = { module = "org.junit:junit-bom", version = "5.14.1" }
+junit-bom = { module = "org.junit:junit-bom", version = "6.1.0" }
 junit-jupiter = { module = "org.junit.jupiter:junit-jupiter" }
 junit-launcher = { module = "org.junit.platform:junit-platform-launcher" }
-mockito = { module = "org.mockito:mockito-core", version = "4.11.0" }
+mockito = { module = "org.mockito:mockito-core", version = "5.23.0" }
