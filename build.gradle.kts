@@ -41,7 +41,7 @@ tasks {
     }
 }
 
-val teamcityVersion = project.findProperty("teamcity.api.version") as String? ?: "2018.1"
+val teamcityVersion = project.findProperty("teamcity.api.version") as String? ?: "2025.03"
 
 teamcity {
     version = teamcityVersion
@@ -56,7 +56,7 @@ teamcity {
             vendorUrl = "https://github.com/rodm"
             email = "rod.n.mackenzie@gmail.com"
             useSeparateClassloader = true
-            minimumBuild = "58245"
+            minimumBuild = "186049"
         }
 
         publish {
@@ -69,8 +69,8 @@ teamcity {
         val java21Home = project.findProperty("java21.home") as String? ?: "/opt/jdk-21.0.2"
         val serverDebugOptions = "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005"
 
-        register("teamcity2018.1") {
-            version = "2018.1.5"
+        register("teamcity2025.03") {
+            version = "2025.03"
             serverOptions (serverDebugOptions)
         }
 
