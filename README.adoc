@@ -114,11 +114,11 @@ The plugin is packaged into a zip file and found in the following directory `bui
 
 Start the TeamCity Server and Build Agent
 
-    ./gradlew startTeamcity2018.1
+    ./gradlew startTeamcity2025.03
 
 Stop the TeamCity Server and Build Agent
 
-    ./gradlew stopTeamcity2018.1
+    ./gradlew stopTeamcity2025.03
 
 == How to configure Munin to monitor TeamCity
 
@@ -126,7 +126,7 @@ See the link:config/munin/README.md[README] in the `config/munin` directory.
 
 == Compatibility
 
-The plugin is compatible with TeamCity 2018.1 or later.
+The plugin is compatible with TeamCity 2025.03 or later.
 
 == License
 
